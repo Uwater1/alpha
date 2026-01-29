@@ -38,6 +38,13 @@ print(f"Downloading data to {output_dir}")
 
 # Download data for each stock
 for code in stock_codes:
+    filename = os.path.join(output_dir, f"{code}.csv")
+    
+    # Skip if file already exists
+    if os.path.exists(filename):
+        print(f"Skipping {code} - data already exists")
+        continue
+    
     print(f"Downloading data for {code}")
     try:
         stock_zh_a_hist = ak.stock_zh_a_hist(
@@ -49,11 +56,29 @@ for code in stock_codes:
         )
         
         # Save to CSV file
-        filename = os.path.join(output_dir, f"{code}.csv")
         stock_zh_a_hist.to_csv(filename, index=False)
         print(f"Data saved to {filename}")
         time.sleep(1)
     except Exception as e:
         print(f"Failed to download data for {code}: {e}")
+        print(f"Retrying {code}...")
+        time.sleep(1)
+        try:
+            stock_zh_a_hist = ak.stock_zh_a_hist(
+                symbol=code, 
+                period="daily", 
+                start_date="20151230", 
+                end_date='20260123', 
+                adjust=adjust
+            )
+            
+            # Save to CSV file
+            stock_zh_a_hist.to_csv(filename, index=False)
+            print(f"Data saved to {filename} on retry")
+            time.sleep(1)
+        except Exception as retry_e:
+            print(f"Failed to download data for {code} on retry: {retry_e}")
+            print("Aborting program due to download failure")
+            sys.exit(1)
 
 print("Download completed")
