@@ -11,6 +11,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from .operators import ts_rank, rolling_corr
 
 
@@ -73,3 +74,105 @@ def alpha_001(df: pd.DataFrame) -> pd.Series:
     result = pd.Series(alpha_values, index=index, name='alpha_001')
 
     return result
+
+
+def load_stock_csv(code: str) -> pd.DataFrame:
+    """
+    Load stock data from CSV file.
+
+    Looks for {code}.csv in bao/hs300/ or bao/zz500/ directories.
+    Exactly one file must exist.
+
+    Parameters
+    ----------
+    code : str
+        Stock code (e.g., 'sh_600016', 'sz_000001')
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with date as index, sorted by date
+
+    Raises
+    ------
+    FileNotFoundError
+        If file not found in either directory
+    ValueError
+        If file found in both directories
+    """
+    hs300_path = Path('bao/hs300') / f'{code}.csv'
+    zz500_path = Path('bao/zz500') / f'{code}.csv'
+
+    hs300_exists = hs300_path.exists()
+    zz500_exists = zz500_path.exists()
+
+    if hs300_exists and zz500_exists:
+        raise ValueError(
+            f"File '{code}.csv' found in both bao/hs300/ and bao/zz500/ directories. "
+            "Exactly one must exist."
+        )
+
+    if not hs300_exists and not zz500_exists:
+        raise FileNotFoundError(
+            f"File '{code}.csv' not found in bao/hs300/ or bao/zz500/ directories."
+        )
+
+    file_path = hs300_path if hs300_exists else zz500_path
+
+    df = pd.read_csv(file_path)
+
+    # Parse date column and set as index
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace=True)
+
+    # Sort by date
+    df.sort_index(inplace=True)
+
+    return df
+
+
+def alpha001(
+    code: str,
+    end_date: str = "2026-01-23",
+    lookback: int = 350
+) -> float:
+    """
+    Compute Alpha001 factor value for a stock at a specific date.
+
+    Parameters
+    ----------
+    code : str
+        Stock code (e.g., 'sh_600016', 'sz_000001')
+    end_date : str, default "2026-01-23"
+        End date for the computation (format: YYYY-MM-DD)
+    lookback : int, default 350
+        Number of trading days to look back
+
+    Returns
+    -------
+    float
+        Alpha001 factor value at the end date, or np.nan if value is NaN
+
+    Raises
+    ------
+    ValueError
+        If insufficient history (less than lookback rows)
+    """
+    df = load_stock_csv(code)
+
+    # Filter data to date <= end_date
+    df = df.loc[:end_date]
+
+    # Check if sufficient history exists
+    if len(df) < lookback:
+        raise ValueError("insufficient history")
+
+    # Keep the last lookback rows
+    df = df.iloc[-lookback:]
+
+    # Call alpha_001 and get the last value
+    value = alpha_001(df).iloc[-1]
+
+    # Return float or np.nan
+    return float(value) if not np.isnan(value) else np.nan
