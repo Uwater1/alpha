@@ -257,6 +257,8 @@ alpha_001(code,end_date=None)
 -   因子公式：  
     -   (-1 \* CORR(RANK(DELTA(LOG(VOLUME),1)),RANK(((CLOSE-OPEN)/OPEN)),6)
 
+(对应WQ alpha002)
+
 #### alpha\_002
 
 ```python

@@ -32,7 +32,11 @@ def alpha_001(df: pd.DataFrame) -> pd.Series:
 
     Usage:
         >>> import pandas as pd
-        >>> from alpha191.alpha001 import alpha_001
+        >>> from alpha191.alpha001 import alpha_001, alpha001
+        >>> # Using alpha001 with benchmark parameter
+        >>> result = alpha001('sh_600009', benchmark='zz800', end_date="2026-01-23", lookback=350)
+        >>> print(result)
+        >>> # Or compute alpha_001 directly from DataFrame
         >>> df = pd.read_csv('bao/hs300/sh_600009.csv')
         >>> result = alpha_001(df)
         >>> print(result.tail(10))
@@ -76,17 +80,21 @@ def alpha_001(df: pd.DataFrame) -> pd.Series:
     return result
 
 
-def load_stock_csv(code: str) -> pd.DataFrame:
+def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
     """
-    Load stock data from CSV file.
+    Load stock data from CSV file based on benchmark selection.
 
-    Looks for {code}.csv in bao/hs300/ or bao/zz500/ directories.
-    Exactly one file must exist.
+    Looks for {code}.csv in the appropriate directory based on benchmark:
+    - 'hs300': bao/hs300/ only
+    - 'zz500': bao/zz500/ only
+    - 'zz800': bao/hs300/ or bao/zz500/ (searches both)
 
     Parameters
     ----------
     code : str
         Stock code (e.g., 'sh_600016', 'sz_000001')
+    benchmark : str, default 'zz800'
+        Benchmark selection: 'hs300', 'zz500', or 'zz800'
 
     Returns
     -------
@@ -96,28 +104,44 @@ def load_stock_csv(code: str) -> pd.DataFrame:
     Raises
     ------
     FileNotFoundError
-        If file not found in either directory
+        If file not found in the specified directory/directories
     ValueError
-        If file found in both directories
+        If benchmark is not one of 'hs300', 'zz500', or 'zz800'
     """
-    hs300_path = Path('bao/hs300') / f'{code}.csv'
-    zz500_path = Path('bao/zz500') / f'{code}.csv'
-
-    hs300_exists = hs300_path.exists()
-    zz500_exists = zz500_path.exists()
-
-    if hs300_exists and zz500_exists:
+    # Validate benchmark parameter
+    if benchmark not in ['hs300', 'zz500', 'zz800']:
         raise ValueError(
-            f"File '{code}.csv' found in both bao/hs300/ and bao/zz500/ directories. "
-            "Exactly one must exist."
+            f"Invalid benchmark '{benchmark}'. Must be one of: 'hs300', 'zz500', 'zz800'"
         )
 
-    if not hs300_exists and not zz500_exists:
-        raise FileNotFoundError(
-            f"File '{code}.csv' not found in bao/hs300/ or bao/zz500/ directories."
-        )
+    # Determine search paths based on benchmark
+    if benchmark == 'hs300':
+        search_paths = [Path('bao/hs300') / f'{code}.csv']
+    elif benchmark == 'zz500':
+        search_paths = [Path('bao/zz500') / f'{code}.csv']
+    else:  # zz800 - search both directories
+        search_paths = [
+            Path('bao/hs300') / f'{code}.csv',
+            Path('bao/zz500') / f'{code}.csv'
+        ]
 
-    file_path = hs300_path if hs300_exists else zz500_path
+    # Find the file
+    file_path = None
+    for path in search_paths:
+        if path.exists():
+            file_path = path
+            break
+
+    if file_path is None:
+        if benchmark == 'zz800':
+            raise FileNotFoundError(
+                f"File '{code}.csv' not found in bao/hs300/ or bao/zz500/ directories."
+            )
+        else:
+            dir_name = benchmark
+            raise FileNotFoundError(
+                f"File '{code}.csv' not found in bao/{dir_name}/ directory."
+            )
 
     df = pd.read_csv(file_path)
 
@@ -134,6 +158,7 @@ def load_stock_csv(code: str) -> pd.DataFrame:
 
 def alpha001(
     code: str,
+    benchmark: str = 'zz800',
     end_date: str = "2026-01-23",
     lookback: int = 350
 ) -> float:
@@ -144,6 +169,12 @@ def alpha001(
     ----------
     code : str
         Stock code (e.g., 'sh_600016', 'sz_000001')
+    benchmark : str, default 'zz800'
+        Benchmark selection: 'hs300', 'zz500', or 'zz800'
+        Determines which directory to search for stock data:
+        - 'hs300': bao/hs300/ only
+        - 'zz500': bao/zz500/ only
+        - 'zz800': bao/hs300/ or bao/zz500/ (searches both)
     end_date : str, default "2026-01-23"
         End date for the computation (format: YYYY-MM-DD)
     lookback : int, default 350
@@ -157,9 +188,11 @@ def alpha001(
     Raises
     ------
     ValueError
-        If insufficient history (less than lookback rows)
+        If insufficient history (less than lookback rows) or invalid benchmark
+    FileNotFoundError
+        If stock file not found in the specified directory/directories
     """
-    df = load_stock_csv(code)
+    df = load_stock_csv(code, benchmark=benchmark)
 
     # Filter data to date <= end_date
     df = df.loc[:end_date]

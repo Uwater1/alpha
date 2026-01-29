@@ -15,17 +15,15 @@
 
 ### API Usage
 
-```python
 from alpha191.alpha001 import alpha001
 
 # Compute alpha_001 for a single stock on a specific date
-result = alpha001(code="sh_600016", end_date="2026-01-23", lookback=350)
+result = alpha001(code="sh_600016",benchmark="zz800", end_date="2026-01-23", lookback=350)
+
 
 # Returns: float (or np.nan if result is NaN)
-```
-
-**Parameters:**
 - `code` (str): Stock code (e.g., "sh_600016", "sz_000001")
+- `benchmark` (str): Benchmark index (bonly have "hs300", "zz500", or "zz800")
 - `end_date` (str): End date for computation (default: "2026-01-23")
 - `lookback` (int): Number of historical rows to use (default: 350)
 
