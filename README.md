@@ -1,2 +1,1 @@
-# alpha
-Study Alpha 191
+# Alpha191 CSI 800 Historical Data Downloader
