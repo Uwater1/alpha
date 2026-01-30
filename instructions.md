@@ -7,7 +7,7 @@ Your goal is to implement a specific batch of Alpha factors. Each factor must fo
 - `alpha191/operators.py`: Library of pre-built math operators.
 - `alpha191/utils.py`: Data loading and execution helper.
 - `tests/test_alphas.py`: Group tests for factors. (PUT YOUR TEST HERE, DO NOT CREATE NEW FILE)
-- `alpha191.md`: list of all alpha, you are to find your alpha from this document, if it said 尚未实现, ingnore this alpha.
+- `alpha191.md`: list of all alpha, you are to find your alpha from this document, if it said 尚未实现, ingnore this alpha. 
 
 ## Implementation Rules
 

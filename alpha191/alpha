@@ -1,0 +1,78 @@
+"""
+Alpha033 factor implementation.
+
+Formula:
+    alpha_033 = ((((-1*TSMIN(LOW,5))+DELAY(TSMIN(LOW,5),5))*RANK(((SUM(RET,240)-SUM(RET,20))/220)))*TSRANK(VOLUME,5))
+"""
+
+import numpy as np
+import pandas as pd
+from .operators import ts_min, delay, ts_sum, compute_ret, rank, ts_rank
+from .utils import run_alpha_factor
+
+
+def alpha_033(df: pd.DataFrame) -> pd.Series:
+    """
+    Compute Alpha033 factor.
+
+    Formula:
+        alpha_033 = ((((-1*TSMIN(LOW,5))+DELAY(TSMIN(LOW,5),5))*RANK(((SUM(RET,240)-SUM(RET,20))/220)))*TSRANK(VOLUME,5))
+    """
+    # Ensure we have required columns
+    required_cols = ['close', 'low', 'volume']
+    for col in required_cols:
+        if col not in df.columns:
+            raise ValueError(f"Required column '{col}' not found in DataFrame")
+
+    if 'date' in df.columns:
+        index = pd.to_datetime(df['date'])
+    else:
+        index = df.index
+
+    close = df['close'].values
+    low = df['low'].values
+    volume = df['volume'].values
+
+    # Step 1: Compute TSMIN(LOW, 5)
+    ts_min_low = ts_min(low, 5)
+
+    # Step 2: Compute DELAY(TSMIN(LOW,5), 5)
+    delay_ts_min = delay(ts_min_low, 5)
+
+    # Step 3: Compute (-1*TSMIN(LOW,5))+DELAY(TSMIN(LOW,5),5)
+    part1 = -1 * ts_min_low + delay_ts_min
+
+    # Step 4: Compute RET
+    ret = compute_ret(close)
+
+    # Step 5: Compute SUM(RET, 240) and SUM(RET, 20)
+    sum_ret_240 = ts_sum(ret, 240)
+    sum_ret_20 = ts_sum(ret, 20)
+
+    # Step 6: Compute (SUM(RET,240)-SUM(RET,20))/220
+    part2 = np.full(len(close), np.nan)
+    valid_mask = ~np.isnan(sum_ret_240) & ~np.isnan(sum_ret_20)
+    part2[valid_mask] = (sum_ret_240[valid_mask] - sum_ret_20[valid_mask]) / 220
+
+    # Step 7: Compute RANK(...)
+    rank_part2 = rank(part2)
+
+    # Step 8: Compute TSRANK(VOLUME, 5)
+    ts_rank_vol = ts_rank(volume, 5)
+
+    # Step 9: Compute final formula
+    alpha_values = part1 * rank_part2 * ts_rank_vol
+
+    return pd.Series(alpha_values, index=index, name='alpha_033')
+
+
+def alpha033(
+    code: str,
+    benchmark: str = 'zz800',
+    end_date: str = "2026-01-23",
+    lookback: int = 350
+) -> float:
+    """
+    Compute Alpha033 factor value for a stock at a specific date.
+    """
+    return run_alpha_factor(alpha_033, code, benchmark, end_date, lookback)

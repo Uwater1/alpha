@@ -22,11 +22,36 @@ from .alpha017 import alpha_017
 from .alpha018 import alpha_018
 from .alpha019 import alpha_019
 from .alpha020 import alpha_020
+from .alpha021 import alpha_021
+from .alpha022 import alpha_022
+from .alpha023 import alpha_023
+from .alpha024 import alpha_024
+from .alpha025 import alpha_025
+from .alpha026 import alpha_026
+from .alpha027 import alpha_027
+from .alpha028 import alpha_028
+from .alpha029 import alpha_029
+# alpha_030 尚未实现
+from .alpha031 import alpha_031
+from .alpha032 import alpha_032
+from .alpha033 import alpha_033
+from .alpha034 import alpha_034
+from .alpha035 import alpha_035
+from .alpha036 import alpha_036
+from .alpha037 import alpha_037
+from .alpha038 import alpha_038
+from .alpha039 import alpha_039
+from .alpha040 import alpha_040
 
 __all__ = [
     "alpha_001", "alpha_002", "alpha_003", "alpha_004",
     "alpha_005", "alpha_006", "alpha_007", "alpha_008",
     "alpha_009", "alpha_010", "alpha_011", "alpha_012",
     "alpha_013", "alpha_014", "alpha_015", "alpha_016",
-    "alpha_017", "alpha_018", "alpha_019", "alpha_020"
+    "alpha_017", "alpha_018", "alpha_019", "alpha_020",
+    "alpha_021", "alpha_022", "alpha_023", "alpha_024",
+    "alpha_025", "alpha_026", "alpha_027", "alpha_028",
+    "alpha_029", "alpha_031", "alpha_032", "alpha_033",
+    "alpha_034", "alpha_035", "alpha_036", "alpha_037",
+    "alpha_038", "alpha_039", "alpha_040"
 ]
