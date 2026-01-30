@@ -1,0 +1,79 @@
+"""
+Utility functions for Alpha191 factors.
+"""
+
+import numpy as np
+import pandas as pd
+from pathlib import Path
+
+
+def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
+    """
+    Load stock data from CSV file based on benchmark selection.
+
+    Looks for {code}.csv in the appropriate directory based on benchmark:
+    - 'hs300': bao/hs300/ only
+    - 'zz500': bao/zz500/ only
+    - 'zz800': bao/hs300/ or bao/zz500/ (searches both)
+
+    Parameters
+    ----------
+    code : str
+        Stock code (e.g., 'sh_600016', 'sz_000001')
+    benchmark : str, default 'zz800'
+        Benchmark selection: 'hs300', 'zz500', or 'zz800'
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with date as index, sorted by date
+    """
+    if benchmark not in ['hs300', 'zz500', 'zz800']:
+        raise ValueError(
+            f"Invalid benchmark '{benchmark}'. Must be one of: 'hs300', 'zz500', 'zz800'"
+        )
+
+    if benchmark == 'hs300':
+        search_paths = [Path('bao/hs300') / f'{code}.csv']
+    elif benchmark == 'zz500':
+        search_paths = [Path('bao/zz500') / f'{code}.csv']
+    else:  # zz800
+        search_paths = [
+            Path('bao/hs300') / f'{code}.csv',
+            Path('bao/zz500') / f'{code}.csv'
+        ]
+
+    file_path = None
+    for path in search_paths:
+        if path.exists():
+            file_path = path
+            break
+
+    if file_path is None:
+        raise FileNotFoundError(f"File '{code}.csv' not found for benchmark {benchmark}")
+
+    df = pd.read_csv(file_path)
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace=True)
+    df.sort_index(inplace=True)
+    return df
+
+
+def run_alpha_factor(
+    alpha_func,
+    code: str,
+    benchmark: str = 'zz800',
+    end_date: str = "2026-01-23",
+    lookback: int = 350
+) -> float:
+    """
+    Generic runner for Alpha factors.
+    """
+    df = load_stock_csv(code, benchmark=benchmark)
+    df = df.loc[:end_date]
+    if len(df) < lookback:
+        raise ValueError("insufficient history")
+    df = df.iloc[-lookback:]
+    value = alpha_func(df).iloc[-1]
+    return float(value) if not np.isnan(value) else np.nan
