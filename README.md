@@ -3,7 +3,7 @@
 ## Current Files
 - `alpha191_cleaned.txt` : Main essay
 - `alpha191.md` : Main Alpha (to be implemented)
-- `bao/` : All the data (.csv)
+- `bao/` : All the data (.csv) (in folder hs300, zz500, contain data from 2015-12-30 to 2026-01-23)
 
 ## Alpha191 Implementation
 - `alpha191/` : Factor implementations with operators and tests
