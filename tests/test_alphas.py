@@ -9,7 +9,9 @@ from alpha191 import (
     alpha_021, alpha_022, alpha_023, alpha_024, alpha_025,
     alpha_026, alpha_027, alpha_028, alpha_029, alpha_031,
     alpha_032, alpha_033, alpha_034, alpha_035, alpha_036,
-    alpha_037, alpha_038, alpha_039, alpha_040
+    alpha_037, alpha_038, alpha_039, alpha_040, alpha_041,
+    alpha_042, alpha_043, alpha_044, alpha_045, alpha_046,
+    alpha_047, alpha_048, alpha_049, alpha_050
 )
 
 
@@ -24,6 +26,7 @@ class TestAlphas(unittest.TestCase):
             'low': 98 + np.random.randn(n).cumsum(),
             'close': 101 + np.random.randn(n).cumsum(),
             'volume': np.random.randint(1000000, 5000000, n),
+            'amount': (101 + np.random.randn(n).cumsum()) * np.random.randint(1000000, 5000000, n),
         })
     
     def test_alpha001(self):
@@ -204,6 +207,46 @@ class TestAlphas(unittest.TestCase):
 
     def test_alpha040(self):
         result = alpha_040(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha041(self):
+        result = alpha_041(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha042(self):
+        result = alpha_042(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha043(self):
+        result = alpha_043(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha044(self):
+        result = alpha_044(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha045(self):
+        result = alpha_045(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha046(self):
+        result = alpha_046(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha047(self):
+        result = alpha_047(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha048(self):
+        result = alpha_048(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha049(self):
+        result = alpha_049(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha050(self):
+        result = alpha_050(self.df)
         self.assertEqual(len(result), len(self.df))
 
 

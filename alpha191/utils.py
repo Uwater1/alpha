@@ -57,6 +57,15 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
         df['date'] = pd.to_datetime(df['date'])
         df.set_index('date', inplace=True)
     df.sort_index(inplace=True)
+    
+    # Add VWAP column if missing, approximating as amount / volume
+    if 'vwap' not in df.columns:
+        if 'amount' in df.columns and 'volume' in df.columns:
+            # Avoid division by zero
+            df['vwap'] = np.where(df['volume'] != 0, df['amount'] / df['volume'], np.nan)
+        else:
+            raise ValueError("VWAP column not found and cannot be approximated (missing 'amount' or 'volume' columns)")
+    
     return df
 
 

@@ -42,6 +42,16 @@ from .alpha037 import alpha_037
 from .alpha038 import alpha_038
 from .alpha039 import alpha_039
 from .alpha040 import alpha_040
+from .alpha041 import alpha_041
+from .alpha042 import alpha_042
+from .alpha043 import alpha_043
+from .alpha044 import alpha_044
+from .alpha045 import alpha_045
+from .alpha046 import alpha_046
+from .alpha047 import alpha_047
+from .alpha048 import alpha_048
+from .alpha049 import alpha_049
+from .alpha050 import alpha_050
 
 __all__ = [
     "alpha_001", "alpha_002", "alpha_003", "alpha_004",
@@ -53,5 +63,8 @@ __all__ = [
     "alpha_025", "alpha_026", "alpha_027", "alpha_028",
     "alpha_029", "alpha_031", "alpha_032", "alpha_033",
     "alpha_034", "alpha_035", "alpha_036", "alpha_037",
-    "alpha_038", "alpha_039", "alpha_040"
+    "alpha_038", "alpha_039", "alpha_040", "alpha_041",
+    "alpha_042", "alpha_043", "alpha_044", "alpha_045",
+    "alpha_046", "alpha_047", "alpha_048", "alpha_049",
+    "alpha_050"
 ]

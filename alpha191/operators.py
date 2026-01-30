@@ -23,6 +23,7 @@ as they rely on scipy's optimized C implementations.
 
 import numpy as np
 import pandas as pd
+import warnings
 from scipy import stats
 from numba import njit
 
@@ -437,7 +438,10 @@ def rolling_corr(a: np.ndarray, b: np.ndarray, window: int = 6) -> np.ndarray:
 
         # Compute Pearson correlation
         try:
-            corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+            # Suppress ConstantInputWarning for constant arrays
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', category=stats.ConstantInputWarning)
+                corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
             result[i] = corr
         except (ValueError, RuntimeWarning):
             result[i] = np.nan

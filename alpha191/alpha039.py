@@ -43,10 +43,9 @@ def alpha_039(df: pd.DataFrame) -> pd.Series:
     if 'vwap' in df.columns:
         vwap = df['vwap'].values
     elif 'amount' in df.columns:
-        # Avoid division by zero
-        vol = volume.copy()
-        vol[vol == 0] = np.nan
-        vwap = df['amount'].values / vol
+        # Avoid division by zero - convert to float first
+        vol = volume.astype(float)
+        vwap = np.where(vol != 0, df['amount'].values / vol, np.nan)
         # Fill NaNs from division by zero with simple average
         mask = np.isnan(vwap)
         vwap[mask] = (df['open'].values[mask] + df['high'].values[mask] + 
