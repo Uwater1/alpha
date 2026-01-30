@@ -61,8 +61,18 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
     # Add VWAP column if missing, approximating as amount / volume
     if 'vwap' not in df.columns:
         if 'amount' in df.columns and 'volume' in df.columns:
-            # Avoid division by zero
-            df['vwap'] = np.where(df['volume'] != 0, df['amount'] / df['volume'], np.nan)
+            # Calculate VWAP as amount / volume, but handle edge cases
+            vwap_calc = np.where(df['volume'] != 0, df['amount'] / df['volume'], np.nan)
+            
+            # Use OHLC average when amount or volume are 0, or when calculated VWAP is outside high-low range
+            ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+            df['vwap'] = np.where(
+                (df['volume'] == 0) | (df['amount'] == 0) | 
+                (vwap_calc > df['high']) | (vwap_calc < df['low']) |
+                pd.isna(vwap_calc),
+                ohlc_avg,
+                vwap_calc
+            )
         else:
             raise ValueError("VWAP column not found and cannot be approximated (missing 'amount' or 'volume' columns)")
     
