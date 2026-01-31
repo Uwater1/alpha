@@ -29,7 +29,17 @@ from alpha191 import (
     alpha_123, alpha_124, alpha_125, alpha_126, alpha_127,
     alpha_128, alpha_129, alpha_130, alpha_131, alpha_132,
     alpha_133, alpha_134, alpha_135, alpha_136, alpha_137,
-    alpha_138, alpha_139, alpha_140, alpha_141
+    alpha_138, alpha_139, alpha_140, alpha_141, alpha_142,
+    alpha_143, alpha_144, alpha_145, alpha_146, alpha_147,
+    alpha_148, alpha_149, alpha_150, alpha_151, alpha_152,
+    alpha_153, alpha_154, alpha_155, alpha_156, alpha_157,
+    alpha_158, alpha_159, alpha_160, alpha_161, alpha_162,
+    alpha_163, alpha_164, alpha_165, alpha_166, alpha_167,
+    alpha_168, alpha_169, alpha_170, alpha_171, alpha_172,
+    alpha_173, alpha_174, alpha_175, alpha_176, alpha_177,
+    alpha_178, alpha_179, alpha_180, alpha_181, alpha_182,
+    alpha_183, alpha_184, alpha_185, alpha_186, alpha_187,
+    alpha_188, alpha_189, alpha_190, alpha_191
 )
 
 
@@ -50,6 +60,8 @@ class TestAlphas(unittest.TestCase):
         # Add derived columns needed by some alphas
         self.df['vwap'] = self.df['amount'] / self.df['volume']
         self.df['ret'] = self.df['close'].pct_change()
+        # Add benchmark_close column needed by alpha149
+        self.df['benchmark_close'] = close * 0.95  # Some benchmark close values
     
     def test_alpha001(self):
         result = alpha_001(self.df)
@@ -735,6 +747,206 @@ class TestAlphas(unittest.TestCase):
 
     def test_alpha141(self):
         result = alpha_141(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha142(self):
+        result = alpha_142(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha143(self):
+        result = alpha_143(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha144(self):
+        result = alpha_144(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha145(self):
+        result = alpha_145(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha146(self):
+        result = alpha_146(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha147(self):
+        result = alpha_147(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha148(self):
+        result = alpha_148(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha149(self):
+        result = alpha_149(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha150(self):
+        result = alpha_150(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha151(self):
+        result = alpha_151(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha152(self):
+        result = alpha_152(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha153(self):
+        result = alpha_153(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha154(self):
+        result = alpha_154(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha155(self):
+        result = alpha_155(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha156(self):
+        result = alpha_156(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha157(self):
+        result = alpha_157(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha158(self):
+        result = alpha_158(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha159(self):
+        result = alpha_159(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha160(self):
+        result = alpha_160(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha161(self):
+        result = alpha_161(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha162(self):
+        result = alpha_162(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha163(self):
+        result = alpha_163(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha164(self):
+        result = alpha_164(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha165(self):
+        result = alpha_165(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha166(self):
+        result = alpha_166(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha167(self):
+        result = alpha_167(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha168(self):
+        result = alpha_168(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha169(self):
+        result = alpha_169(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha170(self):
+        result = alpha_170(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha171(self):
+        result = alpha_171(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha172(self):
+        result = alpha_172(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha173(self):
+        result = alpha_173(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha174(self):
+        result = alpha_174(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha175(self):
+        result = alpha_175(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha176(self):
+        result = alpha_176(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha177(self):
+        result = alpha_177(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha178(self):
+        result = alpha_178(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha179(self):
+        result = alpha_179(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha180(self):
+        result = alpha_180(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha181(self):
+        result = alpha_181(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha182(self):
+        result = alpha_182(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha183(self):
+        result = alpha_183(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha184(self):
+        result = alpha_184(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha185(self):
+        result = alpha_185(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha186(self):
+        result = alpha_186(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha187(self):
+        result = alpha_187(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha188(self):
+        result = alpha_188(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha189(self):
+        result = alpha_189(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha190(self):
+        result = alpha_190(self.df)
+        self.assertEqual(len(result), len(self.df))
+
+    def test_alpha191(self):
+        result = alpha_191(self.df)
         self.assertEqual(len(result), len(self.df))
 
 

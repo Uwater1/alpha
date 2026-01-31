@@ -28,8 +28,12 @@ def alpha_110(df: pd.DataFrame) -> pd.Series:
     # Calculate sum of maximum of 0 and delay of close minus low
     sum_max_delay_close_low = ts_sum(max_delay_close_low, 20)
     
+    # Protect against division by zero
+    denom = sum_max_delay_close_low
+    denom[denom == 0] = np.nan
+    
     # Calculate final result
-    result = sum_max_high_delay_close / sum_max_delay_close_low * 100
+    result = sum_max_high_delay_close / denom * 100
     
     return pd.Series(result, index=df.index, name='alpha_110')
 

@@ -24,8 +24,12 @@ def alpha_120(df: pd.DataFrame) -> pd.Series:
     # Calculate rank of VWAP plus close
     rank_vwap_plus_close = rank(vwap_plus_close)
     
+    # Protect against division by zero
+    denom = rank_vwap_plus_close
+    denom[denom == 0] = np.nan
+    
     # Calculate final result
-    result = rank_vwap_minus_close / rank_vwap_plus_close
+    result = rank_vwap_minus_close / denom
     
     return pd.Series(result, index=df.index, name='alpha_120')
 

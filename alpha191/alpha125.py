@@ -37,8 +37,12 @@ def alpha_125(df: pd.DataFrame) -> pd.Series:
     # Calculate rank of decay linear of delta
     rank_decay_linear_delta = rank(decay_linear_delta)
     
+    # Protect against division by zero
+    denom = rank_decay_linear_delta
+    denom[denom == 0] = np.nan
+    
     # Calculate final result
-    result = rank_decay_linear_corr / rank_decay_linear_delta
+    result = rank_decay_linear_corr / denom
     
     return pd.Series(result, index=df.index, name='alpha_125')
 

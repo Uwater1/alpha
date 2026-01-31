@@ -38,8 +38,12 @@ def alpha_130(df: pd.DataFrame) -> pd.Series:
     # Calculate rank of decay linear of correlation
     rank_decay_linear_corr_rank = rank(decay_linear_corr_rank)
     
+    # Protect against division by zero
+    denom = rank_decay_linear_corr_rank
+    denom[denom == 0] = np.nan
+    
     # Calculate final result
-    result = rank_decay_linear_corr / rank_decay_linear_corr_rank
+    result = rank_decay_linear_corr / denom
     
     return pd.Series(result, index=df.index, name='alpha_130')
 
