@@ -34,13 +34,13 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
         )
 
     if benchmark == 'hs300':
-        search_paths = [Path('../bao/hs300') / f'{code}.csv']
+        search_paths = [Path('bao/hs300') / f'{code}.csv']
     elif benchmark == 'zz500':
-        search_paths = [Path('../bao/zz500') / f'{code}.csv']
+        search_paths = [Path('bao/zz500') / f'{code}.csv']
     else:  # zz800
         search_paths = [
-            Path('../bao/hs300') / f'{code}.csv',
-            Path('../bao/zz500') / f'{code}.csv'
+            Path('bao/hs300') / f'{code}.csv',
+            Path('bao/zz500') / f'{code}.csv'
         ]
 
     file_path = None

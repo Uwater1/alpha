@@ -1962,3 +1962,97 @@ def compute_ld(low: np.ndarray) -> np.ndarray:
     """
     low = np.asarray(low, dtype=float)
     return delay(low, 1) - low
+
+
+# =============================================================================
+# Exponential decay weighted average
+# =============================================================================
+
+def decay_exp(x: np.ndarray, d: int) -> np.ndarray:
+    """
+    Exponential decay weighted average.
+    
+    Computes the exponentially weighted moving average with decay factor.
+    Weights decrease exponentially: w_i = decay^(d-1-i) for i=0,...,d-1
+    
+    Parameters
+    ----------
+    x : np.ndarray
+        Input array
+    d : int
+        Decay window length
+        
+    Returns
+    -------
+    np.ndarray
+        Exponentially weighted moving average
+        
+    Examples
+    --------
+    >>> decay_exp(np.array([1, 2, 3, 4, 5]), 3)
+    array([nan, nan, 2.428..., 3.428..., 4.428...])
+    
+    Notes
+    -----
+    - First d-1 values are NaN (insufficient data)
+    - Similar to pandas ewm().mean() with span=d
+    """
+    x = np.asarray(x, dtype=float)
+    n = len(x)
+    result = np.full(n, np.nan)
+    
+    # Decay factor: weights are decay^0, decay^1, ..., decay^(d-1)
+    # where decay = 2 / (d + 1) (standard EWMA decay)
+    decay = 2.0 / (d + 1)
+    
+    for i in range(d - 1, n):
+        weighted_sum = 0.0
+        weight_sum = 0.0
+        
+        for j in range(d):
+            idx = i - j
+            if idx >= 0 and not np.isnan(x[idx]):
+                weight = decay ** j
+                weighted_sum += weight * x[idx]
+                weight_sum += weight
+        
+        if weight_sum > 0:
+            result[i] = weighted_sum / weight_sum
+    
+    return result
+
+
+# =============================================================================
+# Aliases for consistent rolling_* naming convention
+# =============================================================================
+
+# Time-series rolling operators
+rolling_sum = ts_sum
+rolling_mean = ts_mean
+rolling_std = ts_std
+rolling_max = ts_max
+rolling_min = ts_min
+rolling_cov = covariance
+rolling_argmax = high_day
+rolling_argmin = low_day
+
+__all__ = [
+    # Core time-series operators
+    'ts_rank', 'ts_sum', 'ts_mean', 'ts_std', 'ts_min', 'ts_max', 
+    'ts_count', 'ts_prod',
+    # Rolling operators (aliases)
+    'rolling_sum', 'rolling_mean', 'rolling_std', 'rolling_max', 'rolling_min',
+    'rolling_corr', 'rolling_cov', 'rolling_argmax', 'rolling_argmin',
+    # Decay operators
+    'decay_linear', 'decay_exp',
+    # Cross-sectional
+    'rank',
+    # Utilities
+    'delay', 'delta', 'sign', 'covariance',
+    'regression_beta', 'regression_residual',
+    'sma', 'wma', 'sum_if', 'filter_array',
+    'high_day', 'low_day', 'sequence',
+    # Computations
+    'compute_ret', 'compute_dtm', 'compute_dbm', 'compute_tr', 
+    'compute_hd', 'compute_ld',
+]
