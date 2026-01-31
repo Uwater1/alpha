@@ -450,8 +450,8 @@ class TestAlphas(unittest.TestCase):
     def test_alpha082(self):
         result = alpha_082(self.df)
         self.assertEqual(len(result), len(self.df))
-        # SMA(..., 20, 1) -> valid from index 0
-        self.assertFalse(np.isnan(result.values[0]))
+        # TSMAX(HIGH,6) and TSMIN(LOW,6) -> valid from index 5
+        self.assertTrue(np.all(np.isnan(result.values[:5])))
 
     def test_alpha083(self):
         result = alpha_083(self.df)

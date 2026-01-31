@@ -38,6 +38,9 @@ def alpha_086(df: pd.DataFrame) -> pd.Series:
     result = np.where(condition1, -1,
                      np.where(condition2, 1, -1 * close_diff))
     
+    # Propagate NaN: if diff is NaN, result should be NaN
+    result = np.where(np.isnan(diff), np.nan, result)
+    
     return pd.Series(result, index=df.index, name='alpha_086')
 
 def alpha086(code, benchmark='zz800', end_date="2026-01-23", lookback=350):

@@ -46,7 +46,7 @@ def alpha_041(df: pd.DataFrame) -> pd.Series:
     delta_vwap = delta(vwap, 3)
 
     # Step 2: Compute MAX(DELTA(VWAP, 3), 5)
-    max_delta = np.maximum(delta_vwap, 5)
+    max_delta = ts_max(delta_vwap, 5)
 
     # Step 3: Compute RANK(MAX(DELTA(VWAP, 3), 5))
     ranked = rank(max_delta)

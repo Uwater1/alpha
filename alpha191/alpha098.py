@@ -37,6 +37,9 @@ def alpha_098(df: pd.DataFrame) -> pd.Series:
     # Apply conditional logic
     result = np.where(condition1 | condition2, term1, term2)
     
+    # Propagate NaN: if ratio is NaN, result should be NaN
+    result = np.where(np.isnan(ratio), np.nan, result)
+    
     return pd.Series(result, index=df.index, name='alpha_098')
 
 def alpha098(code, benchmark='zz800', end_date="2026-01-23", lookback=350):
