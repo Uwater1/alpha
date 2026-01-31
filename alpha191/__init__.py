@@ -2,198 +2,440 @@
 Alpha191 - WorldQuant Alpha Factor Library
 """
 
-from .alpha001 import alpha_001
-from .alpha002 import alpha_002
-from .alpha003 import alpha_003
-from .alpha004 import alpha_004
-from .alpha005 import alpha_005
-from .alpha006 import alpha_006
-from .alpha007 import alpha_007
-from .alpha008 import alpha_008
-from .alpha009 import alpha_009
-from .alpha010 import alpha_010
-from .alpha011 import alpha_011
-from .alpha012 import alpha_012
-from .alpha013 import alpha_013
-from .alpha014 import alpha_014
-from .alpha015 import alpha_015
-from .alpha016 import alpha_016
-from .alpha017 import alpha_017
-from .alpha018 import alpha_018
-from .alpha019 import alpha_019
-from .alpha020 import alpha_020
-from .alpha021 import alpha_021
-from .alpha022 import alpha_022
-from .alpha023 import alpha_023
-from .alpha024 import alpha_024
-from .alpha025 import alpha_025
-from .alpha026 import alpha_026
-from .alpha027 import alpha_027
-from .alpha028 import alpha_028
-from .alpha029 import alpha_029
+# Import convenience functions (with code/benchmark params) as alpha_XXX
+from .alpha001 import alpha001 as alpha_001
+from .alpha002 import alpha002 as alpha_002
+from .alpha003 import alpha003 as alpha_003
+from .alpha004 import alpha004 as alpha_004
+from .alpha005 import alpha005 as alpha_005
+from .alpha006 import alpha006 as alpha_006
+from .alpha007 import alpha007 as alpha_007
+from .alpha008 import alpha008 as alpha_008
+from .alpha009 import alpha009 as alpha_009
+from .alpha010 import alpha010 as alpha_010
+from .alpha011 import alpha011 as alpha_011
+from .alpha012 import alpha012 as alpha_012
+from .alpha013 import alpha013 as alpha_013
+from .alpha014 import alpha014 as alpha_014
+from .alpha015 import alpha015 as alpha_015
+from .alpha016 import alpha016 as alpha_016
+from .alpha017 import alpha017 as alpha_017
+from .alpha018 import alpha018 as alpha_018
+from .alpha019 import alpha019 as alpha_019
+from .alpha020 import alpha020 as alpha_020
+from .alpha021 import alpha021 as alpha_021
+from .alpha022 import alpha022 as alpha_022
+from .alpha023 import alpha023 as alpha_023
+from .alpha024 import alpha024 as alpha_024
+from .alpha025 import alpha025 as alpha_025
+from .alpha026 import alpha026 as alpha_026
+from .alpha027 import alpha027 as alpha_027
+from .alpha028 import alpha028 as alpha_028
+from .alpha029 import alpha029 as alpha_029
 # alpha_030 尚未实现
-from .alpha031 import alpha_031
-from .alpha032 import alpha_032
-from .alpha033 import alpha_033
-from .alpha034 import alpha_034
-from .alpha035 import alpha_035
-from .alpha036 import alpha_036
-from .alpha037 import alpha_037
-from .alpha038 import alpha_038
-from .alpha039 import alpha_039
-from .alpha040 import alpha_040
-from .alpha041 import alpha_041
-from .alpha042 import alpha_042
-from .alpha043 import alpha_043
-from .alpha044 import alpha_044
-from .alpha045 import alpha_045
-from .alpha046 import alpha_046
-from .alpha047 import alpha_047
-from .alpha048 import alpha_048
-from .alpha049 import alpha_049
-from .alpha050 import alpha_050
-from .alpha052 import alpha_052
-from .alpha053 import alpha_053
-from .alpha054 import alpha_054
-from .alpha055 import alpha_055
-from .alpha056 import alpha_056
-from .alpha057 import alpha_057
-from .alpha058 import alpha_058
-from .alpha059 import alpha_059
-from .alpha060 import alpha_060
-from .alpha061 import alpha_061
-from .alpha062 import alpha_062
-from .alpha063 import alpha_063
-from .alpha064 import alpha_064
-from .alpha065 import alpha_065
-from .alpha066 import alpha_066
-from .alpha067 import alpha_067
-from .alpha068 import alpha_068
-from .alpha069 import alpha_069
-from .alpha070 import alpha_070
-from .alpha071 import alpha_071
-from .alpha072 import alpha_072
-from .alpha073 import alpha_073
-from .alpha074 import alpha_074
-from .alpha075 import alpha_075
-from .alpha076 import alpha_076
-from .alpha077 import alpha_077
-from .alpha078 import alpha_078
-from .alpha079 import alpha_079
-from .alpha080 import alpha_080
-from .alpha081 import alpha_081
-from .alpha082 import alpha_082
-from .alpha083 import alpha_083
-from .alpha084 import alpha_084
-from .alpha085 import alpha_085
-from .alpha086 import alpha_086
-from .alpha087 import alpha_087
-from .alpha088 import alpha_088
-from .alpha089 import alpha_089
-from .alpha090 import alpha_090
-from .alpha091 import alpha_091
-from .alpha092 import alpha_092
-from .alpha093 import alpha_093
-from .alpha094 import alpha_094
-from .alpha095 import alpha_095
-from .alpha096 import alpha_096
-from .alpha097 import alpha_097
-from .alpha098 import alpha_098
-from .alpha099 import alpha_099
-from .alpha100 import alpha_100
-from .alpha101 import alpha_101
-from .alpha102 import alpha_102
-from .alpha103 import alpha_103
-from .alpha104 import alpha_104
-from .alpha105 import alpha_105
-from .alpha106 import alpha_106
-from .alpha107 import alpha_107
-from .alpha108 import alpha_108
-from .alpha109 import alpha_109
-from .alpha110 import alpha_110
-from .alpha111 import alpha_111
-from .alpha112 import alpha_112
-from .alpha113 import alpha_113
-from .alpha114 import alpha_114
-from .alpha115 import alpha_115
-from .alpha116 import alpha_116
-from .alpha117 import alpha_117
-from .alpha118 import alpha_118
-from .alpha119 import alpha_119
-from .alpha120 import alpha_120
-from .alpha121 import alpha_121
-from .alpha122 import alpha_122
-from .alpha123 import alpha_123
-from .alpha124 import alpha_124
-from .alpha125 import alpha_125
-from .alpha126 import alpha_126
-from .alpha127 import alpha_127
-from .alpha128 import alpha_128
-from .alpha129 import alpha_129
-from .alpha130 import alpha_130
-from .alpha131 import alpha_131
-from .alpha132 import alpha_132
-from .alpha133 import alpha_133
-from .alpha134 import alpha_134
-from .alpha135 import alpha_135
-from .alpha136 import alpha_136
-from .alpha137 import alpha_137
-from .alpha138 import alpha_138
-from .alpha139 import alpha_139
-from .alpha140 import alpha_140
-from .alpha141 import alpha_141
-from .alpha142 import alpha_142
-from .alpha143 import alpha_143
-from .alpha144 import alpha_144
-from .alpha145 import alpha_145
-from .alpha146 import alpha_146
-from .alpha147 import alpha_147
-from .alpha148 import alpha_148
-from .alpha149 import alpha_149
-from .alpha150 import alpha_150
-from .alpha151 import alpha_151
-from .alpha152 import alpha_152
-from .alpha153 import alpha_153
-from .alpha154 import alpha_154
-from .alpha155 import alpha_155
-from .alpha156 import alpha_156
-from .alpha157 import alpha_157
-from .alpha158 import alpha_158
-from .alpha159 import alpha_159
-from .alpha160 import alpha_160
-from .alpha161 import alpha_161
-from .alpha162 import alpha_162
-from .alpha163 import alpha_163
-from .alpha164 import alpha_164
-from .alpha165 import alpha_165
-from .alpha166 import alpha_166
-from .alpha167 import alpha_167
-from .alpha168 import alpha_168
-from .alpha169 import alpha_169
-from .alpha170 import alpha_170
-from .alpha171 import alpha_171
-from .alpha172 import alpha_172
-from .alpha173 import alpha_173
-from .alpha174 import alpha_174
-from .alpha175 import alpha_175
-from .alpha176 import alpha_176
-from .alpha177 import alpha_177
-from .alpha178 import alpha_178
-from .alpha179 import alpha_179
-from .alpha180 import alpha_180
-from .alpha181 import alpha_181
-from .alpha182 import alpha_182
-from .alpha183 import alpha_183
-from .alpha184 import alpha_184
-from .alpha185 import alpha_185
-from .alpha186 import alpha_186
-from .alpha187 import alpha_187
-from .alpha188 import alpha_188
-from .alpha189 import alpha_189
-from .alpha190 import alpha_190
-from .alpha191 import alpha_191
+from .alpha031 import alpha031 as alpha_031
+from .alpha032 import alpha032 as alpha_032
+from .alpha033 import alpha033 as alpha_033
+from .alpha034 import alpha034 as alpha_034
+from .alpha035 import alpha035 as alpha_035
+from .alpha036 import alpha036 as alpha_036
+from .alpha037 import alpha037 as alpha_037
+from .alpha038 import alpha038 as alpha_038
+from .alpha039 import alpha039 as alpha_039
+from .alpha040 import alpha040 as alpha_040
+from .alpha041 import alpha041 as alpha_041
+from .alpha042 import alpha042 as alpha_042
+from .alpha043 import alpha043 as alpha_043
+from .alpha044 import alpha044 as alpha_044
+from .alpha045 import alpha045 as alpha_045
+from .alpha046 import alpha046 as alpha_046
+from .alpha047 import alpha047 as alpha_047
+from .alpha048 import alpha048 as alpha_048
+from .alpha049 import alpha049 as alpha_049
+from .alpha050 import alpha050 as alpha_050
+from .alpha052 import alpha052 as alpha_052
+from .alpha053 import alpha053 as alpha_053
+from .alpha054 import alpha054 as alpha_054
+from .alpha055 import alpha055 as alpha_055
+from .alpha056 import alpha056 as alpha_056
+from .alpha057 import alpha057 as alpha_057
+from .alpha058 import alpha058 as alpha_058
+from .alpha059 import alpha059 as alpha_059
+from .alpha060 import alpha060 as alpha_060
+from .alpha061 import alpha061 as alpha_061
+from .alpha062 import alpha062 as alpha_062
+from .alpha063 import alpha063 as alpha_063
+from .alpha064 import alpha064 as alpha_064
+from .alpha065 import alpha065 as alpha_065
+from .alpha066 import alpha066 as alpha_066
+from .alpha067 import alpha067 as alpha_067
+from .alpha068 import alpha068 as alpha_068
+from .alpha069 import alpha069 as alpha_069
+from .alpha070 import alpha070 as alpha_070
+from .alpha071 import alpha071 as alpha_071
+from .alpha072 import alpha072 as alpha_072
+from .alpha073 import alpha073 as alpha_073
+from .alpha074 import alpha074 as alpha_074
+from .alpha075 import alpha075 as alpha_075
+from .alpha076 import alpha076 as alpha_076
+from .alpha077 import alpha077 as alpha_077
+from .alpha078 import alpha078 as alpha_078
+from .alpha079 import alpha079 as alpha_079
+from .alpha080 import alpha080 as alpha_080
+from .alpha081 import alpha081 as alpha_081
+from .alpha082 import alpha082 as alpha_082
+from .alpha083 import alpha083 as alpha_083
+from .alpha084 import alpha084 as alpha_084
+from .alpha085 import alpha085 as alpha_085
+from .alpha086 import alpha086 as alpha_086
+from .alpha087 import alpha087 as alpha_087
+from .alpha088 import alpha088 as alpha_088
+from .alpha089 import alpha089 as alpha_089
+from .alpha090 import alpha090 as alpha_090
+from .alpha091 import alpha091 as alpha_091
+from .alpha092 import alpha092 as alpha_092
+from .alpha093 import alpha093 as alpha_093
+from .alpha094 import alpha094 as alpha_094
+from .alpha095 import alpha095 as alpha_095
+from .alpha096 import alpha096 as alpha_096
+from .alpha097 import alpha097 as alpha_097
+from .alpha098 import alpha098 as alpha_098
+from .alpha099 import alpha099 as alpha_099
+from .alpha100 import alpha100 as alpha_100
+from .alpha101 import alpha101 as alpha_101
+from .alpha102 import alpha102 as alpha_102
+from .alpha103 import alpha103 as alpha_103
+from .alpha104 import alpha104 as alpha_104
+from .alpha105 import alpha105 as alpha_105
+from .alpha106 import alpha106 as alpha_106
+from .alpha107 import alpha107 as alpha_107
+from .alpha108 import alpha108 as alpha_108
+from .alpha109 import alpha109 as alpha_109
+from .alpha110 import alpha110 as alpha_110
+from .alpha111 import alpha111 as alpha_111
+from .alpha112 import alpha112 as alpha_112
+from .alpha113 import alpha113 as alpha_113
+from .alpha114 import alpha114 as alpha_114
+from .alpha115 import alpha115 as alpha_115
+from .alpha116 import alpha116 as alpha_116
+from .alpha117 import alpha117 as alpha_117
+from .alpha118 import alpha118 as alpha_118
+from .alpha119 import alpha119 as alpha_119
+from .alpha120 import alpha120 as alpha_120
+from .alpha121 import alpha121 as alpha_121
+from .alpha122 import alpha122 as alpha_122
+from .alpha123 import alpha123 as alpha_123
+from .alpha124 import alpha124 as alpha_124
+from .alpha125 import alpha125 as alpha_125
+from .alpha126 import alpha126 as alpha_126
+from .alpha127 import alpha127 as alpha_127
+from .alpha128 import alpha128 as alpha_128
+from .alpha129 import alpha129 as alpha_129
+from .alpha130 import alpha130 as alpha_130
+from .alpha131 import alpha131 as alpha_131
+from .alpha132 import alpha132 as alpha_132
+from .alpha133 import alpha133 as alpha_133
+from .alpha134 import alpha134 as alpha_134
+from .alpha135 import alpha135 as alpha_135
+from .alpha136 import alpha136 as alpha_136
+from .alpha137 import alpha137 as alpha_137
+from .alpha138 import alpha138 as alpha_138
+from .alpha139 import alpha139 as alpha_139
+from .alpha140 import alpha140 as alpha_140
+from .alpha141 import alpha141 as alpha_141
+from .alpha142 import alpha142 as alpha_142
+from .alpha143 import alpha143 as alpha_143
+from .alpha144 import alpha144 as alpha_144
+from .alpha145 import alpha145 as alpha_145
+from .alpha146 import alpha146 as alpha_146
+from .alpha147 import alpha147 as alpha_147
+from .alpha148 import alpha148 as alpha_148
+from .alpha149 import alpha149 as alpha_149
+from .alpha150 import alpha150 as alpha_150
+from .alpha151 import alpha151 as alpha_151
+from .alpha152 import alpha152 as alpha_152
+from .alpha153 import alpha153 as alpha_153
+from .alpha154 import alpha154 as alpha_154
+from .alpha155 import alpha155 as alpha_155
+from .alpha156 import alpha156 as alpha_156
+from .alpha157 import alpha157 as alpha_157
+from .alpha158 import alpha158 as alpha_158
+from .alpha159 import alpha159 as alpha_159
+from .alpha160 import alpha160 as alpha_160
+from .alpha161 import alpha161 as alpha_161
+from .alpha162 import alpha162 as alpha_162
+from .alpha163 import alpha163 as alpha_163
+from .alpha164 import alpha164 as alpha_164
+from .alpha165 import alpha165 as alpha_165
+from .alpha166 import alpha166 as alpha_166
+from .alpha167 import alpha167 as alpha_167
+from .alpha168 import alpha168 as alpha_168
+from .alpha169 import alpha169 as alpha_169
+from .alpha170 import alpha170 as alpha_170
+from .alpha171 import alpha171 as alpha_171
+from .alpha172 import alpha172 as alpha_172
+from .alpha173 import alpha173 as alpha_173
+from .alpha174 import alpha174 as alpha_174
+from .alpha175 import alpha175 as alpha_175
+from .alpha176 import alpha176 as alpha_176
+from .alpha177 import alpha177 as alpha_177
+from .alpha178 import alpha178 as alpha_178
+from .alpha179 import alpha179 as alpha_179
+from .alpha180 import alpha180 as alpha_180
+from .alpha181 import alpha181 as alpha_181
+from .alpha182 import alpha182 as alpha_182
+from .alpha183 import alpha183 as alpha_183
+from .alpha184 import alpha184 as alpha_184
+from .alpha185 import alpha185 as alpha_185
+from .alpha186 import alpha186 as alpha_186
+from .alpha187 import alpha187 as alpha_187
+from .alpha188 import alpha188 as alpha_188
+from .alpha189 import alpha189 as alpha_189
+from .alpha190 import alpha190 as alpha_190
+from .alpha191 import alpha191 as alpha_191
+
+# Import modules themselves for "from alpha191 import alpha001" support
+from . import alpha001
+from . import alpha002
+from . import alpha003
+from . import alpha004
+from . import alpha005
+from . import alpha006
+from . import alpha007
+from . import alpha008
+from . import alpha009
+from . import alpha010
+from . import alpha011
+from . import alpha012
+from . import alpha013
+from . import alpha014
+from . import alpha015
+from . import alpha016
+from . import alpha017
+from . import alpha018
+from . import alpha019
+from . import alpha020
+from . import alpha021
+from . import alpha022
+from . import alpha023
+from . import alpha024
+from . import alpha025
+from . import alpha026
+from . import alpha027
+from . import alpha028
+from . import alpha029
+from . import alpha031
+from . import alpha032
+from . import alpha033
+from . import alpha034
+from . import alpha035
+from . import alpha036
+from . import alpha037
+from . import alpha038
+from . import alpha039
+from . import alpha040
+from . import alpha041
+from . import alpha042
+from . import alpha043
+from . import alpha044
+from . import alpha045
+from . import alpha046
+from . import alpha047
+from . import alpha048
+from . import alpha049
+from . import alpha050
+from . import alpha052
+from . import alpha053
+from . import alpha054
+from . import alpha055
+from . import alpha056
+from . import alpha057
+from . import alpha058
+from . import alpha059
+from . import alpha060
+from . import alpha061
+from . import alpha062
+from . import alpha063
+from . import alpha064
+from . import alpha065
+from . import alpha066
+from . import alpha067
+from . import alpha068
+from . import alpha069
+from . import alpha070
+from . import alpha071
+from . import alpha072
+from . import alpha073
+from . import alpha074
+from . import alpha075
+from . import alpha076
+from . import alpha077
+from . import alpha078
+from . import alpha079
+from . import alpha080
+from . import alpha081
+from . import alpha082
+from . import alpha083
+from . import alpha084
+from . import alpha085
+from . import alpha086
+from . import alpha087
+from . import alpha088
+from . import alpha089
+from . import alpha090
+from . import alpha091
+from . import alpha092
+from . import alpha093
+from . import alpha094
+from . import alpha095
+from . import alpha096
+from . import alpha097
+from . import alpha098
+from . import alpha099
+from . import alpha100
+from . import alpha101
+from . import alpha102
+from . import alpha103
+from . import alpha104
+from . import alpha105
+from . import alpha106
+from . import alpha107
+from . import alpha108
+from . import alpha109
+from . import alpha110
+from . import alpha111
+from . import alpha112
+from . import alpha113
+from . import alpha114
+from . import alpha115
+from . import alpha116
+from . import alpha117
+from . import alpha118
+from . import alpha119
+from . import alpha120
+from . import alpha121
+from . import alpha122
+from . import alpha123
+from . import alpha124
+from . import alpha125
+from . import alpha126
+from . import alpha127
+from . import alpha128
+from . import alpha129
+from . import alpha130
+from . import alpha131
+from . import alpha132
+from . import alpha133
+from . import alpha134
+from . import alpha135
+from . import alpha136
+from . import alpha137
+from . import alpha138
+from . import alpha139
+from . import alpha140
+from . import alpha141
+from . import alpha142
+from . import alpha143
+from . import alpha144
+from . import alpha145
+from . import alpha146
+from . import alpha147
+from . import alpha148
+from . import alpha149
+from . import alpha150
+from . import alpha151
+from . import alpha152
+from . import alpha153
+from . import alpha154
+from . import alpha155
+from . import alpha156
+from . import alpha157
+from . import alpha158
+from . import alpha159
+from . import alpha160
+from . import alpha161
+from . import alpha162
+from . import alpha163
+from . import alpha164
+from . import alpha165
+from . import alpha166
+from . import alpha167
+from . import alpha168
+from . import alpha169
+from . import alpha170
+from . import alpha171
+from . import alpha172
+from . import alpha173
+from . import alpha174
+from . import alpha175
+from . import alpha176
+from . import alpha177
+from . import alpha178
+from . import alpha179
+from . import alpha180
+from . import alpha181
+from . import alpha182
+from . import alpha183
+from . import alpha184
+from . import alpha185
+from . import alpha186
+from . import alpha187
+from . import alpha188
+from . import alpha189
+from . import alpha190
+from . import alpha191
 
 __all__ = [
+    # Modules (for "from alpha191 import alpha001" support)
+    "alpha001", "alpha002", "alpha003", "alpha004",
+    "alpha005", "alpha006", "alpha007", "alpha008",
+    "alpha009", "alpha010", "alpha011", "alpha012",
+    "alpha013", "alpha014", "alpha015", "alpha016",
+    "alpha017", "alpha018", "alpha019", "alpha020",
+    "alpha021", "alpha022", "alpha023", "alpha024",
+    "alpha025", "alpha026", "alpha027", "alpha028",
+    "alpha029", "alpha031", "alpha032", "alpha033",
+    "alpha034", "alpha035", "alpha036", "alpha037",
+    "alpha038", "alpha039", "alpha040", "alpha041",
+    "alpha042", "alpha043", "alpha044", "alpha045",
+    "alpha046", "alpha047", "alpha048", "alpha049",
+    "alpha050", "alpha052", "alpha053", "alpha054",
+    "alpha055", "alpha056", "alpha057", "alpha058",
+    "alpha059", "alpha060", "alpha061", "alpha062",
+    "alpha063", "alpha064", "alpha065", "alpha066",
+    "alpha067", "alpha068", "alpha069", "alpha070",
+    "alpha071", "alpha072", "alpha073", "alpha074",
+    "alpha075", "alpha076", "alpha077", "alpha078",
+    "alpha079", "alpha080", "alpha081", "alpha082",
+    "alpha083", "alpha084", "alpha085", "alpha086",
+    "alpha087", "alpha088", "alpha089", "alpha090",
+    "alpha091", "alpha092", "alpha093", "alpha094",
+    "alpha095", "alpha096", "alpha097", "alpha098",
+    "alpha099", "alpha100", "alpha101", "alpha102",
+    "alpha103", "alpha104", "alpha105", "alpha106",
+    "alpha107", "alpha108", "alpha109", "alpha110",
+    "alpha111", "alpha112", "alpha113", "alpha114",
+    "alpha115", "alpha116", "alpha117", "alpha118",
+    "alpha119", "alpha120", "alpha121", "alpha122",
+    "alpha123", "alpha124", "alpha125", "alpha126",
+    "alpha127", "alpha128", "alpha129", "alpha130",
+    "alpha131", "alpha132", "alpha133", "alpha134",
+    "alpha135", "alpha136", "alpha137", "alpha138",
+    "alpha139", "alpha140", "alpha141", "alpha142",
+    "alpha143", "alpha144", "alpha145", "alpha146",
+    "alpha147", "alpha148", "alpha149", "alpha150",
+    "alpha151", "alpha152", "alpha153", "alpha154",
+    "alpha155", "alpha156", "alpha157", "alpha158",
+    "alpha159", "alpha160", "alpha161", "alpha162",
+    "alpha163", "alpha164", "alpha165", "alpha166",
+    "alpha167", "alpha168", "alpha169", "alpha170",
+    "alpha171", "alpha172", "alpha173", "alpha174",
+    "alpha175", "alpha176", "alpha177", "alpha178",
+    "alpha179", "alpha180", "alpha181", "alpha182",
+    "alpha183", "alpha184", "alpha185", "alpha186",
+    "alpha187", "alpha188", "alpha189", "alpha190",
+    "alpha191",
+    # Functions (for direct access)
     "alpha_001", "alpha_002", "alpha_003", "alpha_004",
     "alpha_005", "alpha_006", "alpha_007", "alpha_008",
     "alpha_009", "alpha_010", "alpha_011", "alpha_012",
