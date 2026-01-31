@@ -1301,17 +1301,12 @@ def sma(x: np.ndarray, n: int, m: int) -> np.ndarray:
     result[start_idx] = x[start_idx]
     
     for i in range(start_idx + 1, n_len):
-        if np.isnan(x[i]):
-            # If current value is NaN, we have a choice:
-            # 1. Propagate NaN (current implementation)
-            # 2. Keep last valid (like EMA)
-            # Standard JoinQuant SMA usually skips NaNs and uses last valid
-            result[i] = result[i-1]
+        if np.isnan(x[i]) or np.isnan(result[i-1]):
+            # NaN propagates forward once encountered (breaks the chain)
+            result[i] = np.nan
         else:
             # Y[t] = (m*A[t] + (n-m)*Y[t-1]) / n
-            # If result[i-1] is NaN (shouldn't happen now after start_idx), handle it
-            prev_y = result[i-1] if not np.isnan(result[i-1]) else x[i]
-            result[i] = (m * x[i] + (n - m) * prev_y) / n
+            result[i] = (m * x[i] + (n - m) * result[i-1]) / n
     
     return result
 

@@ -1316,8 +1316,11 @@ class TestSma(unittest.TestCase):
         x = np.array([np.nan, 2.0, 3.0, 4.0, 5.0])
         result = sma(x, n=3, m=1)
 
-        # All values should be NaN because Y[0] = NaN
-        self.assertTrue(np.all(np.isnan(result)))
+        # First value should be NaN (no valid starting point)
+        self.assertTrue(np.isnan(result[0]))
+        # Computation starts from first valid value at index 1
+        self.assertFalse(np.isnan(result[1]))
+        self.assertFalse(np.isnan(result[2]))
 
     def test_sma_edge_cases(self):
         """Test sma edge cases."""
