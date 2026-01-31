@@ -709,7 +709,7 @@ def ts_sum(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values in window are excluded from sum
     - Returns NaN if no valid values in window
     - Minimum 1 valid value required for non-NaN result
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -756,7 +756,7 @@ def ts_mean(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values in window are excluded from mean calculation
     - Returns NaN if no valid values in window
     - Minimum 1 valid value required for non-NaN result
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -808,7 +808,7 @@ def ts_std(x: np.ndarray, n: int, ddof: int = 1) -> np.ndarray:
     - Returns NaN if fewer than (ddof + 1) valid values in window
     - Default ddof=1 for sample standard deviation
     - Minimum 2 valid values required for default ddof=1
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -855,7 +855,7 @@ def ts_min(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values in window are excluded from min calculation
     - Returns NaN if no valid values in window
     - Minimum 1 valid value required for non-NaN result
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -902,7 +902,7 @@ def ts_max(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values in window are excluded from max calculation
     - Returns NaN if no valid values in window
     - Minimum 1 valid value required for non-NaN result
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -951,7 +951,7 @@ def ts_count(condition: np.ndarray, n: int) -> np.ndarray:
     - Returns 0.0 if all values in window are False/NaN
     - Minimum 1 non-NaN value required for non-NaN result
     - Result is returned as float array (to support NaN)
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     condition = np.asarray(condition, dtype=float)
     n = int(n)
@@ -1000,7 +1000,7 @@ def ts_prod(x: np.ndarray, n: int) -> np.ndarray:
     - Minimum 1 valid value required for non-NaN result
     - Can overflow easily with large values or large windows
     - Zero values will result in zero product
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -1052,7 +1052,7 @@ def covariance(x: np.ndarray, y: np.ndarray, n: int, ddof: int = 1) -> np.ndarra
     - Requires at least (ddof + 2) valid pairs in window
     - NaN in either array at same position → that pair is excluded
     - Uses sample covariance (ddof=1) by default
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
@@ -1104,7 +1104,7 @@ def regression_beta(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     - Requires at least 2 valid pairs in window
     - If var(y) = 0, returns NaN for that position
     - NaN in either array at same position → that pair is excluded
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
@@ -1162,7 +1162,7 @@ def regression_residual(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     - NaN in either array at same position → that pair is excluded from window
     - The residual is computed using the regression coefficients from the window
       applied to the current values at position i
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
@@ -1342,7 +1342,7 @@ def wma(x: np.ndarray, n: int) -> np.ndarray:
     - Oldest value has weight 0.9^(n-1)
     - NaN values in the window are excluded and weights are renormalized
     - First (n-1) values are NaN due to insufficient data
-    - This function is accelerated using Numba JIT compilation
+-
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -1386,7 +1386,7 @@ def decay_linear(x: np.ndarray, d: int) -> np.ndarray:
     - Oldest value gets lowest weight (1)
     - NaN values in the window are excluded and weights are renormalized
     - First (d-1) values are NaN due to insufficient data
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     d = int(d)
@@ -1528,7 +1528,7 @@ def sum_if(x: np.ndarray, n: int, condition: np.ndarray) -> np.ndarray:
     - NaN in x is excluded
     - False or NaN in condition → exclude that value
     - If all conditions are False in window, returns 0 (not NaN)
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     condition = np.asarray(condition, dtype=float)
@@ -1624,7 +1624,7 @@ def high_day(x: np.ndarray, n: int) -> np.ndarray:
     - Returns 0 when current value is the max
     - If multiple maxes, uses first occurrence
     - NaN values are excluded when finding max
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -1667,7 +1667,7 @@ def low_day(x: np.ndarray, n: int) -> np.ndarray:
     - Returns 0 when current value is the min
     - If multiple mins, uses first occurrence
     - NaN values are excluded when finding min
-    - This function is accelerated using Numba JIT compilation
+    -
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
