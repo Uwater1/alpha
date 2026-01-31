@@ -59,7 +59,10 @@ def alpha_137(df: pd.DataFrame) -> pd.Series:
     max_abs_high_low_minus_delay_close = np.maximum(abs_high_minus_delay_close, abs_low_minus_delay_close)
     
     # Calculate final result
-    result = numerator / denominator * max_abs_high_low_minus_delay_close
+    # Protect against division by zero
+    denom = denominator.copy()
+    denom[denom == 0] = np.nan
+    result = numerator / denom * max_abs_high_low_minus_delay_close
     
     return pd.Series(result, index=df.index, name='alpha_137')
 

@@ -25,7 +25,10 @@ def alpha_124(df: pd.DataFrame) -> pd.Series:
     decay_linear_rank_tsmax_close = decay_linear(rank_tsmax_close, 2)
     
     # Calculate final result
-    result = close_minus_vwap / decay_linear_rank_tsmax_close
+    # Protect against division by zero
+    denom = decay_linear_rank_tsmax_close.copy()
+    denom[denom == 0] = np.nan
+    result = close_minus_vwap / denom
     
     return pd.Series(result, index=df.index, name='alpha_124')
 

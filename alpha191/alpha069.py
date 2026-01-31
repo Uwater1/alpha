@@ -23,13 +23,22 @@ def alpha_069(df: pd.DataFrame) -> pd.Series:
     # If SUM(DTM,20) > SUM(DBM,20): (SUM(DTM,20)-SUM(DBM,20))/SUM(DTM,20)
     # If SUM(DTM,20) == SUM(DBM,20): 0
     # Else: (SUM(DTM,20)-SUM(DBM,20))/SUM(DBM,20)
+    
+    # Protect against division by zero for sum_dtm
+    sum_dtm_safe = sum_dtm.copy()
+    sum_dtm_safe[sum_dtm_safe == 0] = np.nan
+    
+    # Protect against division by zero for sum_dbm
+    sum_dbm_safe = sum_dbm.copy()
+    sum_dbm_safe[sum_dbm_safe == 0] = np.nan
+    
     result = np.where(
         sum_dtm > sum_dbm,
-        diff / sum_dtm,
+        diff / sum_dtm_safe,
         np.where(
             sum_dtm == sum_dbm,
             0,
-            diff / sum_dbm
+            diff / sum_dbm_safe
         )
     )
     

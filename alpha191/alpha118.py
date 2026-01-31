@@ -26,7 +26,10 @@ def alpha_118(df: pd.DataFrame) -> pd.Series:
     sum_open_minus_low = ts_sum(open_minus_low, 20)
     
     # Calculate final result
-    result = sum_high_minus_open / sum_open_minus_low * 100
+    # Protect against division by zero
+    denom = sum_open_minus_low.copy()
+    denom[denom == 0] = np.nan
+    result = sum_high_minus_open / denom * 100
     
     return pd.Series(result, index=df.index, name='alpha_118')
 

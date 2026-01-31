@@ -27,7 +27,10 @@ def alpha_112(df: pd.DataFrame) -> pd.Series:
     sum_negative_close_change = ts_sum(negative_close_change, 12)
     
     # Calculate final result
-    result = (sum_positive_close_change - sum_negative_close_change) / (sum_positive_close_change + sum_negative_close_change) * 100
+    # Protect against division by zero
+    denom = sum_positive_close_change + sum_negative_close_change
+    denom[denom == 0] = np.nan
+    result = (sum_positive_close_change - sum_negative_close_change) / denom * 100
     
     return pd.Series(result, index=df.index, name='alpha_112')
 

@@ -46,7 +46,10 @@ def alpha_047(df: pd.DataFrame) -> pd.Series:
     denominator = max_high_6 - min_low_6
 
     # Step 5: Compute (TSMAX(HIGH,6)-CLOSE)/(TSMAX(HIGH,6)-TSMIN(LOW,6))
-    ratio = numerator / denominator
+    # Protect against division by zero
+    denom = denominator.copy()
+    denom[denom == 0] = np.nan
+    ratio = numerator / denom
 
     # Step 6: Multiply by 100
     ratio_100 = ratio * 100

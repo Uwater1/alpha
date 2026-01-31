@@ -44,9 +44,17 @@ def alpha_159(df: pd.DataFrame) -> pd.Series:
     sum_diff_24 = ts_sum(diff, 24)
     
     # Calculate each term
-    term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
-    term2 = (close - sum_min_12) / sum_diff_12 * 6 * 24
-    term3 = (close - sum_min_24) / sum_diff_24 * 6 * 24
+    # Protect against division by zero
+    sum_diff_6_safe = sum_diff_6.copy()
+    sum_diff_6_safe[sum_diff_6_safe == 0] = np.nan
+    sum_diff_12_safe = sum_diff_12.copy()
+    sum_diff_12_safe[sum_diff_12_safe == 0] = np.nan
+    sum_diff_24_safe = sum_diff_24.copy()
+    sum_diff_24_safe[sum_diff_24_safe == 0] = np.nan
+    
+    term1 = (close - sum_min_6) / sum_diff_6_safe * 12 * 24
+    term2 = (close - sum_min_12) / sum_diff_12_safe * 6 * 24
+    term3 = (close - sum_min_24) / sum_diff_24_safe * 6 * 24
     
     # Calculate denominator
     denominator = 6 * 12 + 6 * 24 + 12 * 24

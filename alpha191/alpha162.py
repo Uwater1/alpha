@@ -49,7 +49,10 @@ def alpha_162(df: pd.DataFrame) -> pd.Series:
             sma_abs[i] = alpha * abs_close_diff[i] + (1 - alpha) * sma_abs[i-1]
     
     # Calculate SMA(...)*100
-    sma_ratio = sma_max / sma_abs * 100
+    # Protect against division by zero
+    sma_abs_safe = sma_abs.copy()
+    sma_abs_safe[sma_abs_safe == 0] = np.nan
+    sma_ratio = sma_max / sma_abs_safe * 100
     
     # Calculate MIN(SMA(...)*100,12)
     min_sma_ratio = ts_min(sma_ratio, 12)

@@ -33,7 +33,10 @@ def alpha_185(df: pd.DataFrame) -> pd.Series:
     denominator_part1 = close_high_diff * close_power_5
     
     # Calculate ((LOW-CLOSE)*(OPEN^5))/((CLOSE-HIGH)*(CLOSE^5))
-    ratio = numerator_part1 / denominator_part1
+    # Protect against division by zero
+    denom = denominator_part1.copy()
+    denom[denom == 0] = np.nan
+    ratio = numerator_part1 / denom
     
     # Calculate -1 * ratio
     negative_ratio = -1 * ratio

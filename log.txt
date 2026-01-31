@@ -1,0 +1,964 @@
+esting all alpha functions on 300 stocks from hs300
+================================================================================
+alpha,total,success,failed,NaN,totalTime,averageTime
+1,300,298,2,0,34.702587,0.115675
+2,300,298,2,0,1.742751,0.005809
+3,300,298,2,0,1.976131,0.006587
+4,300,298,2,0,1.903379,0.006345
+5,300,298,2,10,36.118512,0.120395
+6,300,298,2,0,1.812827,0.006043
+7,300,298,2,0,1.839828,0.006133
+8,300,298,2,0,1.975478,0.006585
+9,300,298,2,17,2.090197,0.006967
+10,300,298,2,0,1.834263,0.006114
+11,300,298,2,0,1.831761,0.006106
+12,300,298,2,0,1.822448,0.006075
+13,300,298,2,0,1.830001,0.006100
+14,300,298,2,0,1.891043,0.006303
+15,300,298,2,0,1.814939,0.006050
+16,300,298,2,0,20.931843,0.069773
+/home/hallo/Documents/alpha/alpha191/alpha017.py:70: RuntimeWarning: overflow encountered in power
+  alpha_values = rank_vwap_diff ** delta_close
+17,300,298,2,256,1.942847,0.006476
+18,300,298,2,0,1.893732,0.006312
+19,300,298,2,0,1.897738,0.006326
+20,300,298,2,0,1.879175,0.006264
+# Progress: 20/191
+21,300,298,2,0,1.918124,0.006394
+22,300,298,2,0,2.150051,0.007167
+23,300,298,2,298,2.365167,0.007884
+24,300,298,2,0,2.193005,0.007310
+25,300,298,2,0,2.057098,0.006857
+26,300,298,2,0,8.570599,0.028569
+27,300,298,2,0,1.914021,0.006380
+28,300,298,2,14,2.375607,0.007919
+29,300,298,2,0,1.830095,0.006100
+30,0,0,0,0,0,0
+31,300,298,2,0,1.891521,0.006305
+32,300,298,2,56,42.603616,0.142012
+33,300,298,2,0,9.808761,0.032696
+34,300,298,2,0,1.811136,0.006037
+35,300,298,2,0,21.029068,0.070097
+36,300,298,2,0,43.611198,0.145371
+37,300,298,2,0,1.911869,0.006373
+38,300,298,2,0,1.956554,0.006522
+39,300,298,2,0,11.708706,0.039029
+40,300,298,2,0,1.838226,0.006127
+# Progress: 40/191
+41,300,298,2,0,1.900823,0.006336
+42,300,298,2,0,20.465445,0.068218
+43,300,298,2,0,1.929860,0.006433
+44,300,298,2,0,35.280039,0.117600
+45,300,298,2,0,12.942032,0.043140
+46,300,298,2,0,1.846750,0.006156
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+/home/hallo/Documents/alpha/alpha191/alpha047.py:49: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / denominator
+47,300,298,2,16,2.152546,0.007175
+48,300,298,2,0,1.905773,0.006353
+/home/hallo/Documents/alpha/alpha191/alpha049.py:74: RuntimeWarning: invalid value encountered in divide
+  alpha_values = sum_numerator / (sum_denominator_1 + sum_denominator_2)
+/home/hallo/Documents/alpha/alpha191/alpha049.py:74: RuntimeWarning: invalid value encountered in divide
+  alpha_values = sum_numerator / (sum_denominator_1 + sum_denominator_2)
+/home/hallo/Documents/alpha/alpha191/alpha049.py:74: RuntimeWarning: invalid value encountered in divide
+  alpha_values = sum_numerator / (sum_denominator_1 + sum_denominator_2)
+49,300,298,2,0,1.862943,0.006210
+/home/hallo/Documents/alpha/alpha191/alpha050.py:89: RuntimeWarning: invalid value encountered in divide
+  fraction_1 = sum_numerator_1 / (sum_denominator_1_1 + sum_denominator_1_2)
+/home/hallo/Documents/alpha/alpha191/alpha050.py:92: RuntimeWarning: invalid value encountered in divide
+  fraction_2 = sum_numerator_2 / (sum_denominator_2_1 + sum_denominator_2_2)
+/home/hallo/Documents/alpha/alpha191/alpha050.py:89: RuntimeWarning: invalid value encountered in divide
+  fraction_1 = sum_numerator_1 / (sum_denominator_1_1 + sum_denominator_1_2)
+/home/hallo/Documents/alpha/alpha191/alpha050.py:92: RuntimeWarning: invalid value encountered in divide
+  fraction_2 = sum_numerator_2 / (sum_denominator_2_1 + sum_denominator_2_2)
+/home/hallo/Documents/alpha/alpha191/alpha050.py:89: RuntimeWarning: invalid value encountered in divide
+  fraction_1 = sum_numerator_1 / (sum_denominator_1_1 + sum_denominator_1_2)
+/home/hallo/Documents/alpha/alpha191/alpha050.py:92: RuntimeWarning: invalid value encountered in divide
+  fraction_2 = sum_numerator_2 / (sum_denominator_2_1 + sum_denominator_2_2)
+50,300,298,2,0,1.980780,0.006603
+51,300,298,2,0,1.914854,0.006383
+52,300,298,2,0,1.898245,0.006327
+53,300,298,2,0,1.853282,0.006178
+54,300,298,2,0,19.601355,0.065338
+55,300,298,2,0,2.264459,0.007548
+56,300,298,2,0,18.235144,0.060784
+57,300,298,2,14,2.222416,0.007408
+58,300,298,2,0,1.951354,0.006505
+59,300,298,2,0,2.041961,0.006807
+60,300,298,2,0,2.061110,0.006870
+# Progress: 60/191
+61,300,298,2,0,16.395524,0.054652
+62,300,298,2,0,21.106885,0.070356
+63,300,298,2,0,2.598245,0.008661
+64,300,298,2,0,36.967975,0.123227
+65,300,298,2,0,2.006537,0.006688
+66,300,298,2,0,1.978602,0.006595
+67,300,298,2,0,2.474535,0.008248
+68,300,298,2,17,2.298373,0.007661
+/home/hallo/Documents/alpha/alpha191/alpha069.py:32: RuntimeWarning: divide by zero encountered in divide
+  diff / sum_dbm
+/home/hallo/Documents/alpha/alpha191/alpha069.py:32: RuntimeWarning: divide by zero encountered in divide
+  diff / sum_dbm
+/home/hallo/Documents/alpha/alpha191/alpha069.py:28: RuntimeWarning: divide by zero encountered in divide
+  diff / sum_dtm,
+/home/hallo/Documents/alpha/alpha191/alpha069.py:28: RuntimeWarning: invalid value encountered in divide
+  diff / sum_dtm,
+/home/hallo/Documents/alpha/alpha191/alpha069.py:32: RuntimeWarning: divide by zero encountered in divide
+  diff / sum_dbm
+/home/hallo/Documents/alpha/alpha191/alpha069.py:32: RuntimeWarning: invalid value encountered in divide
+  diff / sum_dbm
+69,300,298,2,0,1.984631,0.006615
+70,300,298,2,0,1.873088,0.006244
+71,300,298,2,0,1.824444,0.006081
+72,300,298,2,16,2.171707,0.007239
+73,300,298,2,0,44.886017,0.149620
+74,300,298,2,0,37.295448,0.124318
+75,300,298,2,0,1.953693,0.006512
+76,300,298,2,0,1.929685,0.006432
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+77,300,298,2,0,18.665752,0.062219
+78,300,298,2,0,2.084451,0.006948
+79,300,298,2,0,2.556594,0.008522
+80,300,298,2,0,2.078131,0.006927
+# Progress: 80/191
+81,300,298,2,17,2.306621,0.007689
+82,300,298,2,16,2.281251,0.007604
+83,300,298,2,0,2.014858,0.006716
+84,300,298,2,0,1.894202,0.006314
+85,300,298,2,0,17.497510,0.058325
+86,300,298,2,0,1.934916,0.006450
+87,300,298,2,0,9.738459,0.032462
+88,300,298,2,0,2.073037,0.006910
+89,300,298,2,0,2.852225,0.009507
+90,300,298,2,0,20.477775,0.068259
+91,300,298,2,0,18.905940,0.063020
+92,300,298,2,0,15.365541,0.051218
+93,300,298,2,0,1.901558,0.006339
+94,300,298,2,0,1.881005,0.006270
+95,300,298,2,0,1.872730,0.006242
+96,300,298,2,14,2.381102,0.007937
+97,300,298,2,0,1.869097,0.006230
+98,300,298,2,0,1.899566,0.006332
+99,300,298,2,0,1.987263,0.006624
+100,300,298,2,0,1.865886,0.006220
+# Progress: 100/191
+101,300,298,2,0,36.133425,0.120445
+102,300,298,2,17,2.370709,0.007902
+103,300,298,2,0,1.872003,0.006240
+104,300,298,2,0,19.901675,0.066339
+105,300,298,2,0,19.564762,0.065216
+106,300,298,2,0,1.863043,0.006210
+107,300,298,2,0,1.999049,0.006663
+108,300,298,2,0,14.695794,0.048986
+109,300,298,2,0,2.472587,0.008242
+110,300,298,2,0,2.427876,0.008093
+111,300,298,2,37,2.867776,0.009559
+/home/hallo/Documents/alpha/alpha191/alpha112.py:30: RuntimeWarning: invalid value encountered in divide
+  result = (sum_positive_close_change - sum_negative_close_change) / (sum_positive_close_change + sum_negative_close_change) * 100
+/home/hallo/Documents/alpha/alpha191/alpha112.py:30: RuntimeWarning: invalid value encountered in divide
+  result = (sum_positive_close_change - sum_negative_close_change) / (sum_positive_close_change + sum_negative_close_change) * 100
+/home/hallo/Documents/alpha/alpha191/alpha112.py:30: RuntimeWarning: invalid value encountered in divide
+  result = (sum_positive_close_change - sum_negative_close_change) / (sum_positive_close_change + sum_negative_close_change) * 100
+112,300,298,2,0,1.951146,0.006504
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+  corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
+/home/hallo/Documents/alpha/alpha191/operators.py:444: NearConstantInputWarning: An input array is nearly constant; the computed correlation coefficient may be inaccurate.
+113,300,298,2,13,39.202039,0.130673
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: divide by zero encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: divide by zero encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:61: RuntimeWarning: invalid value encountered in divide
+  result = (rank_delay_ratio * rank_rank_volume) / denominator
+/home/hallo/Documents/alpha/alpha191/alpha114.py:58: RuntimeWarning: invalid value encountered in divide
+  denominator = ratio / (vwap - close)
+114,300,298,2,0,2.100169,0.007001
+115,300,298,2,16,54.340765,0.181136
+116,300,298,2,0,1.908945,0.006363
+117,300,0,300,0,1.935494,0.006452
+/home/hallo/Documents/alpha/alpha191/alpha118.py:29: RuntimeWarning: invalid value encountered in divide
+  result = sum_high_minus_open / sum_open_minus_low * 100
+/home/hallo/Documents/alpha/alpha191/alpha118.py:29: RuntimeWarning: divide by zero encountered in divide
+  result = sum_high_minus_open / sum_open_minus_low * 100
+/home/hallo/Documents/alpha/alpha191/alpha118.py:29: RuntimeWarning: invalid value encountered in divide
+  result = sum_high_minus_open / sum_open_minus_low * 100
+118,300,298,2,0,1.885403,0.006285
+119,300,298,2,0,43.928635,0.146429
+120,300,298,2,7,1.952959,0.006510
+# Progress: 120/191
+121,300,298,2,11,36.203481,0.120678
+122,300,298,2,0,2.621717,0.008739
+123,300,298,2,0,34.826999,0.116090
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+/home/hallo/Documents/alpha/alpha191/alpha124.py:28: RuntimeWarning: divide by zero encountered in divide
+  result = close_minus_vwap / decay_linear_rank_tsmax_close
+124,300,298,2,0,2.096957,0.006990
+125,300,298,2,4,16.260995,0.054203
+126,300,298,2,0,1.864090,0.006214
+127,300,298,2,0,1.861989,0.006207
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: invalid value encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: invalid value encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+/home/hallo/Documents/alpha/alpha191/alpha128.py:36: RuntimeWarning: invalid value encountered in divide
+  result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+128,300,298,2,0,1.908272,0.006361
+129,300,298,2,0,1.870438,0.006235
+129,300,298,2,0,1.870438,0.006235
+130,300,298,2,0,37.603472,0.125345
+131,300,298,2,0,24.680204,0.082267
+132,300,298,2,0,1.880439,0.006268
+133,300,298,2,0,1.819825,0.006066
+134,300,298,2,0,1.799159,0.005997
+135,300,298,2,0,2.039562,0.006799
+136,300,0,300,0,1.765149,0.005884
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+/home/hallo/Documents/alpha/alpha191/alpha137.py:62: RuntimeWarning: invalid value encountered in divide
+  result = numerator / denominator * max_abs_high_low_minus_delay_close
+137,300,298,2,0,1.864086,0.006214
+138,300,298,2,11,41.201447,0.137338
+139,300,298,2,0,19.498822,0.064996
+140,300,298,2,16,36.760043,0.122533
+# Progress: 140/191
+141,300,298,2,0,19.984173,0.066614
+142,300,298,2,0,17.250845,0.057503
+143,0,0,0,0,0,0
+144,300,298,2,0,2.613138,0.008710
+145,300,298,2,0,1.800973,0.006003
+146,300,298,2,0,1.825737,0.006086
+147,300,298,2,0,5.064441,0.016881
+148,300,298,2,0,16.833672,0.056112
+149,300,0,300,0,1.781290,0.005938
+150,300,298,2,0,1.792702,0.005976
+151,300,298,2,0,2.043424,0.006811
+152,300,298,2,0,2.302006,0.007673
+153,300,298,2,0,1.791104,0.005970
+154,300,298,2,0,10.897897,0.036326
+155,300,298,2,0,2.863644,0.009545
+156,300,298,2,0,1.894027,0.006313
+157,300,298,2,0,9.614192,0.032047
+158,300,298,2,0,2.066179,0.006887
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:48: RuntimeWarning: divide by zero encountered in divide
+  term2 = (close - sum_min_12) / sum_diff_12 * 6 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:48: RuntimeWarning: divide by zero encountered in divide
+  term2 = (close - sum_min_12) / sum_diff_12 * 6 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:48: RuntimeWarning: divide by zero encountered in divide
+  term2 = (close - sum_min_12) / sum_diff_12 * 6 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+/home/hallo/Documents/alpha/alpha191/alpha159.py:47: RuntimeWarning: divide by zero encountered in divide
+  term1 = (close - sum_min_6) / sum_diff_6 * 12 * 24
+159,300,298,2,0,1.829941,0.006100
+160,300,298,2,0,2.057531,0.006858
+# Progress: 160/191
+161,300,298,2,0,1.802588,0.006009
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+/home/hallo/Documents/alpha/alpha191/alpha162.py:52: RuntimeWarning: invalid value encountered in divide
+  sma_ratio = sma_max / sma_abs * 100
+162,300,298,2,0,2.320027,0.007733
+163,300,298,2,0,1.878681,0.006262
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator / high_low_diff * 100
+/home/hallo/Documents/alpha/alpha191/alpha164.py:38: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator / high_low_diff * 100
+164,300,298,2,0,2.122520,0.007075
+165,0,0,0,0,0,0
+/home/hallo/Documents/alpha/alpha191/alpha166.py:42: RuntimeWarning: divide by zero encountered in divide
+  result = const1 * sum_diff / denominator
+/home/hallo/Documents/alpha/alpha191/alpha166.py:42: RuntimeWarning: divide by zero encountered in divide
+  result = const1 * sum_diff / denominator
+166,300,298,2,0,1.817022,0.006057
+167,300,298,2,0,1.798384,0.005995
+168,300,298,2,0,1.792101,0.005974
+169,300,298,2,0,2.309178,0.007697
+170,300,298,2,0,1.939030,0.006463
+/home/hallo/Documents/alpha/alpha191/alpha171.py:36: RuntimeWarning: divide by zero encountered in divide
+  result = (-1 * numerator_part1) / denominator_part1
+/home/hallo/Documents/alpha/alpha191/alpha172.py:54: RuntimeWarning: invalid value encountered in divide
+  denominator = sum_ld * 100 / sum_tr + sum_hd * 100 / sum_tr
+172,300,298,2,0,1.827996,0.006093
+173,300,298,2,0,1.797471,0.005992
+174,300,298,2,0,4.284096,0.014280
+/home/hallo/Documents/alpha/alpha191/alpha175.py:39: RuntimeWarning: divide by zero encountered in divide
+  ratio = conditional_value / close_diff * volume
+/home/hallo/Documents/alpha/alpha191/alpha186.py:54: RuntimeWarning: invalid value encountered in divide
+  denominator = sum_ld * 100 / sum_tr + sum_hd * 100 / sum_tr
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/Documents/alpha/alpha191/alpha175.py:39: RuntimeWarning: invalid value encountered in divide
+  ratio = conditional_value / close_diff * volume
+175,300,298,2,0,1.878926,0.006263
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+176,300,298,2,0,7.002192,0.023341
+177,300,298,2,0,1.831707,0.006106
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+178,300,298,2,0,11.690020,0.038967
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+179,300,298,2,0,12.029326,0.040098
+180,300,298,2,0,2.912216,0.009707
+# Progress: 180/191
+181,300,298,2,0,2.031388,0.006771
+182,300,298,2,0,1.953910,0.006513
+183,0,0,0,0,0,0
+184,300,298,2,0,4.529896,0.015100
+/home/hallo/Documents/alpha/alpha191/alpha185.py:36: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator_part1 / denominator_part1
+/home/hallo/Documents/alpha/alpha191/alpha185.py:36: RuntimeWarning: invalid value encountered in divide
+  ratio = numerator_part1 / denominator_part1
+/home/hallo/Documents/alpha/alpha191/alpha185.py:36: RuntimeWarning: divide by zero encountered in divide
+  ratio = numerator_part1 / denominator_part1
+
+186,300,298,2,0,1.946620,0.006489
+187,300,298,2,0,1.912523,0.006375
+188,300,298,2,0,2.179979,0.007267
+189,300,298,2,0,1.912329,0.006374
+190,300,298,2,2,2.087184,0.006957
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/hallo/.local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+191,300,298,2,0,6.721240,0.022404

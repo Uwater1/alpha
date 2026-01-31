@@ -86,10 +86,16 @@ def alpha_050(df: pd.DataFrame) -> pd.Series:
     sum_denominator_2_2 = ts_sum(denominator_2_component, 12)
 
     # Step 18: Compute the first fraction
-    fraction_1 = sum_numerator_1 / (sum_denominator_1_1 + sum_denominator_1_2)
+    # Protect against division by zero
+    denom_1 = sum_denominator_1_1 + sum_denominator_1_2
+    denom_1[denom_1 == 0] = np.nan
+    fraction_1 = sum_numerator_1 / denom_1
 
     # Step 19: Compute the second fraction
-    fraction_2 = sum_numerator_2 / (sum_denominator_2_1 + sum_denominator_2_2)
+    # Protect against division by zero
+    denom_2 = sum_denominator_2_1 + sum_denominator_2_2
+    denom_2[denom_2 == 0] = np.nan
+    fraction_2 = sum_numerator_2 / denom_2
 
     # Step 20: Compute the final result
     alpha_values = fraction_1 - fraction_2

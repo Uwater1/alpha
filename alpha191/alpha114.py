@@ -55,9 +55,14 @@ def alpha_114(df: pd.DataFrame) -> pd.Series:
     rank_rank_volume = rank(rank_volume)
     
     # Calculate denominator
-    denominator = ratio / (vwap - close)
+    # Protect against division by zero
+    vwap_close_diff = vwap - close
+    vwap_close_diff[vwap_close_diff == 0] = np.nan
+    denominator = ratio / vwap_close_diff
     
     # Calculate final result
+    # Protect against division by zero
+    denominator[denominator == 0] = np.nan
     result = (rank_delay_ratio * rank_rank_volume) / denominator
     
     return pd.Series(result, index=df.index, name='alpha_114')

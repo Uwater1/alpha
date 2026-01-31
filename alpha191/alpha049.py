@@ -71,7 +71,10 @@ def alpha_049(df: pd.DataFrame) -> pd.Series:
     sum_denominator_2 = ts_sum(denominator_component, 12)
 
     # Step 13: Compute the final result
-    alpha_values = sum_numerator / (sum_denominator_1 + sum_denominator_2)
+    # Protect against division by zero
+    denom = sum_denominator_1 + sum_denominator_2
+    denom[denom == 0] = np.nan
+    alpha_values = sum_numerator / denom
 
     return pd.Series(alpha_values, index=index, name='alpha_049')
 
