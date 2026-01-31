@@ -34,13 +34,13 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
         )
 
     if benchmark == 'hs300':
-        search_paths = [Path('bao/hs300') / f'{code}.csv']
+        search_paths = [Path('../bao/hs300') / f'{code}.csv']
     elif benchmark == 'zz500':
-        search_paths = [Path('bao/zz500') / f'{code}.csv']
+        search_paths = [Path('../bao/zz500') / f'{code}.csv']
     else:  # zz800
         search_paths = [
-            Path('bao/hs300') / f'{code}.csv',
-            Path('bao/zz500') / f'{code}.csv'
+            Path('../bao/hs300') / f'{code}.csv',
+            Path('../bao/zz500') / f'{code}.csv'
         ]
 
     file_path = None
@@ -52,7 +52,7 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
     if file_path is None:
         raise FileNotFoundError(f"File '{code}.csv' not found for benchmark {benchmark}")
 
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(str(file_path))
     if 'date' in df.columns:
         df['date'] = pd.to_datetime(df['date'])
         df.set_index('date', inplace=True)
