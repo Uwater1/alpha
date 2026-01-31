@@ -42,17 +42,21 @@ def alpha_039(df: pd.DataFrame) -> pd.Series:
     # VWAP: approximate if missing
     if 'vwap' in df.columns:
         vwap = df['vwap'].values
-    elif 'amount' in df.columns:
-        # Avoid division by zero - convert to float first
-        vol = volume.astype(float)
-        vwap = np.where(vol != 0, df['amount'].values / vol, np.nan)
-        # Fill NaNs from division by zero with simple average
-        mask = np.isnan(vwap)
-        vwap[mask] = (df['open'].values[mask] + df['high'].values[mask] + 
-                      df['low'].values[mask] + df['close'].values[mask]) / 4
     else:
-        vwap = (df['open'].values + df['high'].values + 
-                df['low'].values + df['close'].values) / 4
+        need_ohlc = True
+        if {'amount', 'volume'}.issubset(df.columns):
+            vwap_s = df['amount'] / df['volume'].replace(0, np.nan)
+            valid = df['amount'].ne(0) & df['volume'].ne(0) & vwap_s.notna() & vwap_s.between(df['low'], df['high'])
+            need_ohlc = ~valid.all()
+            if not need_ohlc:
+                vwap = vwap_s.values
+
+        if need_ohlc:
+            ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+            if 'valid' in locals():
+                vwap = vwap_s.where(valid, ohlc_avg).values
+            else:
+                vwap = ohlc_avg.values
 
     # Step 1: RANK(DECAYLINEAR(DELTA((CLOSE), 2), 8))
     delta_close = delta(close, 2)

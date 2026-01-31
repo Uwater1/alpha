@@ -72,4 +72,23 @@ result = A / denom
 If the formula uses `RET`, utilize the `compute_ret` operator or calculate it as `delta(close, 1) / delay(close, 1)`.
 
 ### 6. Special Variable: VWAP
-If the formula uses `VWAP` and it's missing from the CSV, approximate it using `amount / volume` if available, or `(open + high + low + close) / 4`.
+If the formula uses `VWAP`  Use the following code to calculate it:
+```python
+    if 'vwap' in df.columns:
+        vwap = df['vwap'].values
+    else:
+        need_ohlc = True
+        if {'amount', 'volume'}.issubset(df.columns):
+            vwap_s = df['amount'] / df['volume'].replace(0, np.nan)
+            valid = df['amount'].ne(0) & df['volume'].ne(0) & vwap_s.notna() & vwap_s.between(df['low'], df['high'])
+            need_ohlc = ~valid.all()
+            if not need_ohlc:
+                vwap = vwap_s.values
+
+        if need_ohlc:
+            ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+            if 'valid' in locals():
+                vwap = vwap_s.where(valid, ohlc_avg).values
+            else:
+                vwap = ohlc_avg.values
+```

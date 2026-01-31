@@ -24,13 +24,23 @@ def alpha_041(df: pd.DataFrame) -> pd.Series:
         index = df.index
 
     # Get VWAP, approximating as amount / volume if missing
-    if 'vwap' not in df.columns:
-        if 'amount' in df.columns and 'volume' in df.columns:
-            vwap = np.where(df['volume'].values != 0, df['amount'].values / df['volume'].values, np.nan)
-        else:
-            raise ValueError("VWAP column not found and cannot be approximated (missing 'amount' or 'volume' columns)")
-    else:
+    if 'vwap' in df.columns:
         vwap = df['vwap'].values
+    else:
+        need_ohlc = True
+        if {'amount', 'volume'}.issubset(df.columns):
+            vwap_s = df['amount'] / df['volume'].replace(0, np.nan)
+            valid = df['amount'].ne(0) & df['volume'].ne(0) & vwap_s.notna() & vwap_s.between(df['low'], df['high'])
+            need_ohlc = ~valid.all()
+            if not need_ohlc:
+                vwap = vwap_s.values
+
+        if need_ohlc:
+            ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+            if 'valid' in locals():
+                vwap = vwap_s.where(valid, ohlc_avg).values
+            else:
+                vwap = ohlc_avg.values
 
     # Step 1: Compute DELTA(VWAP, 3)
     delta_vwap = delta(vwap, 3)
