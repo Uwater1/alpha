@@ -44,7 +44,12 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     
     # Calculate (OPEN-CLOSE)/(CLOSE)
     open_close_diff = open_price - close
-    ratio1 = open_close_diff / close
+    
+    # Protect against division by zero
+    denom = close.copy()
+    denom[denom == 0] = np.nan
+    
+    ratio1 = open_close_diff / denom
     
     # Calculate RANK(((OPEN-CLOSE)/(CLOSE)))
     rank_ratio1 = rank(ratio1)

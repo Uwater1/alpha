@@ -34,8 +34,12 @@ def alpha_164(df: pd.DataFrame) -> pd.Series:
     # Calculate (HIGH-LOW)
     high_low_diff = high - low
     
+    # Protect against division by zero
+    denom = high_low_diff.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate numerator/(HIGH-LOW)*100
-    ratio = numerator / high_low_diff * 100
+    ratio = numerator / denom * 100
     
     # Calculate SMA with alpha=2/13 (approximating SMA with alpha parameter)
     # Using exponential moving average with alpha=2/13

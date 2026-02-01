@@ -47,11 +47,15 @@ def alpha_186(df: pd.DataFrame) -> pd.Series:
     # Calculate SUM(TR,14)
     sum_tr = ts_sum(tr, 14)
     
+    # Protect against division by zero
+    denom = sum_tr.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate numerator: sum_ld*100/sum_tr - sum_hd*100/sum_tr
-    numerator = sum_ld * 100 / sum_tr - sum_hd * 100 / sum_tr
+    numerator = sum_ld * 100 / denom - sum_hd * 100 / denom
     
     # Calculate denominator: sum_ld*100/sum_tr + sum_hd*100/sum_tr
-    denominator = sum_ld * 100 / sum_tr + sum_hd * 100 / sum_tr
+    denominator = sum_ld * 100 / denom + sum_hd * 100 / denom
     
     # Calculate ratio
     ratio = np.abs(numerator) / denominator * 100

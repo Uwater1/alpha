@@ -1283,6 +1283,35 @@ def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
     return result
 
 
+@njit(cache=True)
+def _sma_core(x: np.ndarray, n: int, m: int) -> np.ndarray:
+    """Numba-accelerated core for SMA."""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
+    
+    # Find first non-NaN value to start the chain
+    start_idx = -1
+    for i in range(n_len):
+        if not np.isnan(x[i]):
+            start_idx = i
+            break
+            
+    if start_idx == -1:
+        return result
+        
+    result[start_idx] = x[start_idx]
+    
+    for i in range(start_idx + 1, n_len):
+        if np.isnan(x[i]) or np.isnan(result[i-1]):
+            # NaN propagates forward once encountered (breaks the chain)
+            result[i] = np.nan
+        else:
+            # Y[t] = (m*A[t] + (n-m)*Y[t-1]) / n
+            result[i] = (m * x[i] + (n - m) * result[i-1]) / n
+            
+    return result
+
+
 def sma(x: np.ndarray, n: int, m: int) -> np.ndarray:
     """
     Special Moving Average with memory (exponential-like).
@@ -1315,9 +1344,9 @@ def sma(x: np.ndarray, n: int, m: int) -> np.ndarray:
     Notes
     -----
     - Y[0] is initialized to A[0]
-    - Requires iterative computation (not vectorizable)
     - NaN propagates forward once encountered (breaks the chain)
     - If n <= 0, m <= 0, or m > n, raises ValueError
+    - This function uses Numba JIT compilation for performance
     """
     x = np.asarray(x, dtype=float)
     n = int(n)
@@ -1330,34 +1359,10 @@ def sma(x: np.ndarray, n: int, m: int) -> np.ndarray:
     if m > n:
         raise ValueError("m must not exceed n")
     
-    n_len = len(x)
-    
-    if n_len == 0:
+    if len(x) == 0:
         return np.array([], dtype=float)
     
-    result = np.full(n_len, np.nan, dtype=float)
-    
-    # Find first non-NaN value to start the chain
-    start_idx = -1
-    for i in range(n_len):
-        if not np.isnan(x[i]):
-            start_idx = i
-            break
-            
-    if start_idx == -1:
-        return result
-        
-    result[start_idx] = x[start_idx]
-    
-    for i in range(start_idx + 1, n_len):
-        if np.isnan(x[i]) or np.isnan(result[i-1]):
-            # NaN propagates forward once encountered (breaks the chain)
-            result[i] = np.nan
-        else:
-            # Y[t] = (m*A[t] + (n-m)*Y[t-1]) / n
-            result[i] = (m * x[i] + (n - m) * result[i-1]) / n
-    
-    return result
+    return _sma_core(x, n, m)
 
 
 def wma(x: np.ndarray, n: int) -> np.ndarray:
@@ -2017,6 +2022,38 @@ def compute_ld(low: np.ndarray) -> np.ndarray:
 # Exponential decay weighted average
 # =============================================================================
 
+@njit(cache=True)
+def _decay_exp_core(x: np.ndarray, d: int) -> np.ndarray:
+    """Numba-accelerated core for exponential decay weighted average."""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
+    
+    # Decay factor: weights are decay^0, decay^1, ..., decay^(d-1)
+    # where decay = 2 / (d + 1) (standard EWMA decay)
+    decay = 2.0 / (d + 1)
+    
+    # Pre-compute weights
+    weights = np.empty(d, dtype=np.float64)
+    for j in range(d):
+        weights[j] = decay ** j
+    
+    for i in range(d - 1, n_len):
+        weighted_sum = 0.0
+        weight_sum = 0.0
+        
+        for j in range(d):
+            idx = i - j
+            if idx >= 0 and not np.isnan(x[idx]):
+                weight = weights[j]
+                weighted_sum += weight * x[idx]
+                weight_sum += weight
+        
+        if weight_sum > 0:
+            result[i] = weighted_sum / weight_sum
+            
+    return result
+
+
 def decay_exp(x: np.ndarray, d: int) -> np.ndarray:
     """
     Exponential decay weighted average.
@@ -2045,30 +2082,15 @@ def decay_exp(x: np.ndarray, d: int) -> np.ndarray:
     -----
     - First d-1 values are NaN (insufficient data)
     - Similar to pandas ewm().mean() with span=d
+    - This function uses Numba JIT compilation for performance
     """
     x = np.asarray(x, dtype=float)
-    n = len(x)
-    result = np.full(n, np.nan)
+    d = int(d)
     
-    # Decay factor: weights are decay^0, decay^1, ..., decay^(d-1)
-    # where decay = 2 / (d + 1) (standard EWMA decay)
-    decay = 2.0 / (d + 1)
-    
-    for i in range(d - 1, n):
-        weighted_sum = 0.0
-        weight_sum = 0.0
+    if d <= 0:
+        raise ValueError("d must be positive")
         
-        for j in range(d):
-            idx = i - j
-            if idx >= 0 and not np.isnan(x[idx]):
-                weight = decay ** j
-                weighted_sum += weight * x[idx]
-                weight_sum += weight
-        
-        if weight_sum > 0:
-            result[i] = weighted_sum / weight_sum
-    
-    return result
+    return _decay_exp_core(x, d)
 
 
 # =============================================================================

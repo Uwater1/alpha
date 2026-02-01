@@ -32,8 +32,12 @@ def alpha_128(df: pd.DataFrame) -> pd.Series:
     # Calculate sum of negative volume
     sum_negative_volume = ts_sum(negative_volume, 14)
     
+    # Protect against division by zero
+    denom = sum_negative_volume.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate final result
-    result = 100 - (100 / (1 + sum_positive_volume / sum_negative_volume))
+    result = 100 - (100 / (1 + sum_positive_volume / denom))
     
     return pd.Series(result, index=df.index, name='alpha_128')
 

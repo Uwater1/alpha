@@ -28,8 +28,12 @@ def alpha_131(df: pd.DataFrame) -> pd.Series:
     # Calculate TSRANK of correlation
     tsrank_corr = ts_rank(corr_close_mean_volume, 18)
     
+    # Protect against division by zero in power (when base is 0 and exponent is negative)
+    tsrank_corr_safe = tsrank_corr.copy()
+    tsrank_corr_safe[(rank_delta_vwap == 0) & (tsrank_corr < 0)] = np.nan
+    
     # Calculate final result
-    result = rank_delta_vwap ** tsrank_corr
+    result = rank_delta_vwap ** tsrank_corr_safe
     
     return pd.Series(result, index=df.index, name='alpha_131')
 

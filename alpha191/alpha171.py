@@ -32,8 +32,12 @@ def alpha_171(df: pd.DataFrame) -> pd.Series:
     # Calculate (CLOSE-HIGH)*(CLOSE^5)
     denominator_part1 = close_high_diff * close_power_5
     
+    # Protect against division by zero
+    denom = denominator_part1.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate final result: (-1 * numerator_part1) / denominator_part1
-    result = (-1 * numerator_part1) / denominator_part1
+    result = (-1 * numerator_part1) / denom
     
     return pd.Series(result, index=df.index, name='alpha_171')
 

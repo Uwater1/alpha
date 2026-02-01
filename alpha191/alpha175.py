@@ -34,9 +34,12 @@ def alpha_175(df: pd.DataFrame) -> pd.Series:
     # Calculate CLOSE-DELAY(CLOSE,1)
     close_diff = close - delay_close
     
+    # Protect against division by zero
+    denom = close_diff.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate (conditional_value)/(CLOSE-DELAY(CLOSE,1))*VOLUME
-    # Note: We need to handle division by zero
-    ratio = conditional_value / close_diff * volume
+    ratio = conditional_value / denom * volume
     
     # Calculate SUM(...,60)
     result = ts_sum(ratio, 60)

@@ -52,9 +52,9 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
     if file_path is None:
         raise FileNotFoundError(f"File '{code}.csv' not found for benchmark {benchmark}")
 
-    df = pd.read_csv(str(file_path))
+    # Use parse_dates directly in read_csv for better performance
+    df = pd.read_csv(str(file_path), parse_dates=['date'])
     if 'date' in df.columns:
-        df['date'] = pd.to_datetime(df['date'])
         df.set_index('date', inplace=True)
     df.sort_index(inplace=True)
     
