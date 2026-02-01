@@ -55,27 +55,15 @@ def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
     
     # Add VWAP column if missing, approximating as amount / volume
     if 'vwap' not in df.columns:
-        need_ohlc = False
         if {'amount', 'volume'}.issubset(df.columns):
-            vwap_calc = df['amount'] / df['volume'].replace(0, np.nan)
-            valid = (
-                df['amount'].ne(0) & df['volume'].ne(0) & vwap_calc.notna() & vwap_calc.between(df['low'], df['high'])
-            )
-            need_ohlc = ~valid.all()
-            df['vwap'] = vwap_calc
-        else:
-            need_ohlc = True
-
-        if need_ohlc:
-            if not {'open', 'high', 'low', 'close'}.issubset(df.columns):
-                raise ValueError(
-                    "VWAP column not found and cannot be approximated (missing 'open', 'high', 'low', or 'close' columns)"
-                )
+            df['vwap'] = df['amount'] / df['volume'].replace(0, np.nan)
+            # Replace invalid (NaN or outside low-high) with OHLC average
             ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
-            if 'valid' in locals():
-                df['vwap'] = df['vwap'].where(valid, ohlc_avg)
-            else:
-                df['vwap'] = ohlc_avg
+            invalid = df['vwap'].isna() | ~df['vwap'].between(df['low'], df['high'], inclusive='both')
+            df['vwap'] = df['vwap'].where(~invalid, ohlc_avg)
+        else:
+            # Must have OHLC
+            df['vwap'] = (df['open'] + df['high'] + df['low'] + df['close']) / 4
     
     return df
 
@@ -163,9 +151,8 @@ def run_alpha_factor(
     # OPTIMIZATION: Combined date filtering in one operation
     # Filter by end_date first, then take last lookback rows
     if end_date is not None:
-        # Use boolean indexing which is more efficient than .loc for slicing
-        mask = df.index <= end_date
-        df = df[mask]
+        end_dt = pd.to_datetime(end_date)
+        df = df.loc[:end_dt]
     
     if len(df) < lookback:
         raise ValueError("insufficient history")
@@ -176,20 +163,12 @@ def run_alpha_factor(
     # Load and merge benchmark data (cached internally)
     benchmark_df = load_benchmark_csv(benchmark)
     
-    # OPTIMIZATION: Filter benchmark data efficiently
-    if end_date is not None:
-        bench_mask = benchmark_df.index <= end_date
-        benchmark_df = benchmark_df[bench_mask]
-    
-    benchmark_df = benchmark_df.iloc[-lookback:]
-
-    # Add benchmark columns to stock DataFrame
-    # OPTIMIZATION: Use direct assignment with reindexed benchmark data
-    df = df.copy()  # Ensure we don't modify the cached copy
-    df['benchmark_close'] = benchmark_df['close'].values
-    df['benchmark_open'] = benchmark_df['open'].values
-    df['benchmark_index_close'] = benchmark_df['close'].values
-    df['benchmark_index_open'] = benchmark_df['open'].values
+    # Benchmark alignment optimization: Reindex benchmark series to stock's dates
+    # This handles misalignment/suspensions correctly and is faster
+    df['benchmark_close'] = benchmark_df['close'].reindex(df.index).values
+    df['benchmark_open'] = benchmark_df['open'].reindex(df.index).values
+    df['benchmark_index_close'] = df['benchmark_close']
+    df['benchmark_index_open'] = df['benchmark_open']
 
     value = alpha_func(df).iloc[-1]
     return float(value) if not np.isnan(value) else np.nan
