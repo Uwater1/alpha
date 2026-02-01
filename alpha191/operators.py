@@ -1597,55 +1597,6 @@ def sum_if(x: np.ndarray, n: int, condition: np.ndarray) -> np.ndarray:
     return _sum_if_core(x, n, condition)
 
 
-def filter_array(x: np.ndarray, condition: np.ndarray) -> np.ndarray:
-    """
-    Filter array to keep only elements where condition is True.
-    
-    Formula: FILTER(A, condition) = A[condition]
-    
-    Parameters
-    ----------
-    x : np.ndarray
-        Input array
-    condition : np.ndarray
-        Boolean array (same length as x)
-        
-    Returns
-    -------
-    np.ndarray
-        Filtered array (length <= original length)
-        
-    Examples
-    --------
-    >>> x = np.array([1, 2, 3, 4, 5])
-    >>> condition = np.array([True, False, True, False, True])
-    >>> filter_array(x, condition)
-    array([1., 3., 5.])
-    
-    Notes
-    -----
-    - Returns variable-length array
-    - NaN in condition treated as False
-    - Used in formulas like alpha_149
-    - This is a simple vectorized operation (no JIT needed)
-    """
-    x = np.asarray(x, dtype=float)
-    condition = np.asarray(condition)
-    
-    if len(x) != len(condition):
-        raise ValueError("x and condition must have the same length")
-    
-    # Handle NaN in condition by treating as False
-    # Create a mask where True means keep the value
-    if condition.dtype == bool:
-        mask = condition
-    else:
-        # For non-boolean arrays, treat non-zero, non-NaN as True
-        mask = (~np.isnan(condition)) & (condition != 0)
-    
-    return x[mask]
-
-
 def high_day(x: np.ndarray, n: int) -> np.ndarray:
     """
     Number of days since the highest value in past n periods.
@@ -2121,7 +2072,7 @@ __all__ = [
     # Utilities
     'delay', 'delta', 'sign', 'covariance',
     'regression_beta', 'regression_residual',
-    'sma', 'wma', 'sum_if', 'filter_array',
+    'sma', 'wma', 'sum_if', 
     'high_day', 'low_day', 'sequence',
     # Computations
     'compute_ret', 'compute_dtm', 'compute_dbm', 'compute_tr', 

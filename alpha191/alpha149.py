@@ -19,31 +19,14 @@ def alpha_149(df: pd.DataFrame) -> pd.Series:
     # Create filter condition: BANCHMARKINDEXCLOSE < DELAY(BANCHMARKINDEXCLOSE,1)
     filter_condition = benchmark_close < delay(benchmark_close, 1)
     
-    # Apply filter to both return series
+    # Apply filter: set to NaN where condition is False
+    # FILTER returns the value where condition is True, NaN otherwise
     filtered_close_ret = np.where(filter_condition, close_ret, np.nan)
     filtered_benchmark_ret = np.where(filter_condition, benchmark_ret, np.nan)
     
-    # Calculate regression beta over 252 days
-    result = np.full(len(df), np.nan)
-    
-    for i in range(252, len(df)):
-        # Get the window of filtered data
-        window_close_ret = filtered_close_ret[i-252:i]
-        window_benchmark_ret = filtered_benchmark_ret[i-252:i]
-        
-        # Remove NaN values
-        valid_mask = ~(np.isnan(window_close_ret) | np.isnan(window_benchmark_ret))
-        
-        if valid_mask.sum() < 2:  # Need at least 2 points for regression
-            continue
-            
-        clean_close_ret = window_close_ret[valid_mask]
-        clean_benchmark_ret = window_benchmark_ret[valid_mask]
-        
-        # Calculate regression
-        if len(clean_close_ret) > 1:
-            coeffs = np.polyfit(clean_benchmark_ret, clean_close_ret, 1)
-            result[i] = coeffs[0]  # The slope (beta)
+    # Calculate regression beta over 252 days using the regression_beta operator
+    # regression_beta handles NaN values correctly by excluding them from computation
+    result = regression_beta(filtered_close_ret, filtered_benchmark_ret, 252)
     
     return pd.Series(result, index=df.index, name='alpha_149')
 
