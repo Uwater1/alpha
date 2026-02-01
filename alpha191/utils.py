@@ -85,6 +85,37 @@ def load_stock_csv(code: str, benchmark: str = 'zz800') -> pd.DataFrame:
     return df
 
 
+def load_benchmark_csv(benchmark: str) -> pd.DataFrame:
+    """
+    Load benchmark index data from CSV file.
+
+    Parameters
+    ----------
+    benchmark : str
+        Benchmark selection: 'hs300', 'zz500', or 'zz800'
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with date as index, containing benchmark index data
+    """
+    if benchmark not in ['hs300', 'zz500', 'zz800']:
+        raise ValueError(
+            f"Invalid benchmark '{benchmark}'. Must be one of: 'hs300', 'zz500', 'zz800'"
+        )
+
+    benchmark_path = Path(f'bao/{benchmark}.csv')
+    if not benchmark_path.exists():
+        raise FileNotFoundError(f"Benchmark file '{benchmark_path}' not found")
+
+    df = pd.read_csv(str(benchmark_path), parse_dates=['date'])
+    if 'date' in df.columns:
+        df.set_index('date', inplace=True)
+    df.sort_index(inplace=True)
+
+    return df
+
+
 def run_alpha_factor(
     alpha_func,
     code: str,
@@ -100,5 +131,17 @@ def run_alpha_factor(
     if len(df) < lookback:
         raise ValueError("insufficient history")
     df = df.iloc[-lookback:]
+
+    # Load and merge benchmark data
+    benchmark_df = load_benchmark_csv(benchmark)
+    benchmark_df = benchmark_df.loc[:end_date]
+    benchmark_df = benchmark_df.iloc[-lookback:]
+
+    # Add benchmark columns to stock DataFrame
+    df['benchmark_close'] = benchmark_df['close']
+    df['benchmark_open'] = benchmark_df['open']
+    df['benchmark_index_close'] = benchmark_df['close']
+    df['benchmark_index_open'] = benchmark_df['open']
+
     value = alpha_func(df).iloc[-1]
     return float(value) if not np.isnan(value) else np.nan
