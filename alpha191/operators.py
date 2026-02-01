@@ -15,10 +15,11 @@ WorldQuant's Alpha191 factor library. Key operators include:
 
 **Numba Acceleration**
 The following operators use Numba JIT compilation for performance:
-- ts_sum, ts_mean, ts_std, ts_min, ts_max, ts_count, ts_prod
+- ts_rank, ts_sum, ts_mean, ts_std, ts_min, ts_max, ts_count, ts_prod
+- rolling_corr, rolling_cov
 
-Operators using scipy (ts_rank, rolling_corr) are not JIT-accelerated
-as they rely on scipy's optimized C implementations.
+Operators using scipy (rank, decay_linear, decay_exp) rely on scipy's
+optimized implementations where appropriate.
 """
 
 import numpy as np
@@ -331,13 +332,106 @@ def _regression_residual_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarra
     return result
 
 
+@njit(cache=True)
+def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
+    """Numba-accelerated core for time-series rank within a rolling window."""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
+    
+    for i in range(window - 1, n_len):
+        current_value = x[i]
+        
+        # If current value is NaN, result is NaN
+        if np.isnan(current_value):
+            result[i] = np.nan
+            continue
+        
+        # Count valid values and find rank of current value
+        valid_count = 0
+        values_less = 0
+        values_equal = 0
+        
+        for j in range(i - window + 1, i + 1):
+            if not np.isnan(x[j]):
+                valid_count += 1
+                if x[j] < current_value:
+                    values_less += 1
+                elif x[j] == current_value:
+                    values_equal += 1
+        
+        # Need at least 2 valid values to compute meaningful rank
+        if valid_count < 2:
+            result[i] = np.nan
+            continue
+        
+        # Average rank for ties (method='average')
+        # Rank = number of values less + 0.5 * number of values equal
+        current_rank = values_less + 0.5 * values_equal
+        
+        # Normalize to [0, 1] scale
+        result[i] = (current_rank - 1) / (valid_count - 1)
+    
+    return result
+
+
+@njit(cache=True)
+def _rolling_corr_core(a: np.ndarray, b: np.ndarray, window: int) -> np.ndarray:
+    """Numba-accelerated core for rolling Pearson correlation."""
+    n_len = len(a)
+    result = np.full(n_len, np.nan)
+    
+    for i in range(window - 1, n_len):
+        # Collect valid pairs (both a and b are not NaN)
+        sum_a = 0.0
+        sum_b = 0.0
+        sum_ab = 0.0
+        sum_a2 = 0.0
+        sum_b2 = 0.0
+        valid_count = 0
+        
+        for j in range(i - window + 1, i + 1):
+            if not np.isnan(a[j]) and not np.isnan(b[j]):
+                sum_a += a[j]
+                sum_b += b[j]
+                sum_ab += a[j] * b[j]
+                sum_a2 += a[j] * a[j]
+                sum_b2 += b[j] * b[j]
+                valid_count += 1
+        
+        # Need at least 2 valid pairs for correlation
+        if valid_count < 2:
+            result[i] = np.nan
+            continue
+        
+        # Compute means
+        mean_a = sum_a / valid_count
+        mean_b = sum_b / valid_count
+        
+        # Compute covariance and standard deviations
+        cov = sum_ab / valid_count - mean_a * mean_b
+        var_a = sum_a2 / valid_count - mean_a * mean_a
+        var_b = sum_b2 / valid_count - mean_b * mean_b
+        
+        # Avoid division by zero and numerical issues
+        std_a = np.sqrt(max(var_a, 0.0))
+        std_b = np.sqrt(max(var_b, 0.0))
+        
+        if std_a == 0 or std_b == 0:
+            result[i] = np.nan
+            continue
+        
+        result[i] = cov / (std_a * std_b)
+    
+    return result
+
+
 # =============================================================================
 # Public operator functions
 # =============================================================================
 
 def ts_rank(x: np.ndarray, window: int = 6) -> np.ndarray:
     """
-    Time-series rank within a rolling window.
+    Time-series rank within a rolling window (Numba-accelerated).
 
     For each position i, computes the rank of x[i] within the window x[i-window+1:i+1].
     Ranks are normalized to [0, 1] scale. NaN values in the window are excluded from ranking.
@@ -356,47 +450,21 @@ def ts_rank(x: np.ndarray, window: int = 6) -> np.ndarray:
 
     Notes
     -----
-    This function uses scipy.stats.rankdata for ranking and is not JIT-accelerated
-    as scipy's implementation is already highly optimized C code.
+    This function uses Numba JIT compilation for performance. Ties are handled
+    using the 'average' method (same as scipy.stats.rankdata).
     """
     x = np.asarray(x, dtype=float)
-    n = len(x)
-    result = np.full(n, np.nan)
-
-    for i in range(window - 1, n):
-        window_data = x[i - window + 1:i + 1]
-        current_value = window_data[-1]
-
-        # If current value is NaN, result is NaN
-        if np.isnan(current_value):
-            result[i] = np.nan
-            continue
-
-        # Create mask for valid (non-NaN) values
-        valid_mask = ~np.isnan(window_data)
-        valid_data = window_data[valid_mask]
-
-        # Need at least 2 valid values to compute meaningful rank
-        if len(valid_data) < 2:
-            result[i] = np.nan
-            continue
-
-        # Compute ranks only on valid data
-        ranks = stats.rankdata(valid_data, method='average')
-
-        # Find position of current value in valid data
-        current_pos = np.sum(valid_mask) - 1
-        current_rank = ranks[current_pos]
-
-        # Normalize to [0, 1] scale
-        result[i] = (current_rank - 1) / (len(valid_data) - 1)
-
-    return result
+    window = int(window)
+    
+    if window <= 0:
+        raise ValueError("window must be positive")
+    
+    return _ts_rank_core(x, window)
 
 
 def rolling_corr(a: np.ndarray, b: np.ndarray, window: int = 6) -> np.ndarray:
     """
-    Rolling Pearson correlation between two arrays.
+    Rolling Pearson correlation between two arrays (Numba-accelerated).
 
     Parameters
     ----------
@@ -414,39 +482,20 @@ def rolling_corr(a: np.ndarray, b: np.ndarray, window: int = 6) -> np.ndarray:
 
     Notes
     -----
-    This function uses scipy.stats.pearsonr for correlation and is not JIT-accelerated
-    as scipy's implementation is already highly optimized.
+    This function uses Numba JIT compilation for performance. Returns NaN for
+    windows with insufficient data or constant values (zero standard deviation).
     """
     a = np.asarray(a, dtype=float)
     b = np.asarray(b, dtype=float)
+    window = int(window)
 
     if len(a) != len(b):
         raise ValueError("Input arrays must have the same length")
 
-    n = len(a)
-    result = np.full(n, np.nan)
+    if window <= 0:
+        raise ValueError("window must be positive")
 
-    for i in range(window - 1, n):
-        a_window = a[i - window + 1:i + 1]
-        b_window = b[i - window + 1:i + 1]
-
-        # Check for valid data (at least 2 non-NaN pairs for correlation)
-        valid_mask = ~(np.isnan(a_window) | np.isnan(b_window))
-        if np.sum(valid_mask) < 2:
-            result[i] = np.nan
-            continue
-
-        # Compute Pearson correlation
-        try:
-            # Suppress ConstantInputWarning for constant arrays
-            with warnings.catch_warnings():
-                warnings.filterwarnings('ignore', category=stats.ConstantInputWarning)
-                corr, _ = stats.pearsonr(a_window[valid_mask], b_window[valid_mask])
-            result[i] = corr
-        except (ValueError, RuntimeWarning):
-            result[i] = np.nan
-
-    return result
+    return _rolling_corr_core(a, b, window)
 
 
 def delay(x: np.ndarray, n: int) -> np.ndarray:
