@@ -146,13 +146,13 @@ Use `assess_alpha.py` to evaluate alpha factors using Spearman Rank IC (Informat
 
 ```bash
 # Basic usage - assess alpha 1 on default benchmark (zz800) with default horizon (20 days)
-python assess_alpha.py 1
+python ICtest.py 1
 
-# Assess alpha 42 on zz500
-python assess_alpha.py 42 zz500
+# Assess alpha 42 with 5-day horizon
+python assess_alpha.py 42 5
 
-# Assess alpha 1 on hs300 with 5-day horizon
-python assess_alpha.py 1 hs300 5
+# Assess alpha 1 with 5-day horizon on hs300
+python assess_alpha.py 1 5 hs300
 ```
 
 **Arguments:**
