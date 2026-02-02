@@ -25,7 +25,8 @@ pip install numpy pandas scipy numba
 
 ## Usage
 
-### Method 1: Convenience Function (Recommended)\n
+### Method 1: Convenience Function (Recommended)
+
 Import directly from the package:
 
 ```python
@@ -139,10 +140,63 @@ factor_series = alpha_001(df)
 
 See [`alpha191.md`](alpha191.md) for formula details.
 
+## Assessing Alphas
+
+Use `assess_alpha.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis:
+
+```bash
+# Basic usage - assess alpha 1 on default benchmark (zz800) with default horizon (20 days)
+python assess_alpha.py 1
+
+# Assess alpha 42 on zz500
+python assess_alpha.py 42 zz500
+
+# Assess alpha 1 on hs300 with 5-day horizon
+python assess_alpha.py 1 hs300 5
+```
+
+**Arguments:**
+- `alpha_name` (required): Alpha number (1-191) or format like `alpha001`
+- `benchmark`: Index pool - `hs300`, `zz500`, or `zz800` (default: `zz800`)
+- `horizon`: Forward return horizon in days (default: `20`)
+
+**Output Metrics:**
+- `IC_mean`: Mean Information Coefficient
+- `IC_std`: Standard deviation of IC
+- `ICIR`: Information Coefficient Information Ratio (IC_mean / IC_std)
+- `t_stat`: T-statistic for significance testing
+- `n_obs`: Number of observations
+
 ## Testing
 
 ```bash
 pytest tests/
+```
+
+```bash
+# Test specific factor
+python test_factor.py alpha001
+
+# Or using number
+python test_factor.py 1
+```
+
+```bash
+# Speed test
+python speedtest.py
+
+# With specific repeat count
+python speedtest.py 100
+```
+
+```bash
+# Full test suite
+python fulltest.py
+```
+
+```bash
+# Assess factor
+python assess_alpha.py 1 zz800
 ```
 
 ## Data Requirements
@@ -154,3 +208,6 @@ CSV files should contain columns:
 Data is automatically loaded from:
 - `bao/hs300/{code}.csv` for HS300 stocks
 - `bao/zz500/{code}.csv` for ZZ500 stocks
+
+## Notes:
+In this project we treat zz800 (中证800) as the combination of hs300 (沪深300) and zz500 (中证500)
