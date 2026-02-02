@@ -32,11 +32,11 @@ Import directly from the package:
 from alpha191 import alpha_001, alpha_002
 
 # Compute factor value for a stock
-val = alpha_001(code="sh_600009", benchmark="hs300")
-val = alpha_002(code="sz_000001", benchmark="zz500")
+val = alpha001(code="sh_600009", benchmark="hs300")
+val = alpha002(code="sz_000001", benchmark="zz500")
 
 # With custom date and lookback
-val = alpha_001(code="sh_600016", benchmark="zz800", 
+val = alpha001(code="sh_600016", benchmark="zz800", 
                end_date="2026-01-01", lookback=350)
 ```
 
@@ -46,8 +46,8 @@ Or import all factors at once:
 from alpha191 import *
 
 # All alpha modules and functions are now available
-val = alpha_001(code="sh_600009", benchmark="hs300")
-val = alpha_101(code="sz_000001", benchmark="zz500")
+val = alpha001(code="sh_600009", benchmark="hs300")
+val = alpha101(code="sz_000001")
 ```
 
 **Parameters:**
@@ -109,7 +109,10 @@ alpha191/
 
 bao/
 ├── hs300/            # HS300 stock CSV files
-└── zz500/            # ZZ500 stock CSV files
+├── zz500/            # ZZ500 stock CSV files
+├── hs300.csv         # HS300 index CSV files
+├── zz500.csv         # ZZ500 index CSV files
+└── zz800.csv         # ZZ800 index CSV files
 
 tests/
 └── test_alphas.py    # Unit tests
