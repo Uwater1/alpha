@@ -26,6 +26,9 @@ def alpha_176(df: pd.DataFrame) -> pd.Series:
     # Calculate TS_MAX(HIGH,12)-TS_MIN(LOW,12)
     range_diff = max_high_12 - min_low_12
     
+    # Protect against division by zero
+    range_diff[range_diff == 0] = np.nan
+    
     # Calculate (CLOSE-TS_MIN(LOW,12))/(TS_MAX(HIGH,12)-TS_MIN(LOW,12))
     ratio = close_min_diff / range_diff
     

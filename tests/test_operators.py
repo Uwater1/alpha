@@ -7,7 +7,7 @@ import numpy as np
 from alpha191.operators import (
     delay, delta, rank, sign, ts_sum, ts_mean, ts_std, ts_min, ts_max, ts_count, ts_prod,
     covariance, regression_beta, regression_residual, sma, wma, decay_linear,
-    sum_if, filter_array, high_day, low_day, sequence,
+    sum_if, high_day, low_day, sequence,
     compute_ret, compute_dtm, compute_dbm, compute_tr, compute_hd, compute_ld
 )
 

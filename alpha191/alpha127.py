@@ -17,14 +17,21 @@ def alpha_127(df: pd.DataFrame) -> pd.Series:
     # Calculate close minus maximum of close
     close_minus_max_close = close - max_close
     
+    # Protect against division by zero
+    denom = max_close.copy()
+    denom[denom == 0] = np.nan
+    
     # Calculate ratio
-    ratio = 100 * close_minus_max_close / max_close
+    ratio = 100 * close_minus_max_close / denom
     
     # Calculate square of ratio
     ratio_squared = ratio ** 2
     
     # Calculate mean of square of ratio
     mean_ratio_squared = ts_mean(ratio_squared, 12)
+    
+    # Protect against negative values before sqrt (numerical issues)
+    mean_ratio_squared = np.where(mean_ratio_squared < 0, np.nan, mean_ratio_squared)
     
     # Calculate final result
     result = mean_ratio_squared ** (1/2)

@@ -39,18 +39,45 @@ def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        window_sum = 0.0
-        valid_count = 0
-        
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                window_sum += x[j]
-                valid_count += 1
-        
-        if valid_count > 0:
-            result[i] = window_sum
+    if n > n_len:
+        return result
+
+    # Current window state
+    running_sum = 0.0
+    valid_count = 0
     
+    # Pre-compute first window (excluding the last element which is handled in the loop)
+    # We'll actually do the full first window [0, n-1] to set up state, then loop from n-1
+    
+    # 1. Initialize first window 0 to n-1
+    for j in range(n):
+        if not np.isnan(x[j]):
+            running_sum += x[j]
+            valid_count += 1
+            
+    # Set result for the first full window at index n-1
+    if valid_count > 0:
+        result[n - 1] = running_sum
+        
+    # 2. Slide window from n to n_len - 1
+    # For result[i], window is [i-n+1, i]
+    # We are moving from result[i-1] (window [i-n, i-1]) to result[i]
+    # Add x[i], remove x[i-n]
+    for i in range(n, n_len):
+        new_val = x[i]
+        old_val = x[i - n]
+        
+        if not np.isnan(new_val):
+            running_sum += new_val
+            valid_count += 1
+            
+        if not np.isnan(old_val):
+            running_sum -= old_val
+            valid_count -= 1
+            
+        if valid_count > 0:
+            result[i] = running_sum
+            
     return result
 
 
@@ -60,18 +87,37 @@ def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        window_sum = 0.0
-        valid_count = 0
-        
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                window_sum += x[j]
-                valid_count += 1
-        
-        if valid_count > 0:
-            result[i] = window_sum / valid_count
+    if n > n_len:
+        return result
+
+    running_sum = 0.0
+    valid_count = 0
     
+    # Initialize first window
+    for j in range(n):
+        if not np.isnan(x[j]):
+            running_sum += x[j]
+            valid_count += 1
+            
+    if valid_count > 0:
+        result[n - 1] = running_sum / valid_count
+        
+    # Slide window
+    for i in range(n, n_len):
+        new_val = x[i]
+        old_val = x[i - n]
+        
+        if not np.isnan(new_val):
+            running_sum += new_val
+            valid_count += 1
+            
+        if not np.isnan(old_val):
+            running_sum -= old_val
+            valid_count -= 1
+            
+        if valid_count > 0:
+            result[i] = running_sum / valid_count
+            
     return result
 
 
@@ -81,31 +127,51 @@ def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        # First pass: compute mean
-        window_sum = 0.0
-        valid_count = 0
+    if n > n_len:
+        return result
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                window_sum += x[j]
-                valid_count += 1
-        
-        if valid_count < ddof + 1:
-            continue
-        
-        mean = window_sum / valid_count
-        
-        # Second pass: compute variance
-        sq_diff_sum = 0.0
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                diff = x[j] - mean
-                sq_diff_sum += diff * diff
-        
-        variance = sq_diff_sum / (valid_count - ddof)
-        result[i] = np.sqrt(variance)
+    running_sum = 0.0
+    running_sum_sq = 0.0
+    valid_count = 0
     
+    # Initialize first window
+    for j in range(n):
+        val = x[j]
+        if not np.isnan(val):
+            running_sum += val
+            running_sum_sq += val * val
+            valid_count += 1
+            
+    if valid_count >= ddof + 1:
+        # Variance = (SumSq - (Sum^2)/N) / (N - ddof)
+        # Numerical stability handling: max(0, ...)
+        mean = running_sum / valid_count
+        # Naive formula matches the expansion: sum((x-mean)^2) = sum(x^2 - 2*x*mean + mean^2) 
+        # = sum_sq - 2*mean*sum + N*mean^2 = sum_sq - 2*(sum/N)*sum + N*(sum/N)^2 = sum_sq - sum^2/N
+        numerator = running_sum_sq - (running_sum * running_sum) / valid_count
+        variance = max(0.0, numerator) / (valid_count - ddof)
+        result[n - 1] = np.sqrt(variance)
+        
+    # Slide window
+    for i in range(n, n_len):
+        new_val = x[i]
+        old_val = x[i - n]
+        
+        if not np.isnan(new_val):
+            running_sum += new_val
+            running_sum_sq += new_val * new_val
+            valid_count += 1
+            
+        if not np.isnan(old_val):
+            running_sum -= old_val
+            running_sum_sq -= old_val * old_val
+            valid_count -= 1
+            
+        if valid_count >= ddof + 1:
+            numerator = running_sum_sq - (running_sum * running_sum) / valid_count
+            variance = max(0.0, numerator) / (valid_count - ddof)
+            result[i] = np.sqrt(variance)
+            
     return result
 
 
@@ -159,19 +225,40 @@ def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        count = 0
-        valid_count = 0
+    if n > n_len:
+        return result
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                valid_count += 1
-                if x[j] != 0:
-                    count += 1
-        
-        if valid_count > 0:
-            result[i] = float(count)
+    running_count = 0.0  # Count of non-zero elements
+    valid_count = 0      # Count of non-NaN elements
     
+    # Initialize first window
+    for j in range(n):
+        if not np.isnan(x[j]):
+            valid_count += 1
+            if x[j] != 0:
+                running_count += 1.0
+                
+    if valid_count > 0:
+        result[n - 1] = running_count
+        
+    # Slide window
+    for i in range(n, n_len):
+        new_val = x[i]
+        old_val = x[i - n]
+        
+        if not np.isnan(new_val):
+            valid_count += 1
+            if new_val != 0:
+                running_count += 1.0
+                
+        if not np.isnan(old_val):
+            valid_count -= 1
+            if old_val != 0:
+                running_count -= 1.0
+                
+        if valid_count > 0:
+            result[i] = running_count
+            
     return result
 
 
@@ -202,34 +289,52 @@ def _covariance_core(x: np.ndarray, y: np.ndarray, n: int, ddof: int) -> np.ndar
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        # Collect valid pairs (both x and y are not NaN)
-        x_sum = 0.0
-        y_sum = 0.0
-        valid_count = 0
+    if n > n_len:
+        return result
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]) and not np.isnan(y[j]):
-                x_sum += x[j]
-                y_sum += y[j]
-                valid_count += 1
-        
-        # Need at least (ddof + 2) valid pairs for covariance
-        if valid_count < ddof + 2:
-            continue
-        
-        # Compute means
-        x_mean = x_sum / valid_count
-        y_mean = y_sum / valid_count
-        
-        # Compute covariance
-        cov_sum = 0.0
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]) and not np.isnan(y[j]):
-                cov_sum += (x[j] - x_mean) * (y[j] - y_mean)
-        
-        result[i] = cov_sum / (valid_count - ddof)
+    sum_x = 0.0
+    sum_y = 0.0
+    sum_xy = 0.0
+    valid_count = 0
     
+    # Initialize first window
+    for j in range(n):
+        if not np.isnan(x[j]) and not np.isnan(y[j]):
+            val_x = x[j]
+            val_y = y[j]
+            sum_x += val_x
+            sum_y += val_y
+            sum_xy += val_x * val_y
+            valid_count += 1
+            
+    if valid_count >= ddof + 2:
+        numerator = sum_xy - (sum_x * sum_y) / valid_count
+        result[n - 1] = numerator / (valid_count - ddof)
+        
+    # Slide window
+    for i in range(n, n_len):
+        # New pair
+        nx, ny = x[i], y[i]
+        nm = not np.isnan(nx) and not np.isnan(ny)
+        if nm:
+            sum_x += nx
+            sum_y += ny
+            sum_xy += nx * ny
+            valid_count += 1
+            
+        # Old pair
+        ox, oy = x[i - n], y[i - n]
+        om = not np.isnan(ox) and not np.isnan(oy)
+        if om:
+            sum_x -= ox
+            sum_y -= oy
+            sum_xy -= ox * oy
+            valid_count -= 1
+            
+        if valid_count >= ddof + 2:
+            numerator = sum_xy - (sum_x * sum_y) / valid_count
+            result[i] = numerator / (valid_count - ddof)
+            
     return result
 
 
@@ -380,48 +485,74 @@ def _rolling_corr_core(a: np.ndarray, b: np.ndarray, window: int) -> np.ndarray:
     n_len = len(a)
     result = np.full(n_len, np.nan)
     
-    for i in range(window - 1, n_len):
-        # Collect valid pairs (both a and b are not NaN)
-        sum_a = 0.0
-        sum_b = 0.0
-        sum_ab = 0.0
-        sum_a2 = 0.0
-        sum_b2 = 0.0
-        valid_count = 0
+    if window > n_len:
+        return result
         
-        for j in range(i - window + 1, i + 1):
-            if not np.isnan(a[j]) and not np.isnan(b[j]):
-                sum_a += a[j]
-                sum_b += b[j]
-                sum_ab += a[j] * b[j]
-                sum_a2 += a[j] * a[j]
-                sum_b2 += b[j] * b[j]
-                valid_count += 1
-        
-        # Need at least 2 valid pairs for correlation
-        if valid_count < 2:
-            result[i] = np.nan
-            continue
-        
-        # Compute means
-        mean_a = sum_a / valid_count
-        mean_b = sum_b / valid_count
-        
-        # Compute covariance and standard deviations
-        cov = sum_ab / valid_count - mean_a * mean_b
-        var_a = sum_a2 / valid_count - mean_a * mean_a
-        var_b = sum_b2 / valid_count - mean_b * mean_b
-        
-        # Avoid division by zero and numerical issues
-        std_a = np.sqrt(max(var_a, 0.0))
-        std_b = np.sqrt(max(var_b, 0.0))
-        
-        if std_a == 0 or std_b == 0:
-            result[i] = np.nan
-            continue
-        
-        result[i] = cov / (std_a * std_b)
+    sum_a = 0.0
+    sum_b = 0.0
+    sum_ab = 0.0
+    sum_a2 = 0.0
+    sum_b2 = 0.0
+    valid_count = 0
     
+    # Initialize first window
+    for j in range(window):
+        val_a = a[j]
+        val_b = b[j]
+        if not np.isnan(val_a) and not np.isnan(val_b):
+            sum_a += val_a
+            sum_b += val_b
+            sum_ab += val_a * val_b
+            sum_a2 += val_a * val_a
+            sum_b2 += val_b * val_b
+            valid_count += 1
+            
+    if valid_count >= 2:
+        numerator = sum_ab - (sum_a * sum_b) / valid_count
+        var_a = sum_a2 - (sum_a * sum_a) / valid_count
+        var_b = sum_b2 - (sum_b * sum_b) / valid_count
+        
+        std_a = np.sqrt(max(0.0, var_a))
+        std_b = np.sqrt(max(0.0, var_b))
+        
+        if std_a != 0 and std_b != 0:
+            result[window - 1] = numerator / (std_a * std_b)
+            
+    # Slide window
+    for i in range(window, n_len):
+        # Add new
+        na, nb = a[i], b[i]
+        nm = not np.isnan(na) and not np.isnan(nb)
+        if nm:
+            sum_a += na
+            sum_b += nb
+            sum_ab += na * nb
+            sum_a2 += na * na
+            sum_b2 += nb * nb
+            valid_count += 1
+            
+        # Remove old
+        oa, ob = a[i - window], b[i - window]
+        om = not np.isnan(oa) and not np.isnan(ob)
+        if om:
+            sum_a -= oa
+            sum_b -= ob
+            sum_ab -= oa * ob
+            sum_a2 -= oa * oa
+            sum_b2 -= ob * ob
+            valid_count -= 1
+            
+        if valid_count >= 2:
+            numerator = sum_ab - (sum_a * sum_b) / valid_count
+            var_a = sum_a2 - (sum_a * sum_a) / valid_count
+            var_b = sum_b2 - (sum_b * sum_b) / valid_count
+            
+            std_a = np.sqrt(max(0.0, var_a))
+            std_b = np.sqrt(max(0.0, var_b))
+            
+            if std_a != 0 and std_b != 0:
+                result[i] = numerator / (std_a * std_b)
+
     return result
 
 

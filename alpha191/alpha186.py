@@ -57,6 +57,9 @@ def alpha_186(df: pd.DataFrame) -> pd.Series:
     # Calculate denominator: sum_ld*100/sum_tr + sum_hd*100/sum_tr
     denominator = sum_ld * 100 / denom + sum_hd * 100 / denom
     
+    # Protect against division by zero in denominator
+    denominator[denominator == 0] = np.nan
+    
     # Calculate ratio
     ratio = np.abs(numerator) / denominator * 100
     
