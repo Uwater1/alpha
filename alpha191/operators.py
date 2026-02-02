@@ -37,13 +37,13 @@ from numba import njit
 def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling sum."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     if n > n_len:
         return result
 
-    # Current window state
-    running_sum = 0.0
+    # Current window state - use FP64 accumulator for precision
+    running_sum = np.float64(0.0)
     valid_count = 0
     
     # Pre-compute first window (excluding the last element which is handled in the loop)
@@ -57,7 +57,7 @@ def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
             
     # Set result for the first full window at index n-1
     if valid_count > 0:
-        result[n - 1] = running_sum
+        result[n - 1] = np.float32(running_sum)
         
     # 2. Slide window from n to n_len - 1
     # For result[i], window is [i-n+1, i]
@@ -76,7 +76,7 @@ def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
             valid_count -= 1
             
         if valid_count > 0:
-            result[i] = running_sum
+            result[i] = np.float32(running_sum)
             
     return result
 
@@ -85,12 +85,13 @@ def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
 def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling mean."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     if n > n_len:
         return result
 
-    running_sum = 0.0
+    # Use FP64 accumulator for precision
+    running_sum = np.float64(0.0)
     valid_count = 0
     
     # Initialize first window
@@ -100,7 +101,7 @@ def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
             valid_count += 1
             
     if valid_count > 0:
-        result[n - 1] = running_sum / valid_count
+        result[n - 1] = np.float32(running_sum / valid_count)
         
     # Slide window
     for i in range(n, n_len):
@@ -116,7 +117,7 @@ def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
             valid_count -= 1
             
         if valid_count > 0:
-            result[i] = running_sum / valid_count
+            result[i] = np.float32(running_sum / valid_count)
             
     return result
 
@@ -125,13 +126,14 @@ def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
 def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
     """Numba-accelerated core for rolling standard deviation."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     if n > n_len:
         return result
         
-    running_sum = 0.0
-    running_sum_sq = 0.0
+    # Use FP64 accumulators for numerical stability
+    running_sum = np.float64(0.0)
+    running_sum_sq = np.float64(0.0)
     valid_count = 0
     
     # Initialize first window
@@ -146,11 +148,11 @@ def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
         # Variance = (SumSq - (Sum^2)/N) / (N - ddof)
         # Numerical stability handling: max(0, ...)
         mean = running_sum / valid_count
-        # Naive formula matches the expansion: sum((x-mean)^2) = sum(x^2 - 2*x*mean + mean^2) 
+        # Naive formula matches the expansion: sum((x-mean)^2) = sum(x^2 - 2*x*mean + mean^2)
         # = sum_sq - 2*mean*sum + N*mean^2 = sum_sq - 2*(sum/N)*sum + N*(sum/N)^2 = sum_sq - sum^2/N
         numerator = running_sum_sq - (running_sum * running_sum) / valid_count
         variance = max(0.0, numerator) / (valid_count - ddof)
-        result[n - 1] = np.sqrt(variance)
+        result[n - 1] = np.float32(np.sqrt(variance))
         
     # Slide window
     for i in range(n, n_len):
@@ -170,51 +172,96 @@ def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
         if valid_count >= ddof + 1:
             numerator = running_sum_sq - (running_sum * running_sum) / valid_count
             variance = max(0.0, numerator) / (valid_count - ddof)
-            result[i] = np.sqrt(variance)
+            result[i] = np.float32(np.sqrt(variance))
             
     return result
 
 
 @njit(cache=True)
 def _ts_min_core(x: np.ndarray, n: int) -> np.ndarray:
-    """Numba-accelerated core for rolling minimum."""
+    """Numba-accelerated core for rolling minimum using monotonic deque (O(n))."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
-    for i in range(n - 1, n_len):
-        window_min = np.inf
-        valid_count = 0
+    if n > n_len:
+        return result
+    
+    # Deque stores (index, value) pairs using arrays for Numba compatibility
+    # Using circular buffer approach for efficiency
+    deque_idx = np.empty(n_len, dtype=np.int64)
+    deque_val = np.empty(n_len, dtype=np.float32)
+    front = 0
+    back = 0
+    
+    for i in range(n_len):
+        # Skip NaN values - they don't affect min
+        if np.isnan(x[i]):
+            # Still need to record result if we have enough data
+            if i >= n - 1 and back > front:
+                result[i] = deque_val[front]
+            continue
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                if x[j] < window_min:
-                    window_min = x[j]
-                valid_count += 1
+        # Remove elements outside window (older than i - n + 1)
+        while back > front and deque_idx[front] <= i - n:
+            front += 1
         
-        if valid_count > 0:
-            result[i] = window_min
+        # Remove elements >= current (they can't be min when current is in window)
+        # For min: maintain increasing deque
+        while back > front and deque_val[back - 1] >= x[i]:
+            back -= 1
+        
+        # Add current element to back
+        deque_idx[back] = i
+        deque_val[back] = x[i]
+        back += 1
+        
+        # Record result if we have a full window
+        if i >= n - 1 and back > front:
+            result[i] = deque_val[front]
     
     return result
 
 
 @njit(cache=True)
 def _ts_max_core(x: np.ndarray, n: int) -> np.ndarray:
-    """Numba-accelerated core for rolling maximum."""
+    """Numba-accelerated core for rolling maximum using monotonic deque (O(n))."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
-    for i in range(n - 1, n_len):
-        window_max = -np.inf
-        valid_count = 0
+    if n > n_len:
+        return result
+    
+    # Deque stores (index, value) pairs using arrays for Numba compatibility
+    deque_idx = np.empty(n_len, dtype=np.int64)
+    deque_val = np.empty(n_len, dtype=np.float32)
+    front = 0
+    back = 0
+    
+    for i in range(n_len):
+        # Skip NaN values - they don't affect max
+        if np.isnan(x[i]):
+            # Still need to record result if we have enough data
+            if i >= n - 1 and back > front:
+                result[i] = deque_val[front]
+            continue
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                if x[j] > window_max:
-                    window_max = x[j]
-                valid_count += 1
+        # Remove elements outside window (older than i - n + 1)
+        while back > front and deque_idx[front] <= i - n:
+            front += 1
         
-        if valid_count > 0:
-            result[i] = window_max
+        # Remove elements <= current (they can't be max when current is in window)
+        # For max: maintain decreasing deque
+        while back > front and deque_val[back - 1] <= x[i]:
+            back -= 1
+        
+        # Add current element to back
+        deque_idx[back] = i
+        deque_val[back] = x[i]
+        back += 1
+        
+        # Record result if we have a full window
+        if i >= n - 1 and back > front:
+            result[i] = deque_val[front]
     
     return result
 
@@ -223,13 +270,13 @@ def _ts_max_core(x: np.ndarray, n: int) -> np.ndarray:
 def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling count of non-zero values."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     if n > n_len:
         return result
         
-    running_count = 0.0  # Count of non-zero elements
-    valid_count = 0      # Count of non-NaN elements
+    running_count = np.float64(0.0)  # Count of non-zero elements
+    valid_count = 0                  # Count of non-NaN elements
     
     # Initialize first window
     for j in range(n):
@@ -239,7 +286,7 @@ def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
                 running_count += 1.0
                 
     if valid_count > 0:
-        result[n - 1] = running_count
+        result[n - 1] = np.float32(running_count)
         
     # Slide window
     for i in range(n, n_len):
@@ -257,28 +304,59 @@ def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
                 running_count -= 1.0
                 
         if valid_count > 0:
-            result[i] = running_count
+            result[i] = np.float32(running_count)
             
     return result
 
 
 @njit(cache=True)
 def _ts_prod_core(x: np.ndarray, n: int) -> np.ndarray:
-    """Numba-accelerated core for rolling product."""
+    """Numba-accelerated core for rolling product using rolling multiplication (O(n))."""
     n_len = len(x)
     result = np.full(n_len, np.nan)
     
-    for i in range(n - 1, n_len):
-        window_prod = 1.0
-        valid_count = 0
+    if n > n_len:
+        return result
+    
+    # Track running product and zero count (can't divide by zero)
+    running_prod = 1.0
+    zero_count = 0
+    valid_count = 0
+    
+    # Initialize first window [0, n-1]
+    for j in range(n):
+        if not np.isnan(x[j]):
+            valid_count += 1
+            if x[j] == 0.0:
+                zero_count += 1
+            else:
+                running_prod *= x[j]
+    
+    if valid_count > 0:
+        result[n - 1] = 0.0 if zero_count > 0 else running_prod
+    
+    # Slide window: remove x[i-n], add x[i]
+    for i in range(n, n_len):
+        # Remove old value at position i-n
+        old_val = x[i - n]
+        if not np.isnan(old_val):
+            valid_count -= 1
+            if old_val == 0.0:
+                zero_count -= 1
+            elif running_prod != 0.0:
+                running_prod /= old_val
         
-        for j in range(i - n + 1, i + 1):
-            if not np.isnan(x[j]):
-                window_prod *= x[j]
-                valid_count += 1
+        # Add new value at position i
+        new_val = x[i]
+        if not np.isnan(new_val):
+            valid_count += 1
+            if new_val == 0.0:
+                zero_count += 1
+            else:
+                running_prod *= new_val
         
         if valid_count > 0:
-            result[i] = window_prod
+            result[i] = 0.0 if zero_count > 0 else running_prod
     
     return result
 
@@ -441,7 +519,7 @@ def _regression_residual_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarra
 def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
     """Numba-accelerated core for time-series rank within a rolling window."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     for i in range(window - 1, n_len):
         current_value = x[i]
@@ -474,7 +552,7 @@ def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
         current_rank = values_less + 0.5 * values_equal
         
         # Normalize to [0, 1] scale
-        result[i] = (current_rank - 1) / (valid_count - 1)
+        result[i] = np.float32((current_rank - 1) / (valid_count - 1))
     
     return result
 
@@ -584,7 +662,7 @@ def ts_rank(x: np.ndarray, window: int = 6) -> np.ndarray:
     This function uses Numba JIT compilation for performance. Ties are handled
     using the 'average' method (same as scipy.stats.rankdata).
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     window = int(window)
     
     if window <= 0:
@@ -667,7 +745,7 @@ def delay(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values in input are preserved at their shifted positions
     - This function uses vectorized NumPy operations (no JIT needed)
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
 
     if n < 0:
         raise ValueError("n must be non-negative")
@@ -729,7 +807,7 @@ def delta(x: np.ndarray, n: int) -> np.ndarray:
     - NaN values propagate: if either x[t] or x[t-n] is NaN, result is NaN
     - This function uses vectorized NumPy operations (no JIT needed)
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
 
     if n < 0:
         raise ValueError("n must be non-negative")
@@ -781,14 +859,14 @@ def rank(x: np.ndarray) -> np.ndarray:
     - Ties receive the average of their ranks
     - This function uses scipy.stats.rankdata (no JIT needed)
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
 
     # Handle empty array
     if len(x) == 0:
-        return np.array([], dtype=float)
+        return np.array([], dtype=np.float32)
 
     # Create result array filled with NaN
-    result = np.full_like(x, np.nan, dtype=float)
+    result = np.full_like(x, np.nan, dtype=np.float32)
 
     # Create mask for valid (non-NaN) values
     valid_mask = ~np.isnan(x)
@@ -849,7 +927,7 @@ def sign(x: np.ndarray) -> np.ndarray:
     - np.sign returns 0 for 0 inputs
     - This is a simple element-wise operation (no JIT needed)
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     return np.sign(x)
 
 
@@ -891,7 +969,7 @@ def ts_sum(x: np.ndarray, n: int) -> np.ndarray:
     - Minimum 1 valid value required for non-NaN result
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -938,7 +1016,7 @@ def ts_mean(x: np.ndarray, n: int) -> np.ndarray:
     - Minimum 1 valid value required for non-NaN result
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -990,7 +1068,7 @@ def ts_std(x: np.ndarray, n: int, ddof: int = 1) -> np.ndarray:
     - Minimum 2 valid values required for default ddof=1
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -1037,7 +1115,7 @@ def ts_min(x: np.ndarray, n: int) -> np.ndarray:
     - Minimum 1 valid value required for non-NaN result
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -1084,7 +1162,7 @@ def ts_max(x: np.ndarray, n: int) -> np.ndarray:
     - Minimum 1 valid value required for non-NaN result
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -1133,7 +1211,7 @@ def ts_count(condition: np.ndarray, n: int) -> np.ndarray:
     - Result is returned as float array (to support NaN)
     -
     """
-    condition = np.asarray(condition, dtype=float)
+    condition = np.asarray(condition, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -1182,7 +1260,7 @@ def ts_prod(x: np.ndarray, n: int) -> np.ndarray:
     - Zero values will result in zero product
     -
     """
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.float32)
     n = int(n)
 
     if n <= 0:
@@ -1362,16 +1440,23 @@ def regression_residual(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
 def _wma_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for weighted moving average with exponential decay weights."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
+    
+    # Cache the decay factor as a constant
+    DECAY_FACTOR: float = 0.9
+    INV_DECAY: float = 1.0 / DECAY_FACTOR  # ≈ 1.111...
     
     # Compute weights: [0.9^(n-1), 0.9^(n-2), ..., 0.9^0]
+    # Use iterative multiplication instead of power for efficiency
     weights = np.empty(n, dtype=np.float64)
-    for i in range(n):
-        weights[i] = 0.9 ** (n - 1 - i)
+    weights[0] = DECAY_FACTOR ** (n - 1)  # Only one power operation
+    for i in range(1, n):
+        weights[i] = weights[i - 1] * INV_DECAY  # Multiply by 1/0.9
     
     for i in range(n - 1, n_len):
-        window_sum = 0.0
-        weight_sum = 0.0
+        # Use FP64 accumulators for precision, FP32 output
+        window_sum = np.float64(0.0)
+        weight_sum = np.float64(0.0)
         
         for j in range(n):
             idx = i - n + 1 + j
@@ -1380,7 +1465,7 @@ def _wma_core(x: np.ndarray, n: int) -> np.ndarray:
                 weight_sum += weights[j]
         
         if weight_sum > 0:
-            result[i] = window_sum / weight_sum
+            result[i] = np.float32(window_sum / weight_sum)
     
     return result
 
@@ -1389,15 +1474,16 @@ def _wma_core(x: np.ndarray, n: int) -> np.ndarray:
 def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
     """Numba-accelerated core for linear decay weighted average."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     # Compute weights: [d, d-1, d-2, ..., 2, 1]
     # Sum of weights = d * (d + 1) / 2
     weight_sum_total = d * (d + 1) / 2.0
     
     for i in range(d - 1, n_len):
-        window_sum = 0.0
-        weight_sum = 0.0
+        # Use FP64 accumulators for precision, FP32 output
+        window_sum = np.float64(0.0)
+        weight_sum = np.float64(0.0)
         
         for j in range(d):
             idx = i - d + 1 + j
@@ -1409,7 +1495,7 @@ def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
                 weight_sum += weight
         
         if weight_sum > 0:
-            result[i] = window_sum / weight_sum
+            result[i] = np.float32(window_sum / weight_sum)
     
     return result
 
@@ -1418,7 +1504,7 @@ def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
 def _sma_core(x: np.ndarray, n: int, m: int) -> np.ndarray:
     """Numba-accelerated core for SMA."""
     n_len = len(x)
-    result = np.full(n_len, np.nan)
+    result = np.full(n_len, np.nan, dtype=np.float32)
     
     # Find first non-NaN value to start the chain
     start_idx = -1
@@ -1438,7 +1524,8 @@ def _sma_core(x: np.ndarray, n: int, m: int) -> np.ndarray:
             result[i] = np.nan
         else:
             # Y[t] = (m*A[t] + (n-m)*Y[t-1]) / n
-            result[i] = (m * x[i] + (n - m) * result[i-1]) / n
+            # Cast computation to float64 for precision, then back to float32
+            result[i] = np.float32((np.float64(m) * np.float64(x[i]) + np.float64(n - m) * np.float64(result[i-1])) / np.float64(n))
             
     return result
 

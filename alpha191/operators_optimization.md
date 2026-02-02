@@ -1,118 +1,142 @@
-### Key Speed Optimizations
+Looking at your code, there are several opportunities for speed optimization:
 
-The code is already highly optimized: Numba JIT on the expensive rolling loops, small effective array sizes (≤350 rows due to `run_alpha_factor` slicing), and vectorized NumPy for simple ops. Quadratic-time loops (O(n × window)) are acceptable here—350² ≈ 120k operations per call is negligible with Numba (~millions–billions ops/sec).
+## Major Optimization Opportunities
 
-However, several rolling operators can be upgraded from O(n × window) loops to **O(n) total** using **sliding-window running aggregates**. This is a classic optimization for rolling stats ignoring NaNs: maintain running sums/counts and update them in O(1) when sliding the window (add new value, subtract outgoing value, but only if non-NaN).
+### 1. **`ts_min` and `ts_max` - Use Monotonic Deque**
+Currently O(n*window), can be O(n) with a deque-based algorithm:
 
-Gains:
-- **5–300× theoretical speedup** per call (depending on window size).
-- Biggest wins on frequently used ops (ts_mean, ts_sum, rolling_corr, rolling_cov, regression_beta).
-- Still correct NaN-skipping semantics.
-- Practical impact modest at n=350 but significant if lookback/window increased or many nested calls.
-
-#### 1. **Primary Targets: Convert to Running Aggregates (Biggest Wins)**
-Rewrite these with running variables instead of per-window loops:
-
-- **ts_sum / rolling_sum**
-- **ts_mean / rolling_mean**
-- **ts_count** (count non-zero non-NaN)
-- **ts_std** (if used; maintain sum + sum_sq + count)
-- **rolling_corr**
-- **rolling_cov / covariance**
-- **regression_beta**
-- **regression_residual** (uses same aggregates as beta)
-
-**Pattern (Numba @njit)**:
 ```python
 @njit(cache=True)
-def _new_ts_sum_core(x: np.ndarray, window: int) -> np.ndarray:
-    n = len(x)
-    result = np.full(n, np.nan)
-    if n < window:
-        return result
+def _ts_min_core_optimized(x: np.ndarray, n: int) -> np.ndarray:
+    """O(n) monotonic deque approach instead of O(n*window)"""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
     
-    # Initial window (O(window) once)
-    running_sum = 0.0
-    running_count = 0
-    for j in range(window):
-        if not np.isnan(x[j]):
-            running_sum += x[j]
-            running_count += 1
+    # Deque stores (index, value) pairs
+    # We'll use arrays to simulate deque in numba
+    deque_idx = np.empty(n_len, dtype=np.int64)
+    deque_val = np.empty(n_len, dtype=np.float64)
+    front = 0
+    back = 0
     
-    if running_count > 0:
-        result[window-1] = running_sum
-    
-    # Slide window (O(1) per step)
-    for i in range(window, n):
-        new_val = x[i]
-        old_val = x[i - window]
+    for i in range(n_len):
+        if np.isnan(x[i]):
+            continue
+            
+        # Remove elements outside window
+        while back > front and deque_idx[front] <= i - n:
+            front += 1
         
-        if not np.isnan(new_val):
-            running_sum += new_val
-            running_count += 1
-        if not np.isnan(old_val):
-            running_sum -= old_val
-            running_count -= 1
+        # Remove elements >= current (for min; reverse for max)
+        while back > front and deque_val[back - 1] >= x[i]:
+            back -= 1
         
-        if running_count > 0:
-            result[i] = running_sum
-        # else NaN (already filled)
+        # Add current element
+        deque_idx[back] = i
+        deque_val[back] = x[i]
+        back += 1
+        
+        # Record result
+        if i >= n - 1 and back > front:
+            result[i] = deque_val[front]
     
     return result
 ```
 
-Adapt similarly for others:
-- **Mean**: add `running_sum` + `running_count` → `result[i] = running_sum / running_count if running_count > 0`.
-- **Count non-zero**: `running_nonzero` (increment only if `not np.isnan(val) and val != 0`).
-  - If `running_count == 0`: NaN, else `running_nonzero`.
-- **Std** (biased for simplicity, or adjust for ddof):
-  - Maintain `sum_sq` alongside `sum` + `count`.
-  - `var = sum_sq / count - (sum / count)**2` (or unbiased formula).
-- **Corr / Cov / Beta**:
-  - Maintain 5 running sums (`sum_a`, `sum_b`, `sum_ab`, `sum_a2`, `sum_b2`) + `pair_count`.
-  - Add/subtract only when **both** values non-NaN.
-  - Compute final stats exactly as current one-pass formula.
-- **Regression residual**: same aggregates, but only compute residual if current `x[i]` and `y[i]` non-NaN.
+### 2. **`ts_prod` - Avoid Recomputation**
+Current implementation recalculates entire product each window. Use rolling multiplication/division:
 
-**Why faster**: Eliminates inner loop. Initial O(window) + (n - window) × O(1).
+```python
+@njit(cache=True)
+def _ts_prod_core_optimized(x: np.ndarray, n: int) -> np.ndarray:
+    """Use rolling product with careful zero/NaN handling"""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
+    
+    # Track product and count of zeros in window
+    running_prod = 1.0
+    zero_count = 0
+    valid_count = 0
+    
+    # Initialize first window
+    for j in range(n):
+        if not np.isnan(x[j]):
+            if x[j] == 0:
+                zero_count += 1
+            else:
+                running_prod *= x[j]
+            valid_count += 1
+    
+    if valid_count > 0:
+        result[n - 1] = 0.0 if zero_count > 0 else running_prod
+    
+    # Slide window
+    for i in range(n, n_len):
+        # Remove old value
+        if not np.isnan(x[i - n]):
+            if x[i - n] == 0:
+                zero_count -= 1
+            else:
+                running_prod /= x[i - n]
+            valid_count -= 1
+        
+        # Add new value
+        if not np.isnan(x[i]):
+            if x[i] == 0:
+                zero_count += 1
+            else:
+                running_prod *= x[i]
+            valid_count += 1
+        
+        if valid_count > 0:
+            result[i] = 0.0 if zero_count > 0 else running_prod
+    
+    return result
+```
 
-#### 2. **Secondary Targets (Nice-to-Have, Smaller Gains)**
-- **decay_linear** (and similar weighted like wma if present):
-  - Weights fixed → maintain `running_weighted_sum` + `running_weight_sum`.
-  - Incoming always highest weight (d), outgoing always lowest (1).
-  - Add: if new non-NaN, `weighted_sum += new * d`, `weight_sum += d`.
-  - Subtract: if old non-NaN, `weighted_sum -= old * 1`, `weight_sum -= 1`.
-  - But wait: after slide, previous weights shift down by 1 → all middle weights change!
-  - Cannot O(1) without extra running sums (e.g., maintain multiple weighted levels).
-  - **Conclusion**: Not easily O(n) → leave loop (small n anyway).
+### 3. **`ts_count` - Already Optimized ✓**
+Your implementation is already O(n) with rolling window.
 
-- **ts_min / ts_max / high_day / low_day**:
-  - Possible with monotonic deque (store indices, skip NaNs by not adding them).
-  - Numba-compatible but ~50–100 lines extra code.
-  - Gains minor (current already fast).
+### 4. **`_ts_rank_core` - Can Use Fenwick Tree**
+Currently O(n*window²), can be O(n*window*log(window)) with a balanced tree structure, though this is complex in Numba.
 
-- **ts_prod**:
-  - Multiplicative → hard to slide (division on remove risky with 0s/negatives).
-  - Leave loop.
+### 5. **Decay Functions - Can Use Recursive Formula**
+Both `decay_linear` and `decay_exp` recalculate sums. Can optimize with rolling approach:
 
-- **ts_rank**:
-  - Requires order stats → no simple O(n).
-  - Could extract windows + np.sort + search, but slower constants.
-  - Leave loop (acceptable at n≤350).
+```python
+@njit(cache=True)
+def _decay_linear_core_optimized(x: np.ndarray, d: int) -> np.ndarray:
+    """Use rolling update formula instead of recalculating"""
+    n_len = len(x)
+    result = np.full(n_len, np.nan)
+    
+    # weights: [1, 2, 3, ..., d]
+    # When sliding: new_sum = old_sum - x[i-d]*1 - x[i-d+1]*2 - ... 
+    #                        + x[i-d+1]*1 + x[i-d+2]*2 + ... + x[i]*d
+    # Simplifies to: new_sum = old_sum + x[i]*d - sum(x[i-d+1:i])
+    
+    # This is still complex; simpler to pre-accumulate
+    # For now, current implementation is reasonable
+    return _decay_linear_core(x, d)  # Keep current
+```
 
-#### 3. **Minor Cleanups (Negligible Speed but Good)**
-- Precompute constants outside loops (e.g., in decay_exp, precompute full weight array once).
-- Remove unused `weight_sum_total` in decay_linear.
-- In public wrappers: ensure `np.asarray(x, float)` once, validate early.
-- For sma/decay_exp: already O(n) recursive → excellent, no change.
+## Performance Impact Summary
 
-#### Summary of Impact
-| Operator              | Current Complexity | Proposed | Expected Speedup (n=350, window=100) |
-|-----------------------|--------------------|---------|-------------------------------------|
-| ts_sum/mean/count     | O(n×w)             | O(n)    | ~100× theoretical                   |
-| rolling_corr/cov/beta | O(n×w)             | O(n)    | ~100× theoretical                   |
-| ts_std                | O(n×w)             | O(n)    | ~100× theoretical                   |
-| ts_min/max/rank/prod  | O(n×w)             | unchanged | Minor/none                         |
-| high/low_day          | O(n×w)             | optional deque | 2–5× if implemented                |
+| Function | Current | Optimized | Speedup |
+|----------|---------|-----------|---------|
+| `ts_min/ts_max` | O(n·w) | O(n) | **~w× faster** |
+| `ts_prod` | O(n·w) | O(n) | **~w× faster** |
+| `ts_rank` | O(n·w²) | O(n·w·log w) | Modest |
+| Others | Already O(n) | - | - |
 
-Implement the running-aggregate versions for the additive stats first—highest ROI, clean code, future-proof. The rest is already near-optimal for this scale.
+## Additional Minor Optimizations
+
+1. **Pre-allocate in `rank()`**: Use `np.empty` instead of `np.full` then fill
+2. **Vectorize `sign()`**: Already optimal (just wraps `np.sign`)
+3. **Cache frequently used values**: Store `0.9` as constant in `_wma_core`
+
+## Recommendation
+
+**Implement optimizations for `ts_min`, `ts_max`, and `ts_prod` first** - these will give the biggest gains, especially for large window sizes. The monotonic deque approach for min/max is well-established and straightforward to implement in Numba.
+
+Would you like me to provide complete optimized implementations for any of these functions?

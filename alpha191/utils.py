@@ -11,10 +11,19 @@ from functools import lru_cache
 _benchmark_cache = {}
 
 # Cache for required columns validation
-_validated_files = set() 
+_validated_files = set()
+
+# Pre-constructed Path objects to avoid repeated construction
+_BAO_HS300_PATH = Path('bao/hs300')
+_BAO_ZZ500_PATH = Path('bao/zz500')
+_BAO_BENCHMARK_PATHS = {
+    'hs300': Path('bao/hs300.csv'),
+    'zz500': Path('bao/zz500.csv'),
+    'zz800': Path('bao/zz800.csv'),
+} 
 
 
-@lru_cache(maxsize=512)
+@lru_cache(maxsize=1024)
 def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
     """
     Internal cached function to load stock data from CSV file.
@@ -26,13 +35,13 @@ def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
         )
 
     if benchmark == 'hs300':
-        search_paths = [Path('bao/hs300') / f'{code}.csv']
+        search_paths = [_BAO_HS300_PATH / f'{code}.csv']
     elif benchmark == 'zz500':
-        search_paths = [Path('bao/zz500') / f'{code}.csv']
+        search_paths = [_BAO_ZZ500_PATH / f'{code}.csv']
     else:  # zz800
         search_paths = [
-            Path('bao/hs300') / f'{code}.csv',
-            Path('bao/zz500') / f'{code}.csv'
+            _BAO_HS300_PATH / f'{code}.csv',
+            _BAO_ZZ500_PATH / f'{code}.csv'
         ]
 
     file_path = None
@@ -47,23 +56,55 @@ def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
     # OPTIMIZATION: Use index_col and eliminate inplace operations
     # This reduces memory copies and is faster
     df = pd.read_csv(
-        str(file_path), 
+        str(file_path),
         parse_dates=['date'],
         index_col='date'
     )
     df = df.sort_index()
     
-    # Add VWAP column if missing, approximating as amount / volume
-    if 'vwap' not in df.columns:
-        if {'amount', 'volume'}.issubset(df.columns):
-            df['vwap'] = df['amount'] / df['volume'].replace(0, np.nan)
-            # Replace invalid (NaN or outside low-high) with OHLC average
-            ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
-            invalid = df['vwap'].isna() | ~df['vwap'].between(df['low'], df['high'], inclusive='both')
-            df['vwap'] = df['vwap'].where(~invalid, ohlc_avg)
-        else:
-            # Must have OHLC
-            df['vwap'] = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+    # Ensure VWAP column exists
+    df = _ensure_vwap(df)
+    
+    # OPTIMIZATION: Convert to float32 for cache efficiency
+    # Reduces memory usage by ~50% with sufficient precision for price data
+    float_cols = df.select_dtypes(include=['float64']).columns
+    df[float_cols] = df[float_cols].astype(np.float32)
+    
+    return df
+
+
+def _ensure_vwap(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Ensure VWAP column exists in the DataFrame.
+    
+    If 'vwap' is missing, calculates it from amount/volume if available,
+    otherwise uses the OHLC average. Invalid VWAP values (outside low-high
+    range) are replaced with OHLC average.
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing at minimum OHLC columns
+        
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with guaranteed 'vwap' column
+    """
+    if 'vwap' in df.columns:
+        return df
+    
+    if {'amount', 'volume'}.issubset(df.columns):
+        df = df.copy()
+        df['vwap'] = df['amount'] / df['volume'].replace(0, np.nan)
+        # Replace invalid (NaN or outside low-high) with OHLC average
+        ohlc_avg = (df['open'] + df['high'] + df['low'] + df['close']) / 4
+        invalid = df['vwap'].isna() | ~df['vwap'].between(df['low'], df['high'], inclusive='both')
+        df['vwap'] = df['vwap'].where(~invalid, ohlc_avg)
+    else:
+        # Must have OHLC
+        df = df.copy()
+        df['vwap'] = (df['open'] + df['high'] + df['low'] + df['close']) / 4
     
     return df
 
@@ -103,7 +144,7 @@ def _load_benchmark_csv_cached(benchmark: str) -> pd.DataFrame:
             f"Invalid benchmark '{benchmark}'. Must be one of: 'hs300', 'zz500', 'zz800'"
         )
 
-    benchmark_path = Path(f'bao/{benchmark}.csv')
+    benchmark_path = _BAO_BENCHMARK_PATHS[benchmark]
     if not benchmark_path.exists():
         raise FileNotFoundError(f"Benchmark file '{benchmark_path}' not found")
 
