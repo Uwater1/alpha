@@ -142,17 +142,17 @@ See [`alpha191.md`](alpha191.md) for formula details.
 
 ## Assessing Alphas
 
-Use `assess_alpha.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis:
+Use `ICtest.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis:
 
 ```bash
 # Basic usage - assess alpha 1 on default benchmark (zz800) with default horizon (20 days)
 python ICtest.py 1
 
 # Assess alpha 42 with 5-day horizon
-python assess_alpha.py 42 5
+python ICtest.py 42 5
 
 # Assess alpha 1 with 5-day horizon on hs300
-python assess_alpha.py 1 5 hs300
+python ICtest.py 1 5 hs300
 ```
 
 **Arguments:**
@@ -166,6 +166,24 @@ python assess_alpha.py 1 5 hs300
 - `ICIR`: Information Coefficient Information Ratio (IC_mean / IC_std)
 - `t_stat`: T-statistic for significance testing
 - `n_obs`: Number of observations
+
+## Group Return Test
+
+Divide stocks into $m$ quantiles based on alpha values and calculate group returns over time:
+
+```bash
+# Basic usage - divide into 10 groups, 20-day horizon, hs300 benchmark
+python grouptest.py 1
+
+# Custom parameters: alpha=1, period=20, range=zz800, quantile=5
+python grouptest.py 1 20 zz800 5
+```
+
+**Arguments:**
+- `alpha_name` (required): Alpha number (1-191) or format like `alpha001`
+- `period`: Forward return horizon in days (default: `20`)
+- `range`: Index pool - `hs300`, `zz500`, or `zz800` (default: `hs300`)
+- `quantile`: Number of groups/quantiles (default: `10`)
 
 ## Testing
 
@@ -196,7 +214,7 @@ python fulltest.py
 
 ```bash
 # Assess factor
-python assess_alpha.py 1 zz800
+python ICtest.py 1 zz800
 ```
 
 ## Data Requirements

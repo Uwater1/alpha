@@ -6,7 +6,7 @@ import importlib
 import numba
 from pathlib import Path
 from typing import List, Dict, Any
-from alpha191.utils import load_stock_csv, load_benchmark_csv
+from alpha191.utils import load_stock_csv, load_benchmark_csv, get_benchmark_members, format_alpha_name
 
 @numba.jit(nopython=True)
 def fast_pearson(x, y):
@@ -40,22 +40,6 @@ def compute_ic_series_numba(factor_rank_mat, return_rank_mat):
         
     return ic_values
 
-def get_benchmark_members(benchmark: str) -> List[str]:
-    """Get stock codes for the specified benchmark."""
-    if benchmark == "hs300":
-        df = pd.read_csv("bao/hs300_l.csv")
-    elif benchmark == "zz500":
-        df = pd.read_csv("bao/zz500-l.csv")
-    elif benchmark == "zz800":
-        df1 = pd.read_csv("bao/hs300_l.csv")
-        df2 = pd.read_csv("bao/zz500-l.csv")
-        df = pd.concat([df1, df2])
-    else:
-        raise ValueError(f"Invalid benchmark: {benchmark}")
-    
-    # Standardize codes from sh.600000 to sh_600000
-    codes = df['code'].str.replace('.', '_', regex=False).tolist()
-    return codes
 
 def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, rolling_window: int = 60):
     """Assess an alpha using Spearman Rank IC."""
@@ -164,10 +148,6 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, r
     ic_mean_neg = ic_neg.mean() if len(ic_neg) > 0 else np.nan
     
     output = {
-        "alpha": alpha_name,
-        "benchmark": benchmark,
-        "horizon": horizon,
-        "rolling_window": rolling_window,
         # Existing metrics
         "IC_mean": ic_mean,
         "IC_std": ic_std,
@@ -175,7 +155,6 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, r
         "ICIR": ic_ir, #  mean / std
         "t_stat": t_stat, # mean / std * sqrt(n_obs)
         "n_obs": n_obs,
-        "IC_series": ic_series,
         # Distribution
         "IC_median": ic_median,
         "IC_skew": ic_skew,
@@ -189,21 +168,11 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, r
         # Directional asymmetry
         "IC_mean_pos": ic_mean_pos,
         "IC_mean_neg": ic_mean_neg,
+        # Raw data
+        "IC_series": ic_series,
     }
     
     return output
-def format_alpha_name(alpha_name: str) -> str:
-    """Convert input like '1' or '42' to 'alpha001' or 'alpha042' format.
-    If input already starts with 'alpha', return it as-is."""
-    if alpha_name.lower().startswith("alpha"):
-        return alpha_name.lower()
-    else:
-        # Convert number to zero-padded format
-        try:
-            num = int(alpha_name)
-            return f"alpha{num:03d}"
-        except ValueError:
-            raise ValueError(f"Invalid alpha name: {alpha_name}. Expected format: '1' or 'alpha001'")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

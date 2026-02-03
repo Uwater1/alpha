@@ -76,6 +76,7 @@ IC_std = std(IC_t) for all t
 - Values > 0.5 indicate the factor is correct more often than wrong
 - Values > 0.55 are generally considered good
 - Values < 0.5 indicate the factor is wrong more often than right
+- Values < 0.45 indicate the reverse are considered good
 
 **Formula:**
 ```
@@ -347,17 +348,12 @@ IC_mean_neg = mean(IC_t | IC_t < 0)
 
 ```python
 {
-    "alpha": "alpha001",
-    "benchmark": "zz800",
-    "horizon": 20,
-    "rolling_window": 60,
     "IC_mean": 0.0234,
     "IC_std": 0.0456,
     "IC_winrate": 0.5423,
     "ICIR": 0.5123,
     "t_stat": 4.5678,
     "n_obs": 1200,
-    "IC_series": pd.Series(...),
     "IC_median": 0.0212,
     "IC_skew": 0.3456,
     "rolling_IC_min": -0.0123,
@@ -366,7 +362,8 @@ IC_mean_neg = mean(IC_t | IC_t < 0)
     "avg_cs_size": 750.5,
     "min_cs_size": 680,
     "IC_mean_pos": 0.0345,
-    "IC_mean_neg": -0.0234
+    "IC_mean_neg": -0.0234,
+    "IC_series": pd.Series(...),
 }
 ```
 

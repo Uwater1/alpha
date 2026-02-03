@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from functools import lru_cache
+from typing import List, Optional
 
 # Cache for benchmark data
 _benchmark_cache = {}
@@ -143,3 +144,35 @@ def run_alpha_factor(
 
     value = alpha_func(df).iloc[-1]
     return float(value) if not np.isnan(value) else np.nan
+
+
+def get_benchmark_members(benchmark: str) -> List[str]:
+    """Get stock codes for the specified benchmark."""
+    if benchmark == "hs300":
+        df = pd.read_csv(PROJECT_ROOT / "bao/hs300_l.csv")
+    elif benchmark == "zz500":
+        df = pd.read_csv(PROJECT_ROOT / "bao/zz500-l.csv")
+    elif benchmark == "zz800":
+        df1 = pd.read_csv(PROJECT_ROOT / "bao/hs300_l.csv")
+        df2 = pd.read_csv(PROJECT_ROOT / "bao/zz500-l.csv")
+        df = pd.concat([df1, df2])
+    else:
+        raise ValueError(f"Invalid benchmark: {benchmark}")
+    
+    # Standardize codes from sh.600000 to sh_600000
+    codes = df['code'].str.replace('.', '_', regex=False).tolist()
+    return codes
+
+
+def format_alpha_name(alpha_name: str) -> str:
+    """Convert input like '1' or '42' to 'alpha001' or 'alpha042' format.
+    If input already starts with 'alpha', return it as-is."""
+    if alpha_name.lower().startswith("alpha"):
+        return alpha_name.lower()
+    else:
+        # Convert number to zero-padded format
+        try:
+            num = int(alpha_name)
+            return f"alpha{num:03d}"
+        except ValueError:
+            raise ValueError(f"Invalid alpha name: {alpha_name}. Expected format: '1' or 'alpha001'")
