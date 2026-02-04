@@ -185,6 +185,54 @@ python grouptest.py 1 20 zz800 5
 - `range`: Index pool - `hs300`, `zz500`, or `zz800` (default: `hs300`)
 - `quantile`: Number of groups/quantiles (default: `10`)
 
+## Assessment Module
+
+The `assessment` package provides Alphalens-like performance metrics and visualizations for alpha factors.
+
+### Features
+- **IC Analysis**: Spearman Rank IC, ICIR, t-stats, p-values, and IC distribution.
+- **Quantile Returns**: Mean returns and cumulative returns across factor quantiles.
+- **Turnover Analysis**: Factor stability via rank autocorrelation and top/bottom quantile turnover.
+- **Risk Metrics**: Factor alpha and beta relative to the market.
+- **Visualizations**: Comprehensive tear sheets including IC plots, quantile returns, and turnover charts.
+
+### Usage in Tools
+
+Existing tools have been integrated with the assessment module and support a `--plot` flag:
+
+**IC Assessment (ICtest.py):**
+```bash
+python ICtest.py 1 --plot --horizon 20 --benchmark hs300
+```
+This generates an `alpha001_tear_sheet.png` report in the root directory.
+
+**Quantile Return Test (grouptest.py):**
+```bash
+python grouptest.py 1 --plot --quantiles 5 --horizon 20 --benchmark hs300
+```
+This generates an `alpha001_group_returns.png` bar chart.
+
+### Programmatic Access
+
+```python
+from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics, create_full_tear_sheet
+
+# factor_matrix and price_matrix are Date x Stock DataFrames (wide format)
+factor_data = get_clean_factor_and_forward_returns(
+    factor_matrix, 
+    price_matrix, 
+    periods=[1, 5, 20], 
+    quantiles=10
+)
+
+# Compute statistics
+metrics = compute_performance_metrics(factor_data)
+print(metrics['ic_summary'])
+
+# Generate visual report
+create_full_tear_sheet(factor_data, output_path="alpha_report.png")
+```
+
 ## Expression Alpha Parser
 
 The `alpha191.expression` module allows you to define alpha factors using string expressions. This is based on the logic extracted from `alphatools` and adapted for this project.
