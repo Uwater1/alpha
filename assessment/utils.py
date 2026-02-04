@@ -42,6 +42,7 @@ def get_clean_factor_and_forward_returns(
     long_factor = stack_wide_to_long(factor, 'factor')
     
     # 3. Combine
+    # 3. Combine
     merged_data = pd.DataFrame(index=long_factor.index)
     merged_data['factor'] = long_factor
     for p_str, ret_series in forward_returns.items():
@@ -52,23 +53,23 @@ def get_clean_factor_and_forward_returns(
     
     # 5. Binning (Quantiles)
     if bins is not None:
-        # Use bins
-        def binning(x):
+        # Use bins - more efficient with apply
+        def binning(group):
             try:
-                return pd.cut(x, bins, labels=False) + 1
+                return pd.cut(group, bins, labels=False) + 1
             except ValueError:
-                return np.nan
-        merged_data['factor_quantile'] = merged_data.groupby(level='date')['factor'].transform(binning)
+                return pd.Series([np.nan] * len(group), index=group.index)
+        merged_data['factor_quantile'] = merged_data.groupby(level='date', group_keys=False)['factor'].apply(binning)
     else:
-        # Use quantiles
-        def quantize(x):
+        # Use quantiles - more efficient with apply
+        def quantize(group):
             try:
-                if len(x.dropna()) < quantiles:
-                    return np.nan
-                return pd.qcut(x, quantiles, labels=False, duplicates='drop') + 1
-            except ValueError:
-                return np.nan
-        merged_data['factor_quantile'] = merged_data.groupby(level='date')['factor'].transform(quantize)
+                if len(group.dropna()) < quantiles:
+                    return pd.Series([np.nan] * len(group), index=group.index)
+                return pd.qcut(group, quantiles, labels=False, duplicates='drop') + 1
+            except (ValueError, TypeError):
+                return pd.Series([np.nan] * len(group), index=group.index)
+        merged_data['factor_quantile'] = merged_data.groupby(level='date', group_keys=False)['factor'].apply(quantize)
         
     # 6. Groupby (if provided)
     if groupby is not None:

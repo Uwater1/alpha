@@ -176,3 +176,94 @@ def format_alpha_name(alpha_name: str) -> str:
             return f"alpha{num:03d}"
         except ValueError:
             raise ValueError(f"Invalid alpha name: {alpha_name}. Expected format: '1' or 'alpha001'")
+
+
+def _load_single_stock_with_alpha(args):
+    """
+    Helper function for parallel loading of stock data and alpha computation.
+    Returns (code, alpha_series, price_series) or (code, None, None) on error.
+    """
+    code, alpha_func, benchmark, benchmark_df = args
+    try:
+        df = load_stock_csv(code, benchmark=benchmark)
+        df['benchmark_close'] = benchmark_df['close'].reindex(df.index)
+        df['benchmark_open'] = benchmark_df['open'].reindex(df.index)
+        
+        alpha_series = alpha_func(df).astype(np.float32)
+        price_series = df['close'].astype(np.float32)
+        
+        return (code, alpha_series, price_series)
+    except Exception:
+        return (code, None, None)
+
+
+def parallel_load_stocks_with_alpha(
+    codes: List[str],
+    alpha_func,
+    benchmark: str,
+    n_jobs: int = -1,
+    show_progress: bool = True
+) -> tuple:
+    """
+    Load multiple stocks in parallel and compute alpha values.
+    
+    Parameters:
+    -----------
+    codes : List[str]
+        List of stock codes to load
+    alpha_func : callable
+        Alpha function to compute on each stock
+    benchmark : str
+        Benchmark name (hs300, zz500, zz800)
+    n_jobs : int
+        Number of parallel jobs. -1 uses all CPU cores.
+    show_progress : bool
+        Whether to show progress information
+        
+    Returns:
+    --------
+    tuple : (factor_results, price_results)
+        Dictionaries mapping code to alpha series and price series
+    """
+    from multiprocessing import Pool, cpu_count
+    
+    # Determine number of workers
+    if n_jobs == -1:
+        n_jobs = cpu_count()
+    n_jobs = min(n_jobs, len(codes))
+    
+    # Load benchmark data once (shared across all workers)
+    benchmark_df = load_benchmark_csv(benchmark)
+    
+    # Prepare arguments for parallel execution
+    args_list = [(code, alpha_func, benchmark, benchmark_df) for code in codes]
+    
+    if show_progress:
+        print(f"Loading {len(codes)} stocks using {n_jobs} workers...")
+    
+    # Parallel execution
+    if n_jobs > 1:
+        with Pool(processes=n_jobs) as pool:
+            results = pool.map(_load_single_stock_with_alpha, args_list)
+    else:
+        # Single-threaded fallback
+        results = [_load_single_stock_with_alpha(args) for args in args_list]
+    
+    # Collect results
+    factor_results = {}
+    price_results = {}
+    failed_count = 0
+    
+    for code, alpha_series, price_series in results:
+        if alpha_series is not None:
+            factor_results[code] = alpha_series
+            price_results[code] = price_series
+        else:
+            failed_count += 1
+    
+    if show_progress:
+        success_count = len(factor_results)
+        print(f"Successfully loaded {success_count}/{len(codes)} stocks ({failed_count} failed)")
+    
+    return factor_results, price_results
+

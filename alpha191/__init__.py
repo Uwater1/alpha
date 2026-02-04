@@ -400,7 +400,11 @@ from .operators import (
 # Import utility functions
 from .utils import load_stock_csv, run_alpha_factor
 
-# Import expression alpha
-from .expression import ExpressionAlpha
+# Import expression alpha (optional - requires lark)
+try:
+    from .expression import ExpressionAlpha
+except ImportError:
+    ExpressionAlpha = None
 
 __version__ = "0.1.0"
+

@@ -2,18 +2,91 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 from typing import Dict, Any, List, Optional
+try:
+    from numba import jit
+    HAS_NUMBA = True
+except ImportError:
+    HAS_NUMBA = False
+    # Fallback decorator that does nothing
+    def jit(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator if not args else decorator(args[0])
+
+
+@jit(nopython=True, cache=True)
+def _fast_pearson_corr(x, y):
+    """
+    Fast Pearson correlation using Numba.
+    Assumes no NaN values in inputs.
+    """
+    n = len(x)
+    if n == 0:
+        return np.nan
+    
+    sum_x = 0.0
+    sum_y = 0.0
+    sum_xx = 0.0
+    sum_yy = 0.0
+    sum_xy = 0.0
+    
+    for i in range(n):
+        sum_x += x[i]
+        sum_y += y[i]
+        sum_xx += x[i] * x[i]
+        sum_yy += y[i] * y[i]
+        sum_xy += x[i] * y[i]
+    
+    mean_x = sum_x / n
+    mean_y = sum_y / n
+    
+    numerator = sum_xy - n * mean_x * mean_y
+    denominator = np.sqrt((sum_xx - n * mean_x * mean_x) * (sum_yy - n * mean_y * mean_y))
+    
+    if denominator == 0:
+        return np.nan
+    
+    return numerator / denominator
+
+
+def fast_spearman_corr(x, y):
+    """
+    Fast Spearman correlation by ranking then computing Pearson correlation.
+    Handles NaN values by removing them pairwise.
+    """
+    # Remove NaN values pairwise
+    mask = ~(np.isnan(x) | np.isnan(y))
+    x_clean = x[mask]
+    y_clean = y[mask]
+    
+    if len(x_clean) < 2:
+        return np.nan
+    
+    # Rank the data (using scipy's rankdata for ties handling)
+    from scipy.stats import rankdata
+    x_ranked = rankdata(x_clean).astype(np.float64)
+    y_ranked = rankdata(y_clean).astype(np.float64)
+    
+    # Use fast Pearson correlation on ranked data
+    if HAS_NUMBA:
+        return _fast_pearson_corr(x_ranked, y_ranked)
+    else:
+        # Fallback to numpy's corrcoef
+        return np.corrcoef(x_ranked, y_ranked)[0, 1]
 
 def factor_information_coefficient(factor_data: pd.DataFrame) -> pd.DataFrame:
     """
     Computes the Spearman Rank Correlation based Information Coefficient (IC)
     between factor values and forward returns.
+    Uses fast Numba-accelerated correlation when available.
     """
     def spearman_ic(group):
-        f = group['factor']
+        f = group['factor'].values
         ic_cols = {}
         for col in group.columns:
             if col.endswith('D'):
-                ic_cols[col] = stats.spearmanr(f, group[col])[0]
+                ret_values = group[col].values
+                ic_cols[col] = fast_spearman_corr(f, ret_values)
         return pd.Series(ic_cols)
 
     ic = factor_data.groupby(level='date').apply(spearman_ic)
@@ -86,8 +159,12 @@ def factor_alpha_beta(factor_data: pd.DataFrame) -> pd.DataFrame:
     """
     Compute the alpha (excess returns) and beta (market exposure) of a factor.
     """
-    from statsmodels.regression.linear_model import OLS
-    from statsmodels.tools.tools import add_constant
+    try:
+        from statsmodels.regression.linear_model import OLS
+        from statsmodels.tools.tools import add_constant
+    except ImportError:
+        # If statsmodels not available, return empty result
+        return pd.DataFrame()
 
     return_cols = [c for c in factor_data.columns if c.endswith('D')]
     
@@ -99,11 +176,19 @@ def factor_alpha_beta(factor_data: pd.DataFrame) -> pd.DataFrame:
         # weight = factor / sum(abs(factor))
         # Simplest approach: use the factor itself as weight
         daily_returns = factor_data.groupby(level='date').apply(
-            lambda x: (x['factor'] * x[col]).sum() / x['factor'].abs().sum()
+            lambda x: (x['factor'] * x[col]).sum() / (x['factor'].abs().sum() + 1e-9)
         )
         
         market_returns = factor_data.groupby(level='date')[col].mean()
         
+        # Check alignment
+        common_idx = daily_returns.index.intersection(market_returns.index)
+        daily_returns = daily_returns.loc[common_idx]
+        market_returns = market_returns.loc[common_idx]
+        
+        if len(common_idx) < 5:
+            continue
+            
         # Regression: factor_return ~ alpha + beta * market_return
         X = add_constant(market_returns.values)
         model = OLS(daily_returns.values, X).fit()

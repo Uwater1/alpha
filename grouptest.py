@@ -4,10 +4,15 @@ import sys
 import importlib
 from pathlib import Path
 from typing import List, Dict, Any
-from alpha191.utils import load_stock_csv, load_benchmark_csv, get_benchmark_members, format_alpha_name
+from alpha191.utils import (
+    load_benchmark_csv, 
+    get_benchmark_members, 
+    format_alpha_name,
+    parallel_load_stocks_with_alpha
+)
 from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics
 
-def run_group_test(alpha_name: str, horizon: int = 20, benchmark: str = "hs300", m_quantiles: int = 10, plot: bool = False):
+def run_group_test(alpha_name: str, horizon: int = 20, benchmark: str = "hs300", m_quantiles: int = 10, plot: bool = False, n_jobs: int = -1):
     """
     Perform Group/Quantile Return Test on an alpha using the new assessment module.
     """
@@ -33,21 +38,10 @@ def run_group_test(alpha_name: str, horizon: int = 20, benchmark: str = "hs300",
     benchmark_df = load_benchmark_csv(benchmark)
     timeline = benchmark_df.index
     
-    factor_results = {}
-    price_results = {}
-    
-    print(f"Loading data for {len(codes)} stocks...")
-    for i, code in enumerate(codes):
-        try:
-            df = load_stock_csv(code, benchmark=benchmark)
-            df['benchmark_close'] = benchmark_df['close'].reindex(df.index)
-            df['benchmark_open'] = benchmark_df['open'].reindex(df.index)
-            
-            alpha_series = alpha_func(df)
-            factor_results[code] = alpha_series.astype(np.float32)
-            price_results[code] = df['close'].astype(np.float32)
-        except Exception:
-            continue
+    # Use parallel loading for significant speedup
+    factor_results, price_results = parallel_load_stocks_with_alpha(
+        codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
+    )
 
     if not factor_results:
         print("No data available for testing.")
@@ -102,8 +96,9 @@ if __name__ == "__main__":
     parser.add_argument("--benchmark", default="hs300", help="Benchmark (hs300, zz500, zz800)")
     parser.add_argument("--quantiles", type=int, default=10, help="Number of groups (default: 10)")
     parser.add_argument("--plot", action="store_true", help="Generate group returns plot")
+    parser.add_argument("--jobs", type=int, default=-1, help="Number of parallel workers (default: -1 = all CPUs)")
     
     args = parser.parse_args()
     
     alpha = format_alpha_name(args.alpha)
-    run_group_test(alpha, args.horizon, args.benchmark, args.quantiles, args.plot)
+    run_group_test(alpha, args.horizon, args.benchmark, args.quantiles, args.plot, args.jobs)
