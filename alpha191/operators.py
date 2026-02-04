@@ -893,6 +893,56 @@ def rank(x: np.ndarray) -> np.ndarray:
     return result
 
 
+def ind_neutralize(x: np.ndarray, groups: np.ndarray) -> np.ndarray:
+    """
+    Neutralize (de-mean) a vector x against group categories.
+
+    This is a cross-sectional operation. It calculates the mean for each group
+    and subtracts it from the corresponding elements in x.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Vector of values to neutralize (usually cross-section of stocks)
+    groups : np.ndarray
+        Vector of group identifiers (e.g., industry IDs) of same length as x
+
+    Returns
+    -------
+    np.ndarray
+        Neutralized values (x - group_mean)
+
+    Notes
+    -----
+    - Uses an efficient vectorized approach
+    - NaN values in x or groups are handled (NaN in x remains NaN)
+    - If a group has only NaN values, elements of that group in result will be NaN
+    """
+    x = np.asarray(x, dtype=np.float32)
+    groups = np.asarray(groups)
+
+    if len(x) != len(groups):
+        raise ValueError("x and groups must have the same length")
+
+    # Handle empty or single value
+    if len(x) <= 1:
+        return np.zeros_like(x) if len(x) == 1 else x
+
+    result = np.full_like(x, np.nan)
+    
+    # Get unique groups, excluding NaNs if any
+    unique_groups = np.unique(groups[~pd.isna(groups)])
+    
+    for g in unique_groups:
+        mask = (groups == g)
+        group_vals = x[mask]
+        if len(group_vals) > 0:
+            group_mean = np.nanmean(group_vals)
+            result[mask] = group_vals - group_mean
+            
+    return result
+
+
 def sign(x: np.ndarray) -> np.ndarray:
     """
     Sign function.
@@ -2295,4 +2345,5 @@ __all__ = [
     # Computations
     'compute_ret', 'compute_dtm', 'compute_dbm', 'compute_tr', 
     'compute_hd', 'compute_ld',
+    'ind_neutralize',
 ]

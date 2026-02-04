@@ -185,6 +185,43 @@ python grouptest.py 1 20 zz800 5
 - `range`: Index pool - `hs300`, `zz500`, or `zz800` (default: `hs300`)
 - `quantile`: Number of groups/quantiles (default: `10`)
 
+## Expression Alpha Parser
+
+The `alpha191.expression` module allows you to define alpha factors using string expressions. This is based on the logic extracted from `alphatools` and adapted for this project.
+
+### Usage
+
+```python
+from alpha191 import ExpressionAlpha
+
+# Define an alpha expression
+expr = "rank(delta(log(close), 1))"
+ea = ExpressionAlpha(expr)
+
+# Option 1: Generate Python code
+print(ea.to_python(func_name='my_alpha'))
+
+# Option 2: Get a function object directly
+alpha_func = ea.get_func()
+
+# Use with a DataFrame
+import pandas as pd
+from alpha191.utils import load_stock_csv
+
+df = load_stock_csv("sh_600016")
+factor_series = alpha_func(df)
+```
+
+### Supported Operators
+- **Basic Data**: `close`, `opens`, `high`, `low`, `volume`, `vwap`, `returns`
+- **Arithmetic**: `+`, `-`, `*`, `/`, `^`, `neg`, `abs`, `log`, `sign`
+- **Rolling Windows**: `ts_rank`, `ts_sum`, `ts_max`, `ts_min`, `stddev`, `correlation`, `covariance`, `delay`, `delta`
+- **Cross-sectional**: `rank`, `ind_neutralize(x, groups)`
+- **Conditional**: `condition ? then : else`, `>`, `<`, `==`, `||`
+
+> [!NOTE]
+> `ind_neutralize` (or `indneutralize`) requires a group identifier array (e.g., industry categories) as the second argument.
+
 ## Testing
 
 ```bash

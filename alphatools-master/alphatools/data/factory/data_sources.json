@@ -1,0 +1,6 @@
+{
+    "sample": {
+	"url": "/Users/jonathan/devwork/alphatools/alphatools/data/factory/sample.csv",
+	"schema": "var*{asof_date: datetime, sid: int64, value: float64}"
+    }
+}
