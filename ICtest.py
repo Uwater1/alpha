@@ -67,11 +67,11 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, p
     results = compute_performance_metrics(factor_data)
     
     # Print Results
-    print(f"  Assessment Results for {alpha_name.upper()}")
     print("-" * 40)
     print(f"IC Mean:         {results['ic'].mean().iloc[0]:.6f}")
     print(f"IC Std:          {results['ic'].std().iloc[0]:.6f}")
     print(f"ICIR:            {results['ic_summary'].loc['Risk-Adjusted IC (IR)'].iloc[0]:.6f}")
+    print(f"T-stat:          {results['ic_summary'].loc['T-stat'].iloc[0]:.6f}")
     print(f"Rank Autocorr:   {results['autocorr_mean']:.6f}")
     
     # Detailed Mean Returns by Quantile
