@@ -67,13 +67,7 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizon: int = 20, p
     results = compute_performance_metrics(factor_data)
     
     # Print Results
-    print("\n" + "="*40)
     print(f"  Assessment Results for {alpha_name.upper()}")
-    print("="*40)
-    
-    ic_summary = results['ic_summary']
-    print(ic_summary.to_string())
-    
     print("-" * 40)
     print(f"IC Mean:         {results['ic'].mean().iloc[0]:.6f}")
     print(f"IC Std:          {results['ic'].std().iloc[0]:.6f}")
