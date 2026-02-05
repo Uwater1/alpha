@@ -229,7 +229,7 @@ def parallel_load_stocks_with_alpha(
     
     # Determine number of workers
     if n_jobs == -1:
-        n_jobs = cpu_count()
+        n_jobs = cpu_count() - 1
     n_jobs = min(n_jobs, len(codes))
     
     # Load benchmark data once (shared across all workers)

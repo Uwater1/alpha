@@ -42,7 +42,6 @@ def get_clean_factor_and_forward_returns(
     long_factor = stack_wide_to_long(factor, 'factor')
     
     # 3. Combine
-    # 3. Combine
     merged_data = pd.DataFrame(index=long_factor.index)
     merged_data['factor'] = long_factor
     for p_str, ret_series in forward_returns.items():
