@@ -10,7 +10,8 @@ try:
     from .plotting import (
         create_summary_tear_sheet,
         plot_ic_ts,
-        plot_quantile_returns_bar
+        plot_quantile_returns_bar,
+        plot_cumulative_returns_comparison
     )
     from .tears import create_full_tear_sheet
 except ImportError as e:
@@ -25,4 +26,5 @@ except ImportError as e:
     create_summary_tear_sheet = _raise_missing_dependency_error
     plot_ic_ts = _raise_missing_dependency_error
     plot_quantile_returns_bar = _raise_missing_dependency_error
+    plot_cumulative_returns_comparison = _raise_missing_dependency_error
     create_full_tear_sheet = _raise_missing_dependency_error

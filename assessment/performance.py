@@ -234,6 +234,101 @@ def cumulative_returns(returns: pd.Series) -> pd.Series:
     """
     return (1 + returns).cumprod() - 1
 
+def calculate_portfolio_performance(returns: pd.Series, periods_per_year: int = 252) -> Dict[str, float]:
+    """
+    Computes annualized return, volatility, Sharpe ratio, max drawdown, and Calmar ratio.
+    """
+    if returns.empty:
+        return {
+            'ann_ret': np.nan, 'ann_vol': np.nan, 'sharpe': np.nan, 
+            'max_dd': np.nan, 'calmar': np.nan
+        }
+    
+    # Use log returns for easier compounding if needed, but simple returns are standard for daily
+    total_ret = (1 + returns).prod() - 1
+    n_years = len(returns) / periods_per_year
+    
+    ann_ret = (1 + total_ret) ** (1 / n_years) - 1 if n_years > 0 else np.nan
+    ann_vol = returns.std() * np.sqrt(periods_per_year)
+    sharpe = ann_ret / ann_vol if ann_vol > 0 else np.nan
+    
+    cum_ret = (1 + returns).cumprod()
+    running_max = cum_ret.expanding().max()
+    drawdown = (cum_ret - running_max) / running_max
+    max_dd = drawdown.min()
+    
+    calmar = ann_ret / abs(max_dd) if max_dd != 0 else np.nan
+    
+    return {
+        'ann_ret': ann_ret,
+        'ann_vol': ann_vol,
+        'sharpe': sharpe,
+        'max_dd': max_dd,
+        'calmar': calmar
+    }
+
+def quantile_performance_stats(factor_data: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+    """
+    Computes detailed stats for each quantile: Mean, SE, T-Stat, P-Value.
+    Also computes stats for the Long-Short spread.
+    """
+    return_cols = [c for c in factor_data.columns if c.endswith('D')]
+    all_stats = {}
+    
+    for col in return_cols:
+        # Daily mean returns per quantile
+        date_col = [level_name for level_name in factor_data.index.names if 'date' in str(level_name).lower()][0]
+        daily_q_ret = factor_data.groupby([date_col, 'factor_quantile'])[col].mean().unstack()
+        
+        # Stats per quantile
+        q_mean = daily_q_ret.mean()
+        q_std = daily_q_ret.std()
+        q_count = daily_q_ret.count()
+        q_se = q_std / np.sqrt(q_count)
+        q_tstat = q_mean / q_se
+        q_pvalue = stats.t.sf(np.abs(q_tstat), q_count - 1) * 2
+        
+        q_stats = pd.DataFrame(index=daily_q_ret.columns, columns=['Mean', 'Std. Error', 't-stat', 'p-value', 'ann_ret', 'ann_vol', 'sharpe', 'max_dd', 'calmar'])
+        q_stats.update(pd.DataFrame({
+            'Mean': q_mean,
+            'Std. Error': q_se,
+            't-stat': q_tstat,
+            'p-value': q_pvalue
+        }))
+        
+        # Long-Short stats (Top - Bottom)
+        max_q = daily_q_ret.columns.max()
+        min_q = daily_q_ret.columns.min()
+        if pd.notna(max_q) and pd.notna(min_q):
+            ls_daily = daily_q_ret[max_q] - daily_q_ret[min_q]
+            ls_mean = ls_daily.mean()
+            ls_std = ls_daily.std()
+            ls_count = ls_daily.count()
+            ls_se = ls_std / np.sqrt(ls_count)
+            ls_tstat = ls_mean / ls_se
+            ls_pvalue = stats.t.sf(np.abs(ls_tstat), ls_count - 1) * 2
+            
+            # Additional Portfolio Metrics for LS
+            ls_perf = calculate_portfolio_performance(ls_daily)
+            
+            ls_data = {
+                'Mean': ls_mean,
+                'Std. Error': ls_se,
+                't-stat': ls_tstat,
+                'p-value': ls_pvalue,
+                'ann_ret': ls_perf['ann_ret'],
+                'ann_vol': ls_perf['ann_vol'],
+                'sharpe': ls_perf['sharpe'],
+                'max_dd': ls_perf['max_dd'],
+                'calmar': ls_perf['calmar']
+            }
+            
+            q_stats.loc['Long-Short'] = pd.Series(ls_data)
+            
+        all_stats[col] = q_stats
+        
+    return all_stats
+
 def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     """
     Main entry point to compute all performance metrics.
@@ -288,6 +383,21 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     # Turnover (1D stability)
     autocorr = factor_rank_autocorrelation(factor_data, period=1)
     
+    # Detailed Quantile Stats
+    q_stats = quantile_performance_stats(factor_data)
+    
+    # Portfolio returns for Top, Bottom, and LS (for plotting)
+    date_col = [level_name for level_name in factor_data.index.names if 'date' in str(level_name).lower()][0]
+    daily_q_ret = factor_data.groupby([date_col, 'factor_quantile'])[ic.columns[0]].mean().unstack()
+    max_q = daily_q_ret.columns.max()
+    min_q = daily_q_ret.columns.min()
+    
+    port_returns = pd.DataFrame({
+        'Top': daily_q_ret[max_q],
+        'Bottom': daily_q_ret[min_q],
+        'Long-Short': daily_q_ret[max_q] - daily_q_ret[min_q]
+    })
+
     return {
         'ic': ic,
         'ic_summary': ic_summary,
@@ -296,5 +406,7 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
         'quantile_turnover': q_turnover,
         'alpha_beta': alpha_beta,
         'autocorr': autocorr,
-        'autocorr_mean': autocorr.mean()
+        'autocorr_mean': autocorr.mean(),
+        'q_stats': q_stats,
+        'port_returns': port_returns
     }
