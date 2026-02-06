@@ -60,25 +60,24 @@ def get_clean_factor_and_forward_returns(
                 return pd.Series([np.nan] * len(group), index=group.index)
         merged_data['factor_quantile'] = merged_data.groupby(level='date', group_keys=False)['factor'].apply(binning)
     else:
-        # Use quantiles - more efficient with apply
-        def quantize(group):
-            try:
-                if len(group.dropna()) < quantiles:
-                    return pd.Series([np.nan] * len(group), index=group.index)
-                return pd.qcut(group, quantiles, labels=False, duplicates='drop') + 1
-            except (ValueError, TypeError):
-                return pd.Series([np.nan] * len(group), index=group.index)
-        merged_data['factor_quantile'] = merged_data.groupby(level='date', group_keys=False)['factor'].apply(quantize)
+        # Vectorized Quantization using wide-matrix rank
+        # This is much faster than groupby().apply(qcut)
+        ranks = factor.rank(axis=1, pct=True)
+        # Convert percentiles to quantile bins
+        # We need to handle the wide-to-long mapping carefully
+        long_ranks = stack_wide_to_long(ranks, 'rank')
+        
+        # 1-indexed quantiles: ceil(rank * quantiles)
+        # Note: we drop duplicates if they result in fewer quantiles, but here we just use percentiles
+        quantized = (long_ranks * quantiles).apply(np.ceil)
+        # Clip just in case of precision issues (though pct rank is [0, 1])
+        merged_data['factor_quantile'] = quantized.clip(1, quantiles)
         
     # 6. Groupby (if provided)
     if groupby is not None:
         long_groups = stack_wide_to_long(groupby, 'group')
         merged_data['group'] = long_groups
         
-    # Drop rows with any NaN returns (Alphalens usually does this to ensure consistency)
-    # But we might want to keep them for IC calculation if we have at least one return.
-    # For now, we follow Alphalens loosely.
-    
     return merged_data.dropna()
 
 def print_table(table: pd.DataFrame, name: Optional[str] = None):

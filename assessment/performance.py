@@ -78,19 +78,23 @@ def factor_information_coefficient(factor_data: pd.DataFrame) -> pd.DataFrame:
     """
     Computes the Spearman Rank Correlation based Information Coefficient (IC)
     between factor values and forward returns.
-    Uses fast Numba-accelerated correlation when available.
     """
-    def spearman_ic(group):
-        f = group['factor'].values
-        ic_cols = {}
-        for col in group.columns:
-            if col.endswith('D'):
-                ret_values = group[col].values
-                ic_cols[col] = fast_spearman_corr(f, ret_values)
-        return pd.Series(ic_cols)
-
-    ic = factor_data.groupby(level='date').apply(spearman_ic)
-    return ic
+    # Unstack factor to Date x Asset
+    f_wide = factor_data['factor'].unstack()
+    f_ranked = f_wide.rank(axis=1)
+    
+    ic_results = {}
+    return_cols = [c for c in factor_data.columns if c.endswith('D')]
+    
+    for col in return_cols:
+        # Unstack return to Date x Asset
+        r_wide = factor_data[col].unstack()
+        r_ranked = r_wide.rank(axis=1)
+        
+        # Vectorized correlation between rows for each day
+        ic_results[col] = f_ranked.corrwith(r_ranked, axis=1)
+        
+    return pd.DataFrame(ic_results)
 
 def mean_information_coefficient(
     factor_data: pd.DataFrame,
@@ -107,27 +111,25 @@ def mean_information_coefficient(
 def quantile_turnover(quantile_factor: pd.Series, quantile: int, period: int = 1) -> pd.Series:
     """
     Computes the proportion of names in a factor quantile that were
-    not in that quantile in the previous period.
+    not in that quantile in the previous period using wide matrix operations.
     """
-    quant_factor = quantile_factor[quantile_factor == quantile]
+    # Unstack to get wide format (Date x Asset)
+    # This is much faster if we do it once outside, but for compatibility we do it here
+    q_wide = quantile_factor.unstack()
     
-    # We need to compute turnover for each date
-    dates = quant_factor.index.get_level_values('date').unique()
-    turnover = pd.Series(index=dates, dtype=float)
+    # Boolean mask for the specific quantile
+    mask = (q_wide == quantile)
     
-    for i in range(period, len(dates)):
-        current_date = dates[i]
-        prev_date = dates[i-period]
-        
-        current_assets = set(quant_factor.xs(current_date, level='date').index)
-        prev_assets = set(quant_factor.xs(prev_date, level='date').index)
-        
-        if not prev_assets:
-            turnover[current_date] = np.nan
-        else:
-            # Fraction of current assets that were NOT in the previous assets
-            turnover[current_date] = 1.0 - len(current_assets & prev_assets) / len(current_assets)
-            
+    # count (mask & mask.shift(period)) / count(mask)
+    # This avoids the explicit set operations and looping over dates
+    count_current = mask.sum(axis=1)
+    
+    # Overlap between current and previous
+    overlap = (mask & mask.shift(period)).sum(axis=1)
+    
+    # Turnover = 1 - overlap / count
+    turnover = 1.0 - overlap / count_current
+    
     return turnover.dropna()
 
 def mean_return_by_quantile(factor_data: pd.DataFrame) -> pd.DataFrame:
@@ -140,18 +142,42 @@ def mean_return_by_quantile(factor_data: pd.DataFrame) -> pd.DataFrame:
     mean_ret = factor_data.groupby('factor_quantile')[return_cols].mean()
     return mean_ret
 
+def monotonicity_score(mean_ret: pd.DataFrame) -> pd.Series:
+    """
+    Computes the monotonicity score for each return period.
+    Spearman rank correlation between quantile rank and mean return.
+    """
+    scores = {}
+    for col in mean_ret.columns:
+        # Quantile indices (1, 2, 3...) vs Mean Returns
+        # We use Spearman correlation
+        corr, _ = stats.spearmanr(mean_ret.index, mean_ret[col])
+        scores[col] = corr
+    return pd.Series(scores)
+
+def average_quantile_turnover(factor_data: pd.DataFrame, period: int = 1) -> pd.DataFrame:
+    """
+    Computes average turnover for each quantile.
+    """
+    quantiles = factor_data['factor_quantile'].unique()
+    quantiles = sorted([q for q in quantiles if not np.isnan(q)])
+    
+    turnover_results = {}
+    for q in quantiles:
+        turnover_series = quantile_turnover(factor_data['factor_quantile'], q, period=period)
+        turnover_results[int(q)] = turnover_series.mean()
+        
+    return pd.Series(turnover_results, name='Average Turnover')
+
 def factor_rank_autocorrelation(factor_data: pd.DataFrame, period: int = 1) -> pd.Series:
     """
     Computes the rank autocorrelation of the factor. 
-    This is a measure of factor stability (turnover).
     """
     # Unstack to get wide format (Date x Asset)
     factor_wide = factor_data['factor'].unstack()
     
-    # Calculate rank autocorrelation
-    # We rank cross-sectionally for each day
+    # Calculate rank autocorrelation using vectorized corrwith
     ranks = factor_wide.rank(axis=1)
-    
     autocorr = ranks.corrwith(ranks.shift(period), axis=1)
     return autocorr.dropna()
 
@@ -216,6 +242,36 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     mean_ret = mean_return_by_quantile(factor_data)
     alpha_beta = factor_alpha_beta(factor_data)
     
+    # Monotonicity
+    mono_score = monotonicity_score(mean_ret)
+    
+    # Quantile Turnover (Average across all days)
+    q_turnover = average_quantile_turnover(factor_data, period=1)
+    
+    # Calculate additional IC metrics
+    ic_winrate = {}
+    ic_median = {}
+    ic_skew = {}
+    ic_max_drawdown = {}
+    
+    for col in ic.columns:
+        ic_series = ic[col].dropna()
+        
+        # IC Winrate: percentage of positive IC values
+        ic_winrate[col] = (ic_series > 0).sum() / len(ic_series) if len(ic_series) > 0 else np.nan
+        
+        # IC Median
+        ic_median[col] = ic_series.median()
+        
+        # IC Skewness
+        ic_skew[col] = ic_series.skew()
+        
+        # IC Max Drawdown: max drawdown of cumulative IC
+        cumulative_ic = ic_series.cumsum()
+        running_max = cumulative_ic.expanding().max()
+        drawdown = cumulative_ic - running_max
+        ic_max_drawdown[col] = drawdown.min()
+    
     # Summary IC stats
     ic_summary = pd.DataFrame({
         'IC Mean': ic.mean(),
@@ -223,6 +279,10 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
         'Risk-Adjusted IC (IR)': ic.mean() / ic.std(),
         't-stat(IC)': (ic.mean() / ic.std()) * np.sqrt(len(ic)),
         'IC P-value': [stats.t.sf(np.abs(t), len(ic)-1)*2 for t in (ic.mean() / ic.std()) * np.sqrt(len(ic))],
+        'IC Winrate': pd.Series(ic_winrate),
+        'IC Median': pd.Series(ic_median),
+        'IC Skew': pd.Series(ic_skew),
+        'IC Max Drawdown': pd.Series(ic_max_drawdown),
     }).T
     
     # Turnover (1D stability)
@@ -232,6 +292,8 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
         'ic': ic,
         'ic_summary': ic_summary,
         'mean_ret': mean_ret,
+        'mono_score': mono_score,
+        'quantile_turnover': q_turnover,
         'alpha_beta': alpha_beta,
         'autocorr': autocorr,
         'autocorr_mean': autocorr.mean()

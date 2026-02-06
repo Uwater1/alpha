@@ -13,6 +13,16 @@ try:
         plot_quantile_returns_bar
     )
     from .tears import create_full_tear_sheet
-except ImportError:
-    # Plotting might fail if matplotlib/seaborn are not properly installed
-    pass
+except ImportError as e:
+    error_msg = str(e)
+    def _raise_missing_dependency_error(*args, **kwargs):
+        raise ImportError(
+            f"Plotting functionality is unavailable because of a missing dependency: {error_msg}. "
+            "Please ensure that all packages in requirements.txt (including matplotlib, seaborn, scipy) are installed. "
+            "If using a virtual environment, make sure it is activated."
+        )
+    
+    create_summary_tear_sheet = _raise_missing_dependency_error
+    plot_ic_ts = _raise_missing_dependency_error
+    plot_quantile_returns_bar = _raise_missing_dependency_error
+    create_full_tear_sheet = _raise_missing_dependency_error
