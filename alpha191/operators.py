@@ -548,8 +548,8 @@ def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
             continue
         
         # Average rank for ties (method='average')
-        # Rank = number of values less + 0.5 * number of values equal
-        current_rank = values_less + 0.5 * values_equal
+        # Rank = number of values less + 0.5 * (number of values equal + 1)
+        current_rank = values_less + 0.5 * (values_equal + 1)
         
         # Normalize to [0, 1] scale
         result[i] = np.float32((current_rank - 1) / (valid_count - 1))
