@@ -166,6 +166,7 @@ python ICtest.py 1 5 hs300
 - `ICIR`: Information Coefficient Information Ratio (IC_mean / IC_std)
 - `t_stat`: T-statistic for significance testing
 - `n_obs`: Number of observations
+- `RRE`: Reciprocal Rank Evaluation (Rank Stability)
 
 ## Group Return Test
 
@@ -192,7 +193,7 @@ The `assessment` package provides Alphalens-like performance metrics and visuali
 ### Features
 - **IC Analysis**: Spearman Rank IC, ICIR, t-stats, p-values, and IC distribution.
 - **Quantile Returns**: Mean returns and cumulative returns across factor quantiles.
-- **Turnover Analysis**: Factor stability via rank autocorrelation and top/bottom quantile turnover.
+- **Turnover Analysis**: Factor stability via rank autocorrelation, top/bottom quantile turnover, and **Reciprocal Rank Evaluation (RRE)**.
 - **Risk Metrics**: Factor alpha and beta relative to the market.
 - **Visualizations**: Comprehensive tear sheets including IC plots, quantile returns, and turnover charts.
 

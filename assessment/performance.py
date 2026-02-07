@@ -329,6 +329,49 @@ def quantile_performance_stats(factor_data: pd.DataFrame) -> Dict[str, pd.DataFr
         
     return all_stats
 
+def factor_rre(factor_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Computes the Reciprocal Rank Evaluation (RRE) score, which measures the stability
+    of factor rankings over time.
+    
+    RRE = 1 / (1 + KL_Divergence(Rank_Prob || Rank_Prob_Prev))
+    where Rank_Prob = Rank / Sum(Rank)
+    
+    Returns a DataFrame with RRE scores for each horizon (though RRE is typically horizon-agnostic 
+    and calculated on the factor values themselves, we return it as a single column 'RRE').
+    """
+    # Unstack factor to Date x Asset
+    f_wide = factor_data['factor'].unstack()
+    
+    # Calculate Ranks
+    ranks = f_wide.rank(axis=1)
+    
+    # Calculate Probabilities: P = Rank / Sum(Rank)
+    # Sum of ranks for N assets = N*(N+1)/2
+    row_sums = ranks.sum(axis=1)
+    probs = ranks.div(row_sums, axis=0)
+    
+    # Previous Probabilities
+    probs_prev = probs.shift(1)
+    
+    # KL Divergence: Sum( P * log(P / Q) )
+    # Add epsilon to avoid division by zero or log of zero
+    eps = 1e-8
+    
+    # We only compute for days where we have both current and prev
+    valid_idx = probs.index.intersection(probs_prev.index)
+    
+    p = probs.loc[valid_idx]
+    q = probs_prev.loc[valid_idx]
+    
+    # Compute KL divergence per day
+    kl_div = (p * np.log((p + eps) / (q + eps))).sum(axis=1, min_count=1)
+    
+    # RRE = 1 / (1 + KL)
+    rre_series = 1 / (1 + kl_div)
+    
+    return rre_series
+
 def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     """
     Main entry point to compute all performance metrics.
@@ -342,6 +385,10 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     
     # Quantile Turnover (Average across all days)
     q_turnover = average_quantile_turnover(factor_data, period=1)
+    
+    # RRE (Rank Stability)
+    rre_series = factor_rre(factor_data)
+    rre_mean = rre_series.mean()
     
     # Calculate additional IC metrics
     ic_winrate = {}
@@ -404,6 +451,7 @@ def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
         'mean_ret': mean_ret,
         'mono_score': mono_score,
         'quantile_turnover': q_turnover,
+        'rre': rre_mean,
         'alpha_beta': alpha_beta,
         'autocorr': autocorr,
         'autocorr_mean': autocorr.mean(),

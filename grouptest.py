@@ -106,7 +106,8 @@ def run_group_test(alpha_name: str, horizons: List[int] = [20], benchmark: str =
             ("Sharpe Ratio", f"{ls_row['sharpe']:.2f}"),
             ("Max Drawdown", f"{ls_row['max_dd']*100:.2f}%"),
             ("Calmar Ratio", f"{ls_row['calmar']:.2f}"),
-            ("Monotonicity", f"{results['mono_score'][h_str]:.4f}")
+            ("Monotonicity", f"{results['mono_score'][h_str]:.4f}"),
+            ("RRE (Stability)", f"{results.get('rre', np.nan):.4f}")
         ]
         
         for name, val in metrics:

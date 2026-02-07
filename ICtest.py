@@ -143,6 +143,12 @@ def generate_enhanced_report(alpha_name: str, benchmark: str, full: Dict[str, An
         else: stab = "Significant Decay"
         print(f"\nStability Assessment: {stab} (Recent/Full ratio: {diff:.2f})")
     
+    # 6. Rank Stability (RRE)
+    print("\n[6] Rank Stability (RRE)")
+    rre = full.get('rre', float('nan'))
+    print(f"RRE Score: {rre:.4f} (Higher is better, 0-1 range)")
+    print("Description: Measures how stable the stock rankings are from day to day (Reciprocal Rank Evaluation). High RRE means low turnover.")
+
     # Reset pandas display options
     pd.reset_option('display.float_format')
     print("\n" + "="*80)
