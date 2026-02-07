@@ -26,28 +26,11 @@ def alpha_180(df: pd.DataFrame) -> pd.Series:
     abs_delta_close_7 = np.abs(delta_close_7)
     
     # Calculate TSRANK(ABS(DELTA(CLOSE,7)),60)
-    # Note: TSRANK is time-series rank, we'll implement it as a rolling rank
-    tsrank_values = np.full(len(df), np.nan)
+    # Using Numba-optimized ts_rank operator for significantly better performance.
+    # We scale the normalized [0, 1] rank back to [1, window_size] to match original behavior.
     window = 60
-    
-    for i in range(window - 1, len(df)):
-        # Get the window of data
-        window_data = abs_delta_close_7[i-window+1:i+1]
-        
-        # Calculate rank within the window
-        if not np.isnan(window_data).all():
-            # Remove NaN values
-            valid_mask = ~np.isnan(window_data)
-            if valid_mask.sum() > 0:
-                valid_data = window_data[valid_mask]
-                if len(valid_data) > 0:
-                    # Calculate rank (1-based)
-                    sorted_indices = np.argsort(valid_data)
-                    ranks = np.empty_like(sorted_indices)
-                    ranks[sorted_indices] = np.arange(1, len(valid_data) + 1)
-                    
-                    # Map back to original positions
-                    tsrank_values[i] = ranks[-1]  # Rank of the last element
+    valid_count = ts_count(~np.isnan(abs_delta_close_7), window)
+    tsrank_values = ts_rank(abs_delta_close_7, window) * (valid_count - 1) + 1
     
     # Calculate SIGN(DELTA(CLOSE,7))
     sign_delta_close_7 = np.sign(delta_close_7)
