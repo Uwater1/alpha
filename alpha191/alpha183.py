@@ -99,8 +99,12 @@ def alpha_183(df: pd.DataFrame) -> pd.Series:
     """
     Compute Alpha183 factor.
 
-    Formula:
-        MAX(SUMAC(CLOSE-MEAN(CLOSE,24)))-MIN(SUMAC(CLOSE-MEAN(CLOSE,24)))/STD(CLOSE,24)
+    Formula (from paper, interpreted as R/S analysis):
+        (MAX(SUMAC(CLOSE-MEAN(CLOSE,24))) - MIN(SUMAC(CLOSE-MEAN(CLOSE,24)))) / STD(CLOSE,24)
+
+    Note: The original paper omits parentheses around the numerator. We interpret this
+    as classic Rescaled Range (R/S) analysis: Range / StdDev, which is the standard
+    financial interpretation of this pattern.
     """
     # Ensure we have required columns
     if 'close' not in df.columns:
