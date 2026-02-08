@@ -32,7 +32,7 @@ from .alpha026 import alpha_026, alpha026
 from .alpha027 import alpha_027, alpha027
 from .alpha028 import alpha_028, alpha028
 from .alpha029 import alpha_029, alpha029
-# alpha_030 尚未实现 (Haven't implemented)
+from .alpha030 import alpha_030, alpha030
 from .alpha031 import alpha_031, alpha031
 from .alpha032 import alpha_032, alpha032
 from .alpha033 import alpha_033, alpha033
@@ -222,6 +222,7 @@ from . import alpha026
 from . import alpha027
 from . import alpha028
 from . import alpha029
+from . import alpha030
 from . import alpha031
 from . import alpha032
 from . import alpha033
