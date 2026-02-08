@@ -80,7 +80,7 @@ def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, windo
 
         try:
             coeffs, _, _, _ = np.linalg.lstsq(X_window, y_window)
-        except:
+        except np.linalg.LinAlgError:
             # Handle singular matrix or other errors
             continue
 
