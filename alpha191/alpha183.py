@@ -52,8 +52,8 @@ def _alpha_183_impl(x: np.ndarray, window: int) -> np.ndarray:
 
         # 2. Calculate Cumsum of deviations, Min/Max of Cumsum, and SumSqDiff
         current_cumsum = 0.0
-        max_cumsum = -np.inf
-        min_cumsum = np.inf
+        max_cumsum = 0.0
+        min_cumsum = 0.0
         sum_sq_diff = 0.0
 
         for j in range(start_idx, end_idx):
