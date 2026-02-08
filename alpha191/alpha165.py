@@ -6,7 +6,7 @@ from .utils import run_alpha_factor
 def alpha_165(df: pd.DataFrame) -> pd.Series:
     """
     Compute Alpha165 factor.
-    Formula: MAX(SUMAC(CLOSE-MEAN(CLOSE,48)))-MIN(SUMAC(CLOSE-MEAN(CLOSE,48)))/STD(CLOSE,48)
+    Formula: (MAX(SUMAC(CLOSE-MEAN(CLOSE,48))) - MIN(SUMAC(CLOSE-MEAN(CLOSE,48)))) / STD(CLOSE,48)
     Interpretation: Rescaled Range (R/S) analysis over 48-day window.
     """
     close = df['close'].values
