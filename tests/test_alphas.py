@@ -41,7 +41,7 @@ from alpha191 import (
     alpha_168, alpha_169, alpha_170, alpha_171, alpha_172,
     alpha_173, alpha_174, alpha_175, alpha_176, alpha_177,
     alpha_178, alpha_179, alpha_180,     alpha_181, alpha_182,
-    # alpha_183,  # 尚未实现 (Haven't implemented)
+    alpha_183,
     alpha_184, alpha_185, alpha_186, alpha_187,
     alpha_188, alpha_189, alpha_190, alpha_191
 )
@@ -926,9 +926,12 @@ class TestAlphas(unittest.TestCase):
         result = alpha_182(self.df)
         self.assertEqual(len(result), len(self.df))
 
-    # def test_alpha183(self):  # 尚未实现 (Haven't implemented)
-    #     result = alpha_183(self.df)
-    #     self.assertEqual(len(result), len(self.df))
+    def test_alpha183(self):
+        result = alpha_183(self.df)
+        self.assertEqual(len(result), len(self.df))
+        # Valid from index 23 (window 24)
+        self.assertTrue(np.all(np.isnan(result.values[:23])))
+        self.assertFalse(np.isnan(result.values[23]))
 
     def test_alpha184(self):
         result = alpha_184(self.df)
