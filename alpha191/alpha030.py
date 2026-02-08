@@ -55,15 +55,7 @@ def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, windo
         x_slice = x[i - window + 1 : i + 1, :]
 
         # Check for NaNs in X window
-        has_nan = False
-        for r in range(window):
-            for c in range(n_factors):
-                val = x_slice[r, c]
-                if np.isnan(val):
-                    has_nan = True
-                    break
-            if has_nan:
-                break
+        has_nan = np.isnan(x_slice).any()
 
         if has_nan:
             continue
