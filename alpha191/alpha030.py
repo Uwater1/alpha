@@ -82,9 +82,7 @@ def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, windo
         current_y = y_window[-1]
 
         # Predicted y
-        y_pred = 0.0
-        for k in range(n_factors + 1):
-            y_pred += current_X[k] * coeffs[k]
+        y_pred = np.dot(current_X, coeffs)
 
         result[i] = current_y - y_pred
 
