@@ -2,7 +2,7 @@
 Alpha183 factor implementation.
 
 Formula:
-    MAX(SUMAC(CLOSE-MEAN(CLOSE,24)))-MIN(SUMAC(CLOSE-MEAN(CLOSE,24)))/STD(CLOSE,24)
+    (MAX(SUMAC(CLOSE-MEAN(CLOSE,24)))-MIN(SUMAC(CLOSE-MEAN(CLOSE,24))))/STD(CLOSE,24)
 
     Note: This is interpreted as Rescaled Range (R/S) analysis.
     For a window of 24 days:
