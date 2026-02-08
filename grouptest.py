@@ -160,7 +160,6 @@ if __name__ == "__main__":
     try:
         horizons = [int(h.strip()) for h in args.horizon.split(',')]
     except ValueError:
-        print("Error: horizon must be a comma-separated list of integers.")
-        sys.exit(1)
+        raise ValueError("Error: horizon must be a comma-separated list of integers.")
         
     run_group_test(alpha, horizons, args.benchmark, args.quantiles, args.plot, args.jobs)
