@@ -41,34 +41,21 @@ def get_stock_codes(benchmark: str) -> list:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python speedtest.py <alpha_number> [benchmark]")
-        print("Example: python speedtest.py 17 hs300")
-        print("Example: python speedtest.py 18")
-        print("Default benchmark: hs300")
-        sys.exit(1)
+        raise ValueError("Usage: python speedtest.py <alpha_number> [benchmark]\nExample: python speedtest.py 17 hs300\nDefault benchmark: hs300")
     
     try:
         alpha_num = int(sys.argv[1])
     except ValueError:
-        print(f"Error: Alpha number must be an integer, got '{sys.argv[1]}'")
-        sys.exit(1)
+        raise ValueError(f"Alpha number must be an integer, got '{sys.argv[1]}'")
     
     # Use hs300 as default benchmark if not provided
     benchmark = sys.argv[2] if len(sys.argv) > 2 else "hs300"
     
     # Get the alpha function
-    try:
-        alpha_func = get_alpha_func(alpha_num)
-    except ValueError as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    alpha_func = get_alpha_func(alpha_num)
     
     # Get stock codes
-    try:
-        stock_codes = get_stock_codes(benchmark)
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    stock_codes = get_stock_codes(benchmark)
     
     print(f"Running alpha_{alpha_num:03d} on {len(stock_codes)} stocks from {benchmark}")
     print("-" * 60)

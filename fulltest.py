@@ -94,17 +94,10 @@ def main():
     benchmark = sys.argv[1] if len(sys.argv) > 1 else "hs300"
     
     if len(sys.argv) > 2:
-        print("Usage: python fulltest.py [benchmark]")
-        print("Example: python fulltest.py hs300")
-        print("Default benchmark: hs300")
-        sys.exit(1)
+        raise ValueError("Usage: python fulltest.py [benchmark]\nExample: python fulltest.py hs300\nDefault benchmark: hs300")
     
     # Get stock codes
-    try:
-        stock_codes = get_stock_codes(benchmark)
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+    stock_codes = get_stock_codes(benchmark)
     
     print(f"Testing all alpha functions on {len(stock_codes)} stocks from {benchmark}")
     print("=" * 80)

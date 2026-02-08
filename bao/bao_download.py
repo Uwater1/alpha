@@ -6,8 +6,7 @@ import time
 
 def download_stock_data(input_file):
     if not os.path.exists(input_file):
-        print(f"Error: File {input_file} does not exist.")
-        sys.exit(1)
+        raise FileNotFoundError(f"File {input_file} does not exist.")
 
     # Logic: anything before _ in folder bao
     base_name = os.path.basename(input_file)
@@ -22,12 +21,10 @@ def download_stock_data(input_file):
     try:
         df = pd.read_csv(input_file)
     except Exception as e:
-        print(f"Error reading {input_file}: {e}")
-        sys.exit(1)
+        raise RuntimeError(f"Error reading {input_file}: {e}")
 
     if 'code' not in df.columns:
-        print("Error: Input CSV must have a 'code' column.")
-        sys.exit(1)
+        raise ValueError("Input CSV must have a 'code' column.")
 
     stock_codes = df['code'].tolist()
     print(f"Found {len(stock_codes)} stocks to download.")
@@ -35,9 +32,7 @@ def download_stock_data(input_file):
     #### 登陆系统 ####
     lg = bs.login()
     if lg.error_code != '0':
-        print('login respond error_code:'+lg.error_code)
-        print('login respond  error_msg:'+lg.error_msg)
-        sys.exit(1)
+        raise RuntimeError(f"login respond error_code: {lg.error_code}, error_msg: {lg.error_msg}")
 
     try:
         for code in stock_codes:
@@ -57,7 +52,7 @@ def download_stock_data(input_file):
                 continue
                 
             data_list = []
-            while (rs.error_code == '0') & rs.next():
+            while (rs.error_code == '0') and rs.next():
                 data_list.append(rs.get_row_data())
                 
             if data_list:
@@ -76,8 +71,6 @@ def download_stock_data(input_file):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python bao_download.py <index_csv_file>")
-        print("Example: python bao_download.py hs300_bao.csv")
-        sys.exit(1)
+        raise ValueError("Usage: python bao_download.py <index_csv_file>\nExample: python bao_download.py hs300_bao.csv")
     
     download_stock_data(sys.argv[1])

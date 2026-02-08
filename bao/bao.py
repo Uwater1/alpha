@@ -46,14 +46,7 @@ def fetch_and_save_stock_data(code):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Error: Please provide a stock code.")
-        print("Usage: python bao.py <stock_code>")
-        print("Example: python bao.py sh.600000")
-        sys.exit(1)
+        raise ValueError("Usage: python bao.py <stock_code>\nExample: python bao.py sh.600000")
 
     stock_code = sys.argv[1]
-    try:
-        fetch_and_save_stock_data(stock_code)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        sys.exit(1)
+    fetch_and_save_stock_data(stock_code)
