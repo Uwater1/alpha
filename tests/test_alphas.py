@@ -36,7 +36,7 @@ from alpha191 import (
     alpha_153, alpha_154, alpha_155, alpha_156, alpha_157,
     alpha_158, alpha_159, alpha_160, alpha_161, alpha_162,
     alpha_163, alpha_164,
-    # alpha_165,  # 尚未实现 (Haven't implemented)
+    alpha_165,
     alpha_166, alpha_167,
     alpha_168, alpha_169, alpha_170, alpha_171, alpha_172,
     alpha_173, alpha_174, alpha_175, alpha_176, alpha_177,
@@ -851,9 +851,12 @@ class TestAlphas(unittest.TestCase):
         result = alpha_164(self.df)
         self.assertEqual(len(result), len(self.df))
 
-    # def test_alpha165(self):  # 尚未实现 (Haven't implemented)
-    #     result = alpha_165(self.df)
-    #     self.assertEqual(len(result), len(self.df))
+    def test_alpha165(self):
+        result = alpha_165(self.df)
+        self.assertEqual(len(result), len(self.df))
+        # R/S uses 48 days window, so first 47 values should be NaN
+        self.assertTrue(np.all(np.isnan(result.values[:47])))
+        self.assertFalse(np.isnan(result.values[47]))
 
     def test_alpha166(self):
         result = alpha_166(self.df)

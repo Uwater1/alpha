@@ -2312,6 +2312,88 @@ def decay_exp(x: np.ndarray, d: int) -> np.ndarray:
     return _decay_exp_core(x, d)
 
 
+@njit(cache=True)
+def _rolling_cumsum_range_core(x: np.ndarray, n: int) -> np.ndarray:
+    """Numba-accelerated core for range of cumulative deviations from mean."""
+    n_len = len(x)
+    result = np.full(n_len, np.nan, dtype=np.float32)
+
+    if n > n_len:
+        return result
+
+    for i in range(n - 1, n_len):
+        # We need to process the window [i-n+1, i]
+
+        # Calculate mean of the window
+        window_sum = 0.0
+        valid_count = 0
+
+        # First pass: sum and valid count
+        for j in range(i - n + 1, i + 1):
+            if not np.isnan(x[j]):
+                window_sum += x[j]
+                valid_count += 1
+
+        if valid_count == 0:
+             continue
+
+        mean = window_sum / valid_count
+
+        # Second pass: cumulative deviations
+        current_sum = 0.0
+        max_cumsum = 0.0
+        min_cumsum = 0.0
+
+        has_valid_cumsum = False
+
+        for j in range(i - n + 1, i + 1):
+            if not np.isnan(x[j]):
+                dev = x[j] - mean
+                current_sum += dev
+                if current_sum > max_cumsum:
+                    max_cumsum = current_sum
+                if current_sum < min_cumsum:
+                    min_cumsum = current_sum
+                has_valid_cumsum = True
+
+        if has_valid_cumsum:
+             result[i] = np.float32(max_cumsum - min_cumsum)
+
+    return result
+
+
+def rolling_cumsum_range(x: np.ndarray, n: int) -> np.ndarray:
+    """
+    Range of cumulative deviations from mean over rolling window.
+
+    This is used in R/S analysis (Rescaled Range).
+    For each window of size n:
+    1. Calculate mean of window
+    2. Calculate deviations from mean
+    3. Calculate cumulative sum of deviations
+    4. Result = max(cumsum) - min(cumsum)
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Input array
+    n : int
+        Window size
+
+    Returns
+    -------
+    np.ndarray
+        Range of cumulative deviations
+    """
+    x = np.asarray(x, dtype=float)
+    n = int(n)
+
+    if n <= 0:
+        raise ValueError("n must be positive")
+
+    return _rolling_cumsum_range_core(x, n)
+
+
 # =============================================================================
 # Aliases for consistent rolling_* naming convention
 # =============================================================================
@@ -2346,4 +2428,6 @@ __all__ = [
     'compute_ret', 'compute_dtm', 'compute_dbm', 'compute_tr', 
     'compute_hd', 'compute_ld',
     'ind_neutralize',
+    # Special
+    'rolling_cumsum_range',
 ]
