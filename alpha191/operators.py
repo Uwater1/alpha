@@ -2341,8 +2341,8 @@ def _rolling_cumsum_range_core(x: np.ndarray, n: int) -> np.ndarray:
 
         # Second pass: cumulative deviations
         current_sum = 0.0
-        max_cumsum = -np.inf
-        min_cumsum = np.inf
+        max_cumsum = 0.0
+        min_cumsum = 0.0
 
         has_valid_cumsum = False
 
