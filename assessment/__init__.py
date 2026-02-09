@@ -1,6 +1,7 @@
 from .utils import get_clean_factor_and_forward_returns
 from .performance import (
     compute_performance_metrics,
+    compute_stability_metrics,
     factor_information_coefficient,
     mean_return_by_quantile,
     factor_rank_autocorrelation

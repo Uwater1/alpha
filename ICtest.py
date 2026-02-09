@@ -10,7 +10,7 @@ from alpha191.utils import (
     format_alpha_name,
     parallel_load_stocks_with_alpha
 )
-from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics
+from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics, compute_stability_metrics
 from datetime import datetime
 
 def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] = [1, 5, 10, 20, 30, 60], plot: bool = False, n_jobs: int = -1):
@@ -66,12 +66,15 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] 
         recent_results = compute_performance_metrics(recent_data)
     else:
         recent_results = None
+    
+    # Compute in-depth stability metrics
+    stability_results = compute_stability_metrics(factor_data, ic=full_results['ic'])
         
     # Generate Enhanced Report
-    generate_enhanced_report(alpha_name, benchmark, full_results, recent_results)
+    generate_enhanced_report(alpha_name, benchmark, full_results, recent_results, stability_results)
     
-def generate_enhanced_report(alpha_name: str, benchmark: str, full: Dict[str, Any], recent: Optional[Dict[str, Any]]):
-    """Prints a human-readable assessment report."""
+def generate_enhanced_report(alpha_name: str, benchmark: str, full: Dict[str, Any], recent: Optional[Dict[str, Any]], stability: Optional[Dict[str, Any]] = None):
+    """Prints a human-readable assessment report with in-depth stability analysis."""
     print("\n" + "="*80)
     print(f" ALPHA preformance Report: {alpha_name} ({benchmark}) ".center(80, "="))
     print("="*80)
@@ -148,6 +151,113 @@ def generate_enhanced_report(alpha_name: str, benchmark: str, full: Dict[str, An
     rre = full.get('rre', float('nan'))
     print(f"RRE Score: {rre:.4f} (Higher is better, 0-1 range)")
     print("Description: Measures how stable the stock rankings are from day to day (Reciprocal Rank Evaluation). High RRE means low turnover.")
+
+    # 7. In-Depth Stability Analysis (NEW)
+    if stability:
+        print("\n" + "="*80)
+        print(" [7] IN-DEPTH STABILITY ANALYSIS ".center(80, "="))
+        print("="*80)
+        
+        # 7a. Year-by-Year IC Breakdown
+        print("\n[7a] Year-by-Year IC Performance")
+        yearly = stability.get('yearly_breakdown')
+        if yearly is not None and not yearly.empty:
+            # Pivot for better display: Year as index, Horizon as columns
+            # Show only 20D horizon for compactness, or first available
+            horizon_col = '20D' if '20D' in yearly['Horizon'].values else yearly['Horizon'].iloc[0]
+            yearly_pivot = yearly[yearly['Horizon'] == horizon_col].set_index('Year')[['IC Mean', 'IR', 'Winrate', 'N Days']]
+            print(f"Horizon: {horizon_col}")
+            print(yearly_pivot.to_string())
+            
+            # Show consistency: std of yearly IC means
+            yearly_ic_std = yearly_pivot['IC Mean'].std()
+            yearly_ic_mean = yearly_pivot['IC Mean'].mean()
+            consistency = yearly_ic_mean / yearly_ic_std if yearly_ic_std > 0 else float('inf')
+            print(f"\nYear-over-Year Consistency (Mean/Std): {consistency:.2f}")
+        
+        # 7b. IC Trend Analysis
+        print("\n[7b] IC Trend Analysis")
+        ic_trend = stability.get('ic_trend', {})
+        if ic_trend:
+            trend_data = []
+            for horizon, metrics in ic_trend.items():
+                trend_data.append({
+                    'Horizon': horizon,
+                    'Daily Slope': f"{metrics.get('slope', 0):.6f}",
+                    'Annual Slope': f"{metrics.get('annual_slope', 0):.4f}",
+                    'R²': f"{metrics.get('r_squared', 0):.4f}",
+                    'Trend': metrics.get('interpretation', 'N/A')
+                })
+            trend_df = pd.DataFrame(trend_data)
+            print(trend_df.to_string(index=False))
+            print("\nInterpretation: Positive annual slope = improving, Negative = decaying")
+        
+        # 7c. Multi-Window Rolling IC
+        print("\n[7c] Multi-Window Rolling IC Stats (20D horizon)")
+        rolling_stats = stability.get('rolling_stats')
+        if rolling_stats is not None and not rolling_stats.empty:
+            # Format nicely for terminal
+            formatted = rolling_stats.map(lambda x: f"{x:.4f}" if isinstance(x, (int, float)) else x)
+            print(formatted.to_string())
+            print("\nCompares recent IC across different lookback periods")
+        else:
+            print("Insufficient data for multi-window analysis (requires >1Y of data)")
+        
+        # 7d. Regime Analysis
+        print("\n[7d] Regime Analysis (High IC vs Low IC Periods)")
+        regime_stats = stability.get('regime_stats', {})
+        if regime_stats:
+            for regime_name, regime_df in regime_stats.items():
+                print(f"\n{regime_name}:")
+                if isinstance(regime_df, pd.DataFrame):
+                    # Show transposed for compactness
+                    print(regime_df.T.to_string())
+        else:
+            print("Regime analysis unavailable")
+        
+        # 7e. Overall Stability Score
+        print("\n[7e] IC Consistency Score")
+        print("Measures how consistent the rolling IC stays over time (higher = more stable)")
+        print("-" * 60)
+        stability_scores = stability.get('stability_scores')
+        rolling_stats = stability.get('rolling_stats')
+        if stability_scores is not None:
+            for horizon, score in stability_scores.items():
+                if score >= 0.8:
+                    rating = "Excellent - Very consistent over time"
+                elif score >= 0.5:
+                    rating = "Good - Reasonably stable"
+                elif score >= 0.2:
+                    rating = "Fair - Some variability"
+                elif score > 0:
+                    rating = "Poor - High variability"
+                else:
+                    rating = "Unstable - IC sign changes over time"
+                
+                # Show score with visual bar
+                print(f"\n{horizon}:")
+                print(f"  Score: {score:.2f} ; Rating: {rating}")
+                
+                # Show min/max if available
+                if rolling_stats is not None and not rolling_stats.empty:
+                    if '1Y' in rolling_stats.columns:
+                        try:
+                            min_ic = rolling_stats.loc[('Min Rolling IC', horizon), '1Y'] if isinstance(rolling_stats.index, pd.MultiIndex) else rolling_stats.loc['Min Rolling IC', '1Y'][horizon]
+                        except:
+                            min_ic = rolling_stats.loc['Min Rolling IC', '1Y'] if 'Min Rolling IC' in rolling_stats.index else None
+                        try:
+                            max_ic = rolling_stats.loc[('Max Rolling IC', horizon), '1Y'] if isinstance(rolling_stats.index, pd.MultiIndex) else rolling_stats.loc['Max Rolling IC', '1Y'][horizon]
+                        except:
+                            max_ic = rolling_stats.loc['Max Rolling IC', '1Y'] if 'Max Rolling IC' in rolling_stats.index else None
+                        if min_ic is not None and max_ic is not None:
+                            print(f"  1Y Rolling IC Range: [{min_ic:.4f}, {max_ic:.4f}]")
+            
+            print("\n" + "-" * 60)
+            print("How to interpret:")
+            print("  1.0 = Rolling IC stays constant (perfectly stable)")
+            print("  0.5 = Lowest period IC is half of highest period")
+            print("  <0  = IC changes sign (unreliable alpha)")
+
 
     # Reset pandas display options
     pd.reset_option('display.float_format')

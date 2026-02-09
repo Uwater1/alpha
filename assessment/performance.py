@@ -372,6 +372,251 @@ def factor_rre(factor_data: pd.DataFrame) -> pd.DataFrame:
     
     return rre_series
 
+def compute_rolling_ic_stats(ic: pd.DataFrame, windows: List[int] = [252, 504, 756, 1260]) -> pd.DataFrame:
+    """
+    Computes rolling IC statistics for different window sizes.
+    
+    Args:
+        ic: DataFrame of daily IC values (columns are horizons like '1D', '5D', etc.)
+        windows: List of rolling window sizes in trading days (default: 1Y, 2Y, 3Y, 5Y)
+    
+    Returns:
+        DataFrame with rolling IC mean, std, and IR for each window size
+        Rows = metrics (IC Mean, IC Std, IR), Columns = windows (1Y, 2Y, etc.)
+    """
+    window_names = {252: '1Y', 504: '2Y', 756: '3Y', 1260: '5Y'}
+    
+    # We'll create a simplified table: show only the primary horizon (20D or first available)
+    # for each window, to keep output clean
+    primary_horizon = '20D' if '20D' in ic.columns else ic.columns[0]
+    
+    results = []
+    for window in windows:
+        if len(ic) < window:
+            continue
+        window_name = window_names.get(window, f'{window}D')
+        
+        rolling_mean = ic[primary_horizon].rolling(window=window).mean()
+        rolling_std = ic[primary_horizon].rolling(window=window).std()
+        
+        # Get the latest (most recent) rolling values
+        latest_mean = rolling_mean.iloc[-1]
+        latest_std = rolling_std.iloc[-1]
+        latest_ir = latest_mean / latest_std if latest_std > 0 else np.nan
+        
+        # Also compute the min/max of rolling IC to show range
+        min_rolling = rolling_mean.min()
+        max_rolling = rolling_mean.max()
+        
+        results.append({
+            'Window': window_name,
+            'IC Mean': latest_mean,
+            'IC Std': latest_std,
+            'IR': latest_ir,
+            'Min IC': min_rolling,
+            'Max IC': max_rolling
+        })
+    
+    if not results:
+        return pd.DataFrame()
+    
+    result_df = pd.DataFrame(results).set_index('Window').T
+    return result_df
+
+
+def compute_ic_trend(ic: pd.DataFrame) -> Dict[str, Any]:
+    """
+    Computes the trend of IC over time using linear regression.
+    A negative slope indicates factor decay, positive indicates improvement.
+    
+    Returns:
+        Dict with slope, interpretation, and R-squared for each horizon
+    """
+    results = {}
+    
+    for col in ic.columns:
+        ic_series = ic[col].dropna()
+        if len(ic_series) < 20:
+            results[col] = {'slope': np.nan, 'r_squared': np.nan, 'interpretation': 'Insufficient data'}
+            continue
+        
+        # Use day index as X
+        x = np.arange(len(ic_series))
+        y = ic_series.values
+        
+        # Linear regression
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+        
+        # Annualized slope (slope per 252 trading days)
+        annual_slope = slope * 252
+        
+        # Interpretation
+        if abs(annual_slope) < 0.005:
+            interpretation = "Stable"
+        elif annual_slope > 0.02:
+            interpretation = "Strong Improvement"
+        elif annual_slope > 0.005:
+            interpretation = "Mild Improvement"
+        elif annual_slope < -0.02:
+            interpretation = "Strong Decay"
+        else:
+            interpretation = "Mild Decay"
+        
+        results[col] = {
+            'slope': slope,
+            'annual_slope': annual_slope,
+            'r_squared': r_value ** 2,
+            'p_value': p_value,
+            'interpretation': interpretation
+        }
+    
+    return results
+
+
+def compute_yearly_ic_breakdown(ic: pd.DataFrame) -> pd.DataFrame:
+    """
+    Computes IC statistics broken down by year.
+    
+    Returns:
+        DataFrame with IC Mean, IR, and Winrate for each year and horizon
+    """
+    ic_with_year = ic.copy()
+    ic_with_year['year'] = ic_with_year.index.year
+    
+    yearly_stats = []
+    for year, year_data in ic_with_year.groupby('year'):
+        year_ic = year_data.drop(columns=['year'])
+        
+        ic_mean = year_ic.mean()
+        ic_std = year_ic.std()
+        ic_ir = ic_mean / ic_std
+        ic_winrate = (year_ic > 0).sum() / len(year_ic)
+        
+        for col in year_ic.columns:
+            yearly_stats.append({
+                'Year': int(year),
+                'Horizon': col,
+                'IC Mean': ic_mean[col],
+                'IC Std': ic_std[col],
+                'IR': ic_ir[col],
+                'Winrate': ic_winrate[col],
+                'N Days': len(year_ic)
+            })
+    
+    return pd.DataFrame(yearly_stats)
+
+
+def compute_regime_analysis(ic: pd.DataFrame, market_returns: Optional[pd.Series] = None) -> Dict[str, pd.DataFrame]:
+    """
+    Computes IC statistics in different market regimes (bull vs bear).
+    
+    If market_returns is not provided, uses the IC index to infer regimes
+    based on recent performance.
+    
+    Args:
+        ic: DataFrame of daily IC values
+        market_returns: Optional Series of market returns to define regimes
+    
+    Returns:
+        Dict with 'bull' and 'bear' DataFrames containing IC stats for each regime
+    """
+    if market_returns is not None:
+        # Use provided market returns to define regimes
+        aligned_returns = market_returns.reindex(ic.index).dropna()
+        # 60-day rolling return to define regime
+        rolling_ret = aligned_returns.rolling(60).sum()
+        bull_mask = rolling_ret > 0
+        bear_mask = rolling_ret <= 0
+    else:
+        # Simple regime: split by median IC or use time-based split
+        # Use rolling 60-day IC as regime indicator (high IC period vs low IC period)
+        rolling_ic = ic.iloc[:, 0].rolling(60).mean()  # Use first horizon
+        median_rolling = rolling_ic.median()
+        bull_mask = rolling_ic >= median_rolling
+        bear_mask = rolling_ic < median_rolling
+    
+    # Reindex masks to IC index
+    bull_mask = bull_mask.reindex(ic.index).fillna(False)
+    bear_mask = bear_mask.reindex(ic.index).fillna(False)
+    
+    results = {}
+    
+    for regime_name, mask in [('Up Market', bull_mask), ('Down Market', bear_mask)]:
+        regime_ic = ic[mask]
+        if len(regime_ic) < 5:
+            continue
+        
+        regime_stats = pd.DataFrame({
+            'IC Mean': regime_ic.mean(),
+            'IC Std': regime_ic.std(),
+            'IR': regime_ic.mean() / regime_ic.std(),
+            'Winrate': (regime_ic > 0).sum() / len(regime_ic),
+            'N Days': len(regime_ic)
+        })
+        results[regime_name] = regime_stats
+    
+    return results
+
+
+def compute_stability_metrics(factor_data: pd.DataFrame, ic: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """
+    Main entry point for in-depth stability analysis.
+    
+    Computes:
+    - Multi-window rolling IC stats (1Y, 2Y, 3Y, 5Y)
+    - Year-by-year IC breakdown
+    - IC trend analysis (linear regression)
+    - Regime analysis (bull vs bear market)
+    
+    Args:
+        factor_data: The factor data DataFrame with MultiIndex (date, asset)
+        ic: Optional pre-computed IC DataFrame. If not provided, will compute it.
+    
+    Returns:
+        Dict containing all stability metrics
+    """
+    if ic is None:
+        ic = factor_information_coefficient(factor_data)
+    
+    # 1. Multi-window rolling IC
+    rolling_stats = compute_rolling_ic_stats(ic)
+    
+    # 2. Year-by-year breakdown
+    yearly_breakdown = compute_yearly_ic_breakdown(ic)
+    
+    # 3. IC Trend
+    ic_trend = compute_ic_trend(ic)
+    
+    # 4. Regime analysis (using IC itself as proxy for market regime)
+    regime_stats = compute_regime_analysis(ic)
+    
+    # 5. Calculate overall stability score
+    # Stability score = ratio of min rolling IC mean to max rolling IC mean
+    # Higher = more stable
+    stability_scores = {}
+    for col in ic.columns:
+        rolling_mean = ic[col].rolling(252).mean().dropna()
+        if len(rolling_mean) > 0:
+            min_val = rolling_mean.min()
+            max_val = rolling_mean.max()
+            # Use absolute values for consistency assessment
+            if max_val != 0:
+                consistency = min_val / max_val if min_val * max_val > 0 else 0
+            else:
+                consistency = 0
+            stability_scores[col] = consistency
+        else:
+            stability_scores[col] = np.nan
+    
+    return {
+        'rolling_stats': rolling_stats,
+        'yearly_breakdown': yearly_breakdown,
+        'ic_trend': ic_trend,
+        'regime_stats': regime_stats,
+        'stability_scores': pd.Series(stability_scores)
+    }
+
+
 def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
     """
     Main entry point to compute all performance metrics.
