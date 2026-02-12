@@ -49,23 +49,31 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] 
     price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
     
     # Use assessment module with optimized parameters
-    factor_data = get_clean_factor_and_forward_returns(
+    factor_data, f_wide, q_wide = get_clean_factor_and_forward_returns(
         factor_matrix,
         price_matrix,
         periods=horizons,
         quantiles=10,
-        max_loss=0.35  # Allow more data loss for speed
+        max_loss=0.35,  # Allow more data loss for speed
+        return_wide=True
     )
     
+    # Sync wide matrices with dropped dates in factor_data
+    valid_dates = factor_data.index.get_level_values('date').unique()
+    f_wide = f_wide.reindex(valid_dates)
+    q_wide = q_wide.reindex(valid_dates)
+    
     # Robustness Check (Last 3 years vs All)
-    full_results = compute_performance_metrics(factor_data)
+    full_results = compute_performance_metrics(factor_data, f_wide=f_wide, q_wide=q_wide)
     
     last_date = factor_data.index.get_level_values('date').max()
     three_years_ago = last_date - pd.DateOffset(years=3)
     recent_data = factor_data[factor_data.index.get_level_values('date') >= three_years_ago]
     
     if not recent_data.empty:
-        recent_results = compute_performance_metrics(recent_data)
+        f_wide_recent = f_wide.loc[f_wide.index >= three_years_ago]
+        q_wide_recent = q_wide.loc[q_wide.index >= three_years_ago]
+        recent_results = compute_performance_metrics(recent_data, f_wide=f_wide_recent, q_wide=q_wide_recent)
     else:
         recent_results = None
     

@@ -63,15 +63,21 @@ def run_group_test(alpha_name: str, horizons: List[int] = [20], benchmark: str =
     price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
     
     # Use assessment module with optimized parameters
-    factor_data = get_clean_factor_and_forward_returns(
+    factor_data, f_wide, q_wide = get_clean_factor_and_forward_returns(
         factor_matrix,
         price_matrix,
         periods=horizons,
         quantiles=m_quantiles,
-        max_loss=0.35  # Allow more data loss for speed
+        max_loss=0.35,  # Allow more data loss for speed
+        return_wide=True
     )
     
-    results = compute_performance_metrics(factor_data)
+    # Sync wide matrices with dropped dates in factor_data
+    valid_dates = factor_data.index.get_level_values('date').unique()
+    f_wide = f_wide.reindex(valid_dates)
+    q_wide = q_wide.reindex(valid_dates)
+    
+    results = compute_performance_metrics(factor_data, f_wide=f_wide, q_wide=q_wide)
     
     # Display Results for each horizon
     for h in horizons:

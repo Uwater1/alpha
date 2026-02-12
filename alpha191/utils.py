@@ -69,12 +69,17 @@ def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
     if file_path is None:
         raise FileNotFoundError(f"File '{code}.csv' not found for benchmark {benchmark}")
 
+    # Faster CSV loading: skip parse_dates, use engine='c'
     df = pd.read_csv(
         str(file_path),
-        parse_dates=['date'],
-        index_col='date'
+        engine='c',
+        low_memory=False,
+        memory_map=True
     )
-    df = df.sort_index()
+    # Manual date conversion is often faster than parse_dates
+    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+    df.set_index('date', inplace=True)
+    df.sort_index(inplace=True)
     df = _ensure_vwap(df)
     
     float_cols = df.select_dtypes(include=['float64']).columns
@@ -234,11 +239,12 @@ def parallel_load_stocks_with_alpha(
     tuple : (factor_results, price_results)
         Dictionaries mapping code to alpha series and price series
     """
-    from multiprocessing import Pool, cpu_count
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from multiprocessing import cpu_count
     
     # Determine number of workers
     if n_jobs == -1:
-        n_jobs = cpu_count() - 1
+        n_jobs = cpu_count()
     n_jobs = min(n_jobs, len(codes))
     
     # Load benchmark data once (shared across all workers)
@@ -248,12 +254,14 @@ def parallel_load_stocks_with_alpha(
     args_list = [(code, alpha_func, benchmark, benchmark_df) for code in codes]
     
     if show_progress:
-        print(f"Loading {len(codes)} stocks using {n_jobs} workers...")
+        print(f"Loading {len(codes)} stocks using {n_jobs} threads...")
     
-    # Parallel execution
+    # Threaded execution (usually faster for I/O and low-overhead for data return)
+    results = []
     if n_jobs > 1:
-        with Pool(processes=n_jobs) as pool:
-            results = pool.map(_load_single_stock_with_alpha, args_list)
+        with ThreadPoolExecutor(max_workers=n_jobs) as executor:
+            # Map returns results in order
+            results = list(executor.map(_load_single_stock_with_alpha, args_list))
     else:
         # Single-threaded fallback
         results = [_load_single_stock_with_alpha(args) for args in args_list]

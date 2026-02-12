@@ -21,12 +21,14 @@ def get_clean_factor_and_forward_returns(
     groupby: Optional[pd.DataFrame] = None,
     binning_by_group: bool = False,
     max_loss: float = 0.35,
-    zero_aware: bool = False
-) -> pd.DataFrame:
+    zero_aware: bool = False,
+    return_wide: bool = False
+) -> Union[pd.DataFrame, tuple]:
     """
     A bridge function similar to Alphalens' get_clean_factor_and_forward_returns.
     Expects wide DataFrames (Date x Asset) for factor and prices.
     Returns a MultiIndex DataFrame (date, asset) formatted for Alphalens performance functions.
+    If return_wide is True, also returns (factor, quantized_factor, forward_returns_dict)
     """
     if isinstance(periods, int):
         periods = [periods]
@@ -60,6 +62,7 @@ def get_clean_factor_and_forward_returns(
             except ValueError:
                 return pd.Series([np.nan] * len(group), index=group.index)
         merged_data['factor_quantile'] = merged_data.groupby(level='date', group_keys=False)['factor'].apply(binning)
+        q_wide = merged_data['factor_quantile'].unstack()
     else:
         # Vectorized Quantization using wide-matrix rank - optimized
         ranks = factor.rank(axis=1, pct=True)
@@ -71,12 +74,18 @@ def get_clean_factor_and_forward_returns(
         # Clip just in case of precision issues
         merged_data['factor_quantile'] = pd.Series(quantized, index=long_ranks.index).clip(1, quantiles).astype(np.int8)
         
+        # Quantized wide matrix
+        q_wide = np.ceil(ranks * quantiles).clip(1, quantiles).fillna(-1).astype(np.int8)
+        
     # 6. Groupby (if provided)
     if groupby is not None:
         long_groups = stack_wide_to_long(groupby, 'group')
         merged_data['group'] = long_groups
         
-    return merged_data.dropna()
+    long_res = merged_data.dropna()
+    if return_wide:
+        return long_res, factor, q_wide
+    return long_res
 
 def print_table(table: pd.DataFrame, name: Optional[str] = None):
     """Simple table printer."""

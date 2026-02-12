@@ -27,6 +27,10 @@ import pandas as pd
 import warnings
 from scipy import stats
 from numba import njit
+try:
+    from assessment.fast_ops import fast_rank
+except ImportError:
+    fast_rank = None
 
 
 # =============================================================================
@@ -860,6 +864,12 @@ def rank(x: np.ndarray) -> np.ndarray:
     - This function uses scipy.stats.rankdata (no JIT needed)
     """
     x = np.asarray(x, dtype=np.float32)
+
+    # Use fast C++ implementation if available
+    if fast_rank is not None:
+        res = fast_rank(x)
+        if res is not None:
+            return res
 
     # Handle empty array
     if len(x) == 0:

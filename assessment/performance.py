@@ -14,6 +14,8 @@ except ImportError:
         return decorator if not args else decorator(args[0])
 
 
+from .fast_ops import fast_matrix_ic, fast_quantile_means, fast_quantile_turnover
+
 @jit(nopython=True, cache=True)
 def _fast_pearson_corr(x, y):
     """
@@ -74,47 +76,57 @@ def fast_spearman_corr(x, y):
         # Fallback to numpy's corrcoef
         return np.corrcoef(x_ranked, y_ranked)[0, 1]
 
-def factor_information_coefficient(factor_data: pd.DataFrame) -> pd.DataFrame:
+def factor_information_coefficient(factor_data: pd.DataFrame, f_wide: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Computes the Spearman Rank Correlation based Information Coefficient (IC)
     between factor values and forward returns. Optimized for performance.
     """
-    # Unstack factor to Date x Asset - use float32 for efficiency
-    f_wide = factor_data['factor'].unstack().astype(np.float32)
-    f_ranked = f_wide.rank(axis=1, method='average')
+    if f_wide is None:
+        f_wide = factor_data['factor'].unstack().astype(np.float32)
     
     ic_results = {}
     return_cols = [c for c in factor_data.columns if c.endswith('D')]
     
+    # Pre-rank factor once if not using fast_matrix_ic
+    f_ranked = None
+    if not fast_matrix_ic:
+        f_ranked = f_wide.rank(axis=1, method='average')
+    
     for col in return_cols:
-        # Unstack return to Date x Asset - use float32
-        r_wide = factor_data[col].unstack().astype(np.float32)
-        r_ranked = r_wide.rank(axis=1, method='average')
+        r_wide = factor_data[col].unstack().astype(np.float32).reindex(f_wide.index)
         
-        # Optimized vectorized correlation using numpy
-        # Compute correlation row by row for better memory efficiency
-        correlations = []
-        for i in range(len(f_ranked)):
-            f_row = f_ranked.iloc[i].values
-            r_row = r_ranked.iloc[i].values
+        # Use fast C++ implementation if available
+        ic_values = fast_matrix_ic(f_wide.values, r_wide.values)
+        
+        if ic_values is not None:
+            ic_results[col] = pd.Series(ic_values, index=f_wide.index)
+        else:
+            # Fallback to optimized Python/Numba
+            if f_ranked is None:
+                f_ranked = f_wide.rank(axis=1, method='average')
+            r_ranked = r_wide.rank(axis=1, method='average')
             
-            # Remove NaN pairs
-            mask = ~(np.isnan(f_row) | np.isnan(r_row))
-            if mask.sum() < 2:
-                correlations.append(np.nan)
-                continue
+            correlations = []
+            for i in range(len(f_ranked)):
+                f_row = f_ranked.iloc[i].values
+                r_row = r_ranked.iloc[i].values
                 
-            f_clean = f_row[mask]
-            r_clean = r_row[mask]
+                # Remove NaN pairs
+                mask = ~(np.isnan(f_row) | np.isnan(r_row))
+                if mask.sum() < 2:
+                    correlations.append(np.nan)
+                    continue
+                    
+                f_clean = f_row[mask]
+                r_clean = r_row[mask]
+                
+                if HAS_NUMBA:
+                    corr = _fast_pearson_corr(f_clean, r_clean)
+                else:
+                    corr = np.corrcoef(f_clean, r_clean)[0, 1]
+                correlations.append(corr)
             
-            # Use fast correlation if available
-            if HAS_NUMBA:
-                corr = _fast_pearson_corr(f_clean, r_clean)
-            else:
-                corr = np.corrcoef(f_clean, r_clean)[0, 1]
-            correlations.append(corr)
-        
-        ic_results[col] = pd.Series(correlations, index=f_ranked.index)
+            ic_results[col] = pd.Series(correlations, index=f_ranked.index)
         
     return pd.DataFrame(ic_results)
 
@@ -154,13 +166,30 @@ def quantile_turnover(quantile_factor: pd.Series, quantile: int, period: int = 1
     
     return turnover.dropna()
 
-def mean_return_by_quantile(factor_data: pd.DataFrame) -> pd.DataFrame:
+def mean_return_by_quantile(factor_data: pd.DataFrame, q_wide: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Computes mean returns for factor quantiles.
     """
-    # Columns that end with 'D' are return columns
     return_cols = [c for c in factor_data.columns if c.endswith('D')]
     
+    if q_wide is not None:
+        # Optimized path using wide matrices
+        n_quantiles = int(q_wide.max().max())
+        results = {}
+        for col in return_cols:
+            r_wide = factor_data[col].unstack().astype(np.float32).reindex(q_wide.index)
+            means = fast_quantile_means(q_wide.values, r_wide.values, n_quantiles)
+            if means is not None:
+                results[col] = pd.Series(means, index=range(1, n_quantiles + 1))
+            else:
+                # Fallback to pandas
+                results[col] = factor_data.groupby('factor_quantile')[col].mean()
+        
+        res_df = pd.DataFrame(results)
+        res_df.index.name = 'factor_quantile'
+        return res_df
+
+    # Standard path
     mean_ret = factor_data.groupby('factor_quantile')[return_cols].mean()
     return mean_ret
 
@@ -173,14 +202,24 @@ def monotonicity_score(mean_ret: pd.DataFrame) -> pd.Series:
     for col in mean_ret.columns:
         # Quantile indices (1, 2, 3...) vs Mean Returns
         # We use Spearman correlation
-        corr, _ = stats.spearmanr(mean_ret.index, mean_ret[col])
+        mask = ~np.isnan(mean_ret[col])
+        if mask.sum() < 2:
+            scores[col] = np.nan
+            continue
+        corr, _ = stats.spearmanr(mean_ret.index[mask], mean_ret[col][mask])
         scores[col] = corr
     return pd.Series(scores)
 
-def average_quantile_turnover(factor_data: pd.DataFrame, period: int = 1) -> pd.DataFrame:
+def average_quantile_turnover(factor_data: pd.DataFrame, period: int = 1, q_wide: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Computes average turnover for each quantile.
     """
+    if q_wide is not None:
+        n_quantiles = int(q_wide.max().max())
+        means = fast_quantile_turnover(q_wide.values, n_quantiles, period)
+        if means is not None:
+            return pd.Series(means, index=range(1, n_quantiles + 1), name='Average Turnover')
+
     quantiles = factor_data['factor_quantile'].unique()
     quantiles = sorted([q for q in quantiles if not np.isnan(q)])
     
@@ -351,7 +390,7 @@ def quantile_performance_stats(factor_data: pd.DataFrame) -> Dict[str, pd.DataFr
         
     return all_stats
 
-def factor_rre(factor_data: pd.DataFrame) -> pd.DataFrame:
+def factor_rre(factor_data: pd.DataFrame, f_wide: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Computes the Reciprocal Rank Evaluation (RRE) score, which measures the stability
     of factor rankings over time.
@@ -363,7 +402,8 @@ def factor_rre(factor_data: pd.DataFrame) -> pd.DataFrame:
     and calculated on the factor values themselves, we return it as a single column 'RRE').
     """
     # Unstack factor to Date x Asset
-    f_wide = factor_data['factor'].unstack()
+    if f_wide is None:
+        f_wide = factor_data['factor'].unstack()
     
     # Calculate Ranks
     ranks = f_wide.rank(axis=1)
@@ -639,22 +679,28 @@ def compute_stability_metrics(factor_data: pd.DataFrame, ic: Optional[pd.DataFra
     }
 
 
-def compute_performance_metrics(factor_data: pd.DataFrame) -> Dict[str, Any]:
+def compute_performance_metrics(factor_data: pd.DataFrame, f_wide: Optional[pd.DataFrame] = None, q_wide: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
     """
     Main entry point to compute all performance metrics.
     """
-    ic = factor_information_coefficient(factor_data)
-    mean_ret = mean_return_by_quantile(factor_data)
+    # Unstack factor and quantile once to avoid repeated unstacking
+    if f_wide is None:
+        f_wide = factor_data['factor'].unstack().astype(np.float32)
+    if q_wide is None:
+        q_wide = factor_data['factor_quantile'].unstack().fillna(-1).astype(np.int8)
+    
+    ic = factor_information_coefficient(factor_data, f_wide=f_wide)
+    mean_ret = mean_return_by_quantile(factor_data, q_wide=q_wide)
     alpha_beta = factor_alpha_beta(factor_data)
     
     # Monotonicity
     mono_score = monotonicity_score(mean_ret)
     
     # Quantile Turnover (Average across all days)
-    q_turnover = average_quantile_turnover(factor_data, period=1)
+    q_turnover = average_quantile_turnover(factor_data, period=1, q_wide=q_wide)
     
     # RRE (Rank Stability)
-    rre_series = factor_rre(factor_data)
+    rre_series = factor_rre(factor_data, f_wide=f_wide)
     rre_mean = rre_series.mean()
     
     # Calculate additional IC metrics
