@@ -1,0 +1,134 @@
+Assessing alpha010 on zz800 with horizons [1, 5, 10, 20, 30, 60] days ...
+Loading 800 stocks using 15 workers...
+Successfully loaded 800/800 stocks (0 failed)
+
+================================================================================
+================== ALPHA preformance Report: alpha010 (zz800) ==================
+================================================================================
+
+[1] Information Coefficient (IC) Summary
+                              1D         5D        10D        20D         30D         60D
+IC Mean                -0.016844  -0.016058  -0.019307  -0.026137   -0.032127   -0.039755
+IC Std.                 0.185579   0.198556   0.205002   0.208438    0.211433    0.205320
+Risk-Adjusted IC (IR)  -0.090763  -0.080872  -0.094179  -0.125396   -0.151948   -0.193625
+t-stat(IC)             -4.430705  -3.947842  -4.597449  -6.121327   -7.417514   -9.452006
+IC P-value              0.000010   0.000081   0.000005   0.000000    0.000000    0.000000
+IC Winrate              0.475031   0.488880   0.494335   0.458666    0.451532    0.440621
+IC Median              -0.012965  -0.010449  -0.002348  -0.022312   -0.026921   -0.035748
+IC Skew                -0.133957  -0.274686  -0.237048  -0.254615   -0.158091   -0.086235
+IC Max Drawdown       -41.485140 -53.197384 -65.784838 -84.016037 -102.515655 -135.836003
+
+Assessment: Weak (Based on 20D IC: -0.0261, IR: -0.1254)
+
+[2] IC Decay Curve
+   1D: -0.0168 ###
+   5D: -0.0161 ###
+  10D: -0.0193 ###
+  20D: -0.0261 #####
+  30D: -0.0321 ######
+  60D: -0.0398 #######
+
+[3] QUANTILE METRICS (ANALYSIS (SPREAD & Monotonicity)
+                     1D        5D       10D       20D       30D       60D
+Q10-Q1 Spread -0.000158 -0.000692 -0.001560 -0.003260 -0.005050 -0.007742
+Monotonicity  -0.684848 -0.466667 -0.478788 -0.466667 -0.515152 -0.406061
+
+[4] Avergae Daily Turnover By Quantile
+                       1        2        3        4        5        6        7        8        9        10
+Average Turnover 0.172424 0.144873 0.139371 0.131199 0.122299 0.111639 0.096806 0.079995 0.060419 0.032353
+
+[5] Robustness: Recent 3 Years Performance
+          Metric  Full Period  Recent 3Y
+   IC Mean (20D)    -0.026137  -0.061840
+     IC IR (20D)    -0.125396  -0.337017
+IC Winrate (20D)     0.458666   0.368638
+
+Stability Assessment: Very Stable (Recent/Full ratio: 2.34)
+
+[6] Rank Stability (RRE)
+RRE Score: 0.9597 (Higher is better, 0-1 range)
+Description: Measures how stable the stock rankings are from day to day (Reciprocal Rank Evaluation). High RRE means low turnover.
+
+================================================================================
+======================= [7] IN-DEPTH STABILITY ANALYSIS ========================
+================================================================================
+
+[7a] Year-by-Year IC Performance
+Horizon: 20D
+       IC Mean        IR  Winrate  N Days
+Year                                     
+2016 -0.078030 -0.427136 0.322314     242
+2017  0.007776  0.044733 0.536885     244
+2018 -0.024657 -0.134394 0.518519     243
+2019  0.080659  0.565102 0.635246     244
+2020  0.086186  0.381161 0.588477     243
+2021 -0.092826 -0.321974 0.469136     243
+2022 -0.061814 -0.290578 0.417355     242
+2023 -0.129573 -0.813522 0.219008     242
+2024 -0.038195 -0.215337 0.404959     242
+2025 -0.009170 -0.048418 0.474747     198
+
+Year-over-Year Consistency (Mean/Std): -0.37
+
+[7b] IC Trend Analysis
+Horizon Daily Slope Annual Slope     R²      Trend
+     1D   -0.000015      -0.0038 0.0032     Stable
+     5D   -0.000019      -0.0048 0.0044     Stable
+    10D   -0.000022      -0.0055 0.0054 Mild Decay
+    20D   -0.000024      -0.0061 0.0063 Mild Decay
+    30D   -0.000028      -0.0070 0.0083 Mild Decay
+    60D   -0.000033      -0.0083 0.0122 Mild Decay
+
+Interpretation: Positive annual slope = improving, Negative = decaying
+
+[7c] Multi-Window Rolling IC Stats (20D horizon)
+Window        1Y       2Y       3Y       5Y
+IC Mean  -0.0167  -0.0353  -0.0596  -0.0579
+IC Std    0.1814   0.1830   0.1817   0.2165
+IR       -0.0921  -0.1930  -0.3281  -0.2674
+Min IC   -0.1413  -0.1078  -0.0981  -0.0579
+Max IC    0.1345   0.0818   0.0463   0.0103
+
+Compares recent IC across different lookback periods
+
+[7d] Regime Analysis (High IC vs Low IC Periods)
+
+Up Market:
+                 1D          5D         10D         20D         30D         60D
+IC Mean   -0.000328   -0.004683   -0.010442   -0.020330   -0.025740   -0.024221
+IC Std     0.180006    0.199497    0.212826    0.225231    0.233161    0.224640
+IR        -0.001823   -0.023476   -0.049065   -0.090261   -0.110396   -0.107823
+Winrate    0.517212    0.525818    0.528399    0.488812    0.493115    0.492255
+N Days  1162.000000 1162.000000 1162.000000 1162.000000 1162.000000 1162.000000
+
+Down Market:
+                 1D          5D         10D         20D         30D         60D
+IC Mean   -0.033658   -0.028687   -0.029196   -0.032422   -0.039269   -0.061548
+IC Std     0.191342    0.198015    0.197151    0.191569    0.191730    0.184260
+IR        -0.175907   -0.144872   -0.148092   -0.169243   -0.204815   -0.334029
+Winrate    0.431153    0.447504    0.456971    0.425129    0.407917    0.377797
+N Days  1162.000000 1162.000000 1162.000000 1162.000000 1162.000000 1162.000000
+
+[7e] IC Consistency Score
+Measures how consistent the rolling IC stays over time (higher = more stable)
+------------------------------------------------------------
+
+1D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+5D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+10D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+20D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+30D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+60D:
+  Score: 0.00 ; Rating: Unstable - IC sign changes over time
+
+================================================================================

@@ -147,7 +147,12 @@ def run_alpha_factor(
 
 
 def get_benchmark_members(benchmark: str) -> List[str]:
-    """Get stock codes for the specified benchmark."""
+    """Get stock codes for the specified benchmark with caching."""
+    # Use a simple cache key
+    cache_key = f"members_{benchmark}"
+    if cache_key in _benchmark_cache:
+        return _benchmark_cache[cache_key]
+    
     if benchmark == "hs300":
         df = pd.read_csv(PROJECT_ROOT / "bao/hs300_l.csv")
     elif benchmark == "zz500":
@@ -161,6 +166,9 @@ def get_benchmark_members(benchmark: str) -> List[str]:
     
     # Standardize codes from sh.600000 to sh_600000
     codes = df['code'].str.replace('.', '_', regex=False).tolist()
+    
+    # Cache the result
+    _benchmark_cache[cache_key] = codes
     return codes
 
 
@@ -192,6 +200,7 @@ def _load_single_stock_with_alpha(args):
         alpha_series = alpha_func(df).astype(np.float32)
         price_series = df['close'].astype(np.float32)
         
+        # Optimize memory by downcasting to float32
         return (code, alpha_series, price_series)
     except Exception:
         return (code, None, None)

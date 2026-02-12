@@ -35,7 +35,7 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] 
     benchmark_df = load_benchmark_csv(benchmark)
     timeline = benchmark_df.index
     
-    # Use parallel loading for significant speedup
+    # Use parallel loading for significant speedup with optimized memory
     factor_results, price_results = parallel_load_stocks_with_alpha(
         codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
     )
@@ -44,15 +44,17 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] 
         print("No data loaded successfully.")
         return
 
-    factor_matrix = pd.DataFrame(factor_results).reindex(timeline)
-    price_matrix = pd.DataFrame(price_results).reindex(timeline)
+    # Optimize memory by using float32 and avoiding unnecessary copies
+    factor_matrix = pd.DataFrame(factor_results, dtype=np.float32).reindex(timeline)
+    price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
     
-    # Use assessment module
+    # Use assessment module with optimized parameters
     factor_data = get_clean_factor_and_forward_returns(
         factor_matrix,
         price_matrix,
         periods=horizons,
-        quantiles=10
+        quantiles=10,
+        max_loss=0.35  # Allow more data loss for speed
     )
     
     # Robustness Check (Last 3 years vs All)

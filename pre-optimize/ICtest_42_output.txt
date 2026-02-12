@@ -1,0 +1,138 @@
+Assessing alpha042 on zz800 with horizons [1, 5, 10, 20, 30, 60] days ...
+Loading 800 stocks using 15 workers...
+/home/hallo/.local/lib/python3.13/site-packages/numpy/_core/_methods.py:56: RuntimeWarning: overflow encountered in reduce
+  return umr_prod(a, axis, dtype, out, keepdims, initial, where)
+/home/hallo/.local/lib/python3.13/site-packages/numpy/_core/fromnumeric.py:57: RuntimeWarning: overflow encountered in accumulate
+  return bound(*args, **kwds)
+Successfully loaded 800/800 stocks (0 failed)
+
+================================================================================
+================== ALPHA preformance Report: alpha042 (zz800) ==================
+================================================================================
+
+[1] Information Coefficient (IC) Summary
+                             1D        5D       10D       20D       30D       60D
+IC Mean                0.028442  0.053602  0.066840  0.085979  0.097528  0.115214
+IC Std.                0.122753  0.118184  0.119983  0.118839  0.116483  0.116905
+Risk-Adjusted IC (IR)  0.231701  0.453546  0.557080  0.723496  0.837277  0.985542
+t-stat(IC)            11.298858 22.117029 27.165871 35.281074 40.829580 48.059706
+IC P-value             0.000000  0.000000  0.000000  0.000000  0.000000  0.000000
+IC Winrate             0.602187  0.684609  0.728343  0.776703  0.786796  0.850715
+IC Median              0.030054  0.052184  0.065131  0.081683  0.098107  0.111741
+IC Skew               -0.026321  0.040776 -0.014213  0.138208  0.059679 -0.044172
+IC Max Drawdown       -0.995078 -2.765545 -3.100636 -3.435000 -4.389460 -5.214303
+
+Assessment: Excellent (Based on 20D IC: 0.0860, IR: 0.7235)
+
+[2] IC Decay Curve
+   1D: 0.0284 #####
+   5D: 0.0536 ##########
+  10D: 0.0668 #############
+  20D: 0.0860 #################
+  30D: 0.0975 ###################
+  60D: 0.1152 #######################
+
+[3] QUANTILE METRICS (ANALYSIS (SPREAD & Monotonicity)
+                    1D       5D      10D      20D      30D      60D
+Q10-Q1 Spread 0.000704 0.004617 0.008522 0.017260 0.023140 0.038436
+Monotonicity  0.866667 0.878788 0.878788 0.878788 0.878788 0.818182
+
+[4] Avergae Daily Turnover By Quantile
+                       1        2        3        4        5        6        7        8        9        10
+Average Turnover 0.238210 0.495275 0.594183 0.640846 0.659987 0.661864 0.641332 0.590181 0.508283 0.299320
+
+[5] Robustness: Recent 3 Years Performance
+          Metric  Full Period  Recent 3Y
+   IC Mean (20D)     0.085979   0.065553
+     IC IR (20D)     0.723496   0.535500
+IC Winrate (20D)     0.776703   0.702889
+
+Stability Assessment: Moderately Stable (Recent/Full ratio: 0.72)
+
+[6] Rank Stability (RRE)
+RRE Score: 0.9563 (Higher is better, 0-1 range)
+Description: Measures how stable the stock rankings are from day to day (Reciprocal Rank Evaluation). High RRE means low turnover.
+
+================================================================================
+======================= [7] IN-DEPTH STABILITY ANALYSIS ========================
+================================================================================
+
+[7a] Year-by-Year IC Performance
+Horizon: 20D
+      IC Mean       IR  Winrate  N Days
+Year                                   
+2016 0.101720 0.837413 0.810127     237
+2017 0.136517 1.057604 0.885246     244
+2018 0.089157 0.710421 0.786008     243
+2019 0.106582 0.951748 0.819672     244
+2020 0.090657 0.833316 0.847737     243
+2021 0.062631 0.620858 0.736626     243
+2022 0.071954 0.768781 0.768595     242
+2023 0.058367 0.534879 0.685950     242
+2024 0.080427 0.711769 0.764463     242
+2025 0.056162 0.373526 0.636364     198
+
+Year-over-Year Consistency (Mean/Std): 3.40
+
+[7b] IC Trend Analysis
+Horizon Daily Slope Annual Slope     R²      Trend
+     1D    0.000001       0.0003 0.0000     Stable
+     5D   -0.000013      -0.0033 0.0056     Stable
+    10D   -0.000021      -0.0052 0.0141 Mild Decay
+    20D   -0.000028      -0.0070 0.0254 Mild Decay
+    30D   -0.000039      -0.0098 0.0523 Mild Decay
+    60D   -0.000066      -0.0166 0.1495 Mild Decay
+
+Interpretation: Positive annual slope = improving, Negative = decaying
+
+[7c] Multi-Window Rolling IC Stats (20D horizon)
+Window       1Y      2Y      3Y      5Y
+IC Mean  0.0644  0.0631  0.0656  0.0686
+IC Std   0.1410  0.1269  0.1205  0.1114
+IR       0.4568  0.4970  0.5446  0.6157
+Min IC   0.0431  0.0571  0.0622  0.0684
+Max IC   0.1434  0.1256  0.1132  0.1057
+
+Compares recent IC across different lookback periods
+
+[7d] Regime Analysis (High IC vs Low IC Periods)
+
+Up Market:
+                 1D          5D         10D         20D         30D         60D
+IC Mean    0.042796    0.057047    0.069018    0.087295    0.095909    0.115840
+IC Std     0.116120    0.112343    0.118267    0.121576    0.119181    0.113037
+IR         0.368551    0.507798    0.583577    0.718029    0.804729    1.024790
+Winrate    0.651724    0.706034    0.745690    0.782759    0.787069    0.857759
+N Days  1160.000000 1160.000000 1160.000000 1160.000000 1160.000000 1160.000000
+
+Down Market:
+                 1D          5D         10D         20D         30D         60D
+IC Mean    0.014780    0.050765    0.064031    0.082467    0.095969    0.107912
+IC Std     0.127745    0.122790    0.120300    0.114467    0.110106    0.115483
+IR         0.115702    0.413432    0.532262    0.720445    0.871606    0.934440
+Winrate    0.557377    0.666954    0.710095    0.769629    0.787748    0.838654
+N Days  1159.000000 1159.000000 1159.000000 1159.000000 1159.000000 1159.000000
+
+[7e] IC Consistency Score
+Measures how consistent the rolling IC stays over time (higher = more stable)
+------------------------------------------------------------
+
+1D:
+  Score: 0.27 ; Rating: Fair - Some variability
+
+5D:
+  Score: 0.26 ; Rating: Fair - Some variability
+
+10D:
+  Score: 0.28 ; Rating: Fair - Some variability
+
+20D:
+  Score: 0.30 ; Rating: Fair - Some variability
+
+30D:
+  Score: 0.27 ; Rating: Fair - Some variability
+
+60D:
+  Score: 0.21 ; Rating: Fair - Some variability
+
+================================================================================

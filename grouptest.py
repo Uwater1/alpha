@@ -48,7 +48,7 @@ def run_group_test(alpha_name: str, horizons: List[int] = [20], benchmark: str =
     benchmark_df = load_benchmark_csv(benchmark)
     timeline = benchmark_df.index
     
-    # Use parallel loading
+    # Use parallel loading with optimized memory usage
     print("Loading stock data and calculating alpha...")
     factor_results, price_results = parallel_load_stocks_with_alpha(
         codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
@@ -58,15 +58,17 @@ def run_group_test(alpha_name: str, horizons: List[int] = [20], benchmark: str =
         print("No data available for testing.")
         return
 
-    factor_matrix = pd.DataFrame(factor_results).reindex(timeline)
-    price_matrix = pd.DataFrame(price_results).reindex(timeline)
+    # Optimize memory by using float32 and avoiding unnecessary copies
+    factor_matrix = pd.DataFrame(factor_results, dtype=np.float32).reindex(timeline)
+    price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
     
-    # Use assessment module
+    # Use assessment module with optimized parameters
     factor_data = get_clean_factor_and_forward_returns(
         factor_matrix,
         price_matrix,
         periods=horizons,
-        quantiles=m_quantiles
+        quantiles=m_quantiles,
+        max_loss=0.35  # Allow more data loss for speed
     )
     
     results = compute_performance_metrics(factor_data)

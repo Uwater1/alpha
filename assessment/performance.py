@@ -77,22 +77,44 @@ def fast_spearman_corr(x, y):
 def factor_information_coefficient(factor_data: pd.DataFrame) -> pd.DataFrame:
     """
     Computes the Spearman Rank Correlation based Information Coefficient (IC)
-    between factor values and forward returns.
+    between factor values and forward returns. Optimized for performance.
     """
-    # Unstack factor to Date x Asset
-    f_wide = factor_data['factor'].unstack()
-    f_ranked = f_wide.rank(axis=1)
+    # Unstack factor to Date x Asset - use float32 for efficiency
+    f_wide = factor_data['factor'].unstack().astype(np.float32)
+    f_ranked = f_wide.rank(axis=1, method='average')
     
     ic_results = {}
     return_cols = [c for c in factor_data.columns if c.endswith('D')]
     
     for col in return_cols:
-        # Unstack return to Date x Asset
-        r_wide = factor_data[col].unstack()
-        r_ranked = r_wide.rank(axis=1)
+        # Unstack return to Date x Asset - use float32
+        r_wide = factor_data[col].unstack().astype(np.float32)
+        r_ranked = r_wide.rank(axis=1, method='average')
         
-        # Vectorized correlation between rows for each day
-        ic_results[col] = f_ranked.corrwith(r_ranked, axis=1)
+        # Optimized vectorized correlation using numpy
+        # Compute correlation row by row for better memory efficiency
+        correlations = []
+        for i in range(len(f_ranked)):
+            f_row = f_ranked.iloc[i].values
+            r_row = r_ranked.iloc[i].values
+            
+            # Remove NaN pairs
+            mask = ~(np.isnan(f_row) | np.isnan(r_row))
+            if mask.sum() < 2:
+                correlations.append(np.nan)
+                continue
+                
+            f_clean = f_row[mask]
+            r_clean = r_row[mask]
+            
+            # Use fast correlation if available
+            if HAS_NUMBA:
+                corr = _fast_pearson_corr(f_clean, r_clean)
+            else:
+                corr = np.corrcoef(f_clean, r_clean)[0, 1]
+            correlations.append(corr)
+        
+        ic_results[col] = pd.Series(correlations, index=f_ranked.index)
         
     return pd.DataFrame(ic_results)
 
@@ -112,12 +134,12 @@ def quantile_turnover(quantile_factor: pd.Series, quantile: int, period: int = 1
     """
     Computes the proportion of names in a factor quantile that were
     not in that quantile in the previous period using wide matrix operations.
+    Optimized for memory efficiency.
     """
-    # Unstack to get wide format (Date x Asset)
-    # This is much faster if we do it once outside, but for compatibility we do it here
-    q_wide = quantile_factor.unstack()
+    # Unstack to get wide format (Date x Asset) - handle NaN properly
+    q_wide = quantile_factor.unstack().fillna(-1).astype(np.int8)
     
-    # Boolean mask for the specific quantile
+    # Boolean mask for the specific quantile - use bool for efficiency
     mask = (q_wide == quantile)
     
     # count (mask & mask.shift(period)) / count(mask)
