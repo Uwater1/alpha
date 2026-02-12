@@ -142,76 +142,74 @@ See [`alpha191.md`](alpha191.md) for formula details.
 
 ## Assessing Alphas
 
-Use `ICtest.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis:
+Use `ICtest.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis. It supports multi-horizon analysis and parallel processing for fast execution.
 
 ```bash
-# Basic usage - assess alpha 1 on default benchmark (zz800) with default horizon (20 days)
+# Basic usage - assess alpha 1 with default settings
 python ICtest.py 1
 
-# Assess alpha 42 with 5-day horizon
-python ICtest.py 42 5
+# Assess with custom horizons and benchmark
+python ICtest.py 1 --horizons "1,5,10,20,30,60" --benchmark zz800
 
-# Assess alpha 1 with 5-day horizon on hs300
-python ICtest.py 1 5 hs300
+# Run with parallel processing (8 workers) and generate plots
+python ICtest.py 1 --jobs 8 --plot
 ```
 
 **Arguments:**
-- `alpha_name` (required): Alpha number (1-191) or format like `alpha001`
-- `benchmark`: Index pool - `hs300`, `zz500`, or `zz800` (default: `zz800`)
-- `horizon`: Forward return horizon in days (default: `20`)
+- `alpha`: Alpha number (1-191) or format like `alpha001`.
+- `--horizons`: Comma-separated list of forward return horizons (default: `1,5,10,20,30,60`).
+- `--benchmark`: Index pool - `hs300`, `zz500`, or `zz800` (default: `zz800`).
+- `--plot`: Generate a comprehensive `alphaXXX_tear_sheet.png` visual report.
+- `--jobs`: Number of parallel workers (default: `-1` to use all CPUs).
 
 **Output Metrics:**
-- `IC_mean`: Mean Information Coefficient
-- `IC_std`: Standard deviation of IC
-- `ICIR`: Information Coefficient Information Ratio (IC_mean / IC_std)
-- `t_stat`: T-statistic for significance testing
-- `n_obs`: Number of observations
-- `RRE`: Reciprocal Rank Evaluation (Rank Stability)
+- **IC Summary**: Mean IC, IC Std, ICIR (Information Ratio), and T-stat for significance.
+- **IC Decay**: Visual representation of IC across different horizons.
+- **Robustness**: Performance comparison between the full period and the recent 3 years.
+- **Rank Stability (RRE)**: Measures the day-to-day stability of stock rankings (Higher is better).
+- **In-Depth Stability Analysis**:
+    - **Year-by-Year Breakdown**: Yearly IC performance for consistency check.
+    - **IC Trend Analysis**: Detects if the alpha factor is improving or decaying over time.
+    - **Regime Analysis**: Performance during different market regimes (High vs Low IC periods).
+    - **IC Consistency Score**: An overall rating of how stable the rolling IC stays.
 
 ## Group Return Test
 
-Divide stocks into $m$ quantiles based on alpha values and calculate group returns over time:
+Divide stocks into quantiles based on alpha values and calculate group returns over time to test for monotonicity and spread.
 
 ```bash
-# Basic usage - divide into 10 groups, 20-day horizon, hs300 benchmark
+# Basic usage - divide into 10 groups, 20-day horizon
 python grouptest.py 1
 
-# Custom parameters: alpha=1, period=20, range=zz800, quantile=5
-python grouptest.py 1 20 zz800 5
+# Custom parameters: 5 quantiles, multiple horizons, zz800 benchmark
+python grouptest.py 1 --quantiles 5 --horizon "5,10,20" --benchmark zz800 --plot
 ```
 
 **Arguments:**
-- `alpha_name` (required): Alpha number (1-191) or format like `alpha001`
-- `period`: Forward return horizon in days (default: `20`)
-- `range`: Index pool - `hs300`, `zz500`, or `zz800` (default: `hs300`)
-- `quantile`: Number of groups/quantiles (default: `10`)
+- `alpha`: Alpha number (1-191) or format like `alpha001`.
+- `--horizon`: Forward return horizon(s), comma-separated (default: `20`).
+- `--benchmark`: Index pool - `hs300`, `zz500`, or `zz800` (default: `hs300`).
+- `--quantiles`: Number of groups/quantiles (default: `10`).
+- `--plot`: Generate `alphaXXX_group_returns.png` and `alphaXXX_cumulative_returns.png`.
+
+**Performance Metrics:**
+- **Quantile Stats**: Mean Return, Std Error, t-stat, p-value, and Turnover for each group.
+- **Long-Short Portfolio**:
+    - **Annualized Return & Volatility**
+    - **Sharpe & Calmar Ratios**
+    - **Max Drawdown**
+- **Monotonicity**: Score indicating how well returns follow the quantile order.
 
 ## Assessment Module
 
-The `assessment` package provides Alphalens-like performance metrics and visualizations for alpha factors.
+The `assessment` package provides professional-grade performance metrics and visualizations for alpha factors.
 
 ### Features
-- **IC Analysis**: Spearman Rank IC, ICIR, t-stats, p-values, and IC distribution.
-- **Quantile Returns**: Mean returns and cumulative returns across factor quantiles.
-- **Turnover Analysis**: Factor stability via rank autocorrelation, top/bottom quantile turnover, and **Reciprocal Rank Evaluation (RRE)**.
-- **Risk Metrics**: Factor alpha and beta relative to the market.
-- **Visualizations**: Comprehensive tear sheets including IC plots, quantile returns, and turnover charts.
-
-### Usage in Tools
-
-Existing tools have been integrated with the assessment module and support a `--plot` flag:
-
-**IC Assessment (ICtest.py):**
-```bash
-python ICtest.py 1 --plot --horizon 20 --benchmark hs300
-```
-This generates an `alpha001_tear_sheet.png` report in the root directory.
-
-**Quantile Return Test (grouptest.py):**
-```bash
-python grouptest.py 1 --plot --quantiles 5 --horizon 20 --benchmark hs300
-```
-This generates an `alpha001_group_returns.png` bar chart.
+- **IC Analysis**: Spearman Rank IC, ICIR, t-stats, and p-values.
+- **Quantile Returns**: Mean returns, cumulative returns, and monotonicity analysis.
+- **Stability Analysis**: Factor stability via rank autocorrelation, quantile turnover, and **Rank Stability (RRE)**.
+- **Advanced Stability (New)**: Multi-window rolling IC, trend analysis, and year-over-year consistency metrics.
+- **Visualizations**: Comprehensive tear sheets, IC decay plots, and quantile return bar charts.
 
 ### Programmatic Access
 

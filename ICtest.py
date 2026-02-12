@@ -251,13 +251,6 @@ def generate_enhanced_report(alpha_name: str, benchmark: str, full: Dict[str, An
                             max_ic = rolling_stats.loc['Max Rolling IC', '1Y'] if 'Max Rolling IC' in rolling_stats.index else None
                         if min_ic is not None and max_ic is not None:
                             print(f"  1Y Rolling IC Range: [{min_ic:.4f}, {max_ic:.4f}]")
-            
-            print("\n" + "-" * 60)
-            print("How to interpret:")
-            print("  1.0 = Rolling IC stays constant (perfectly stable)")
-            print("  0.5 = Lowest period IC is half of highest period")
-            print("  <0  = IC changes sign (unreliable alpha)")
-
 
     # Reset pandas display options
     pd.reset_option('display.float_format')
