@@ -38,6 +38,9 @@ def alpha_166(df: pd.DataFrame) -> pd.Series:
     # Calculate denominator: const2 * (sum_squared)^1.5
     denominator = const2 * (sum_squared ** 1.5)
     
+    # Protect against division by zero
+    denominator[denominator == 0] = np.nan
+    
     # Calculate final result: const1 * sum_diff / denominator
     result = const1 * sum_diff / denominator
     

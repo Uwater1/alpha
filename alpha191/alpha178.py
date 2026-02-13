@@ -35,7 +35,8 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
                 close_valid = close_window[valid_mask]
                 volume_valid = volume_window[valid_mask]
                 if len(close_valid) > 1:
-                    corr = np.corrcoef(close_valid, volume_valid)[0, 1]
+                    with np.errstate(invalid='ignore', divide='ignore'):
+                        corr = np.corrcoef(close_valid, volume_valid)[0, 1]
                     if not np.isnan(corr):
                         corr_close_volume[i] = corr
     
@@ -49,7 +50,8 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     denom = close.copy()
     denom[denom == 0] = np.nan
     
-    ratio1 = open_close_diff / denom
+    with np.errstate(invalid='ignore', divide='ignore'):
+        ratio1 = open_close_diff / denom
     
     # Calculate RANK(((OPEN-CLOSE)/(CLOSE)))
     rank_ratio1 = rank(ratio1)
@@ -77,7 +79,8 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
                 vwap_valid = vwap_window[valid_mask]
                 volume_valid = volume_window[valid_mask]
                 if len(vwap_valid) > 1:
-                    corr = np.corrcoef(vwap_valid, volume_valid)[0, 1]
+                    with np.errstate(invalid='ignore', divide='ignore'):
+                        corr = np.corrcoef(vwap_valid, volume_valid)[0, 1]
                     if not np.isnan(corr):
                         corr_vwap_volume[i] = corr
     

@@ -43,7 +43,8 @@ def alpha_191(df: pd.DataFrame) -> pd.Series:
                 volume_valid = volume_window[valid_mask]
                 low_valid = low_window[valid_mask]
                 if len(volume_valid) > 1:
-                    corr = np.corrcoef(volume_valid, low_valid)[0, 1]
+                    with np.errstate(invalid='ignore', divide='ignore'):
+                        corr = np.corrcoef(volume_valid, low_valid)[0, 1]
                     if not np.isnan(corr):
                         corr_values[i] = corr
     

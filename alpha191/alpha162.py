@@ -66,6 +66,9 @@ def alpha_162(df: pd.DataFrame) -> pd.Series:
     # Calculate denominator: MAX(...) - MIN(...)
     denominator = max_sma_ratio - min_sma_ratio
     
+    # Protect against division by zero
+    denominator[denominator == 0] = np.nan
+    
     # Calculate final result: numerator / denominator
     result = numerator / denominator
     

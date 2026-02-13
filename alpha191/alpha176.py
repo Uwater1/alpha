@@ -56,7 +56,8 @@ def alpha_176(df: pd.DataFrame) -> pd.Series:
                 rank_ratio_valid = rank_ratio_window[valid_mask]
                 rank_volume_valid = rank_volume_window[valid_mask]
                 if len(rank_ratio_valid) > 1:
-                    corr = np.corrcoef(rank_ratio_valid, rank_volume_valid)[0, 1]
+                    with np.errstate(invalid='ignore', divide='ignore'):
+                        corr = np.corrcoef(rank_ratio_valid, rank_volume_valid)[0, 1]
                     if not np.isnan(corr):
                         corr_values[i] = corr
     

@@ -66,7 +66,7 @@ def alpha_017(df: pd.DataFrame) -> pd.Series:
 
     # Step 5: Compute RANK((VWAP-MAX(VWAP,15)))^DELTA(CLOSE,5)
     # Using power operation - suppress expected warnings for edge cases
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide='ignore', invalid='ignore', over='ignore'):
         alpha_values = rank_vwap_diff ** delta_close
 
     return pd.Series(alpha_values, index=index, name='alpha_017')

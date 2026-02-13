@@ -140,9 +140,11 @@ factor_series = alpha_001(df)
 
 See [`alpha191.md`](alpha191.md) for formula details.
 
-## Assessing Alphas
+## Assessment Scripts
 
-Use `ICtest.py` to evaluate alpha factors using Spearman Rank IC (Information Coefficient) analysis. It supports multi-horizon analysis and parallel processing for fast execution.
+- `calculate_covariance.py`: Calculates correlation and covariance matrices for alpha factors.
+- `calculate_vif.py`: Calculates Variance Inflation Factor (VIF) to assess multicollinearity between alpha factors.
+- `ICtest.py`: Information Coefficient test for alpha factors using Spearman Rank IC (Information Coefficient) analysis. It supports multi-horizon analysis and parallel processing for fast execution.
 
 ```bash
 # Basic usage - assess alpha 1 with default settings

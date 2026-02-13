@@ -28,11 +28,7 @@ def main():
         benchmark_dir = Path('bao') / benchmark
         stock_codes = [f.stem for f in benchmark_dir.glob('*.csv')]
 
-    # Limit to a subset of stocks for speed if necessary, 
-    # but let's try 50 stocks first to get a good representative sample
-    sample_size = 50
-    stock_codes = stock_codes[:sample_size]
-    print(f"Using {len(stock_codes)} stocks for covariance calculation.")
+    print(f"Using all {len(stock_codes)} stocks for covariance calculation.")
 
     benchmark_df = load_benchmark_csv(benchmark)
 
@@ -40,8 +36,8 @@ def main():
     # Key: alpha_name, Value: list of series
     alpha_data = {f"alpha_{i:03d}": [] for i in range(1, 192)}
     
-    # Existing alphas (based on fulltest.py notes)
-    missing_alphas = {30, 143, 165, 183}
+    # Existing alphas (only 143 is missing)
+    missing_alphas = {143}
 
     start_time = time.time()
     
@@ -105,10 +101,10 @@ def main():
     cov_matrix = df_signals.cov()
     corr_matrix = df_signals.corr()
 
-    # Save to files
-    cov_matrix.to_csv("alpha_covariance.csv")
-    corr_matrix.to_csv("alpha_correlation.csv")
-    print("Results saved to alpha_covariance.csv and alpha_correlation.csv")
+    # Save to files with 5 decimal places
+    cov_matrix.to_csv("alpha_covariance.csv", float_format="%.5f")
+    corr_matrix.to_csv("alpha_correlation.csv", float_format="%.5f")
+    print("Results saved to alpha_covariance.csv and alpha_correlation.csv (5 decimal places)")
 
     # Present human readable results (Top 20 highly correlated pairs)
     print("\nTop 20 most correlated alpha pairs (absolute value):")
@@ -128,7 +124,7 @@ def main():
         if pair not in seen:
             seen.add(pair)
             actual_corr = corr_pairs[(a1, a2)]
-            print(f"{a1} <-> {a2}: {actual_corr:.4f}")
+            print(f"{a1} <-> {a2}: {actual_corr:.5f}")
             count += 1
             if count >= 20:
                 break
