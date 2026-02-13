@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_133(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha133 factor.
+    Compute Alpha133 factor (inverted).
     Formula: ((20-HIGHDAY(HIGH,20))/20)*100-((20-LOWDAY(LOW,20))/20)*100
     """
     # Extract values as numpy arrays
@@ -19,7 +19,7 @@ def alpha_133(df: pd.DataFrame) -> pd.Series:
     lowday_result = low_day(low, 20)
     
     # Calculate final result
-    result = ((20 - highday_result) / 20) * 100 - ((20 - lowday_result) / 20) * 100
+    result = ((20 - lowday_result) / 20) * 100 - ((20 - highday_result) / 20) * 100
     
     return pd.Series(result, index=df.index, name='alpha_133')
 

@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_071(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha071 factor.
-    Formula: (CLOSE-MEAN(CLOSE,24))/MEAN(CLOSE,24)*100
+    Compute Alpha071 factor (inverted).
+    Formula: (MEAN(CLOSE,24)-CLOSE)/MEAN(CLOSE,24)*100
     """
     # Calculate (CLOSE-MEAN(CLOSE,24))/MEAN(CLOSE,24)*100
     close = df['close'].values
@@ -15,7 +15,7 @@ def alpha_071(df: pd.DataFrame) -> pd.Series:
     # Handle division by zero
     denom = mean_24
     denom[denom == 0] = np.nan
-    result = (close - denom) / denom * 100
+    result = (denom - close) / denom * 100
     
     return pd.Series(result, index=df.index, name='alpha_071')
 

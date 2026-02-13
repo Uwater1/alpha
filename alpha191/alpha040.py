@@ -14,11 +14,11 @@ from .utils import run_alpha_factor
 
 def alpha_040(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha040 factor.
+    Compute Alpha040 factor (inverted).
 
-    Formula:
-        alpha_040 = SUM((CLOSE > DELAY(CLOSE, 1) ? VOLUME : 0), 26) / 
-                    SUM((CLOSE <= DELAY(CLOSE, 1) ? VOLUME : 0), 26) * 100
+    Formula (inverted):
+        alpha_040 = SUM((CLOSE <= DELAY(CLOSE, 1) ? VOLUME : 0), 26) / 
+                    SUM((CLOSE > DELAY(CLOSE, 1) ? VOLUME : 0), 26) * 100
     """
     # Ensure we have required columns
     required_cols = ['close', 'volume']
@@ -39,12 +39,12 @@ def alpha_040(df: pd.DataFrame) -> pd.Series:
 
     # Step 2: Compute components for numerators and denominators
     # (CLOSE > DELAY(CLOSE, 1) ? VOLUME : 0)
-    up_vol = np.where(close > delayed_close, volume, 0.0)
+    up_vol = np.where(close <= delayed_close, volume, 0.0)
     # Handle NaNs from delayed_close
     up_vol[np.isnan(delayed_close)] = np.nan
 
     # (CLOSE <= DELAY(CLOSE, 1) ? VOLUME : 0)
-    down_vol = np.where(close <= delayed_close, volume, 0.0)
+    down_vol = np.where(close > delayed_close, volume, 0.0)
     # Handle NaNs from delayed_close
     down_vol[np.isnan(delayed_close)] = np.nan
 

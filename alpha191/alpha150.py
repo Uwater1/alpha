@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_150(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha150 factor.
+    Compute Alpha150 factor (inverted).
     Formula: (CLOSE+HIGH+LOW)/3*VOLUME
     """
     # Extract values as numpy arrays
@@ -17,8 +17,8 @@ def alpha_150(df: pd.DataFrame) -> pd.Series:
     # Calculate (CLOSE+HIGH+LOW)/3
     typical_price = (close + high + low) / 3
     
-    # Calculate final result: typical_price * volume
-    result = typical_price * volume
+    # Calculate final result: -(CLOSE+HIGH+LOW)/3*VOLUME
+    result = -typical_price * volume
     
     return pd.Series(result, index=df.index, name='alpha_150')
 

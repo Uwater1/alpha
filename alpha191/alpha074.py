@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_074(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha074 factor.
-    Formula: (RANK(CORR(SUM(((LOW*0.35)+(VWAP*0.65)),20),SUM(MEAN(VOLUME,40),20),7))+RANK(CORR(RANK(VWAP),RANK(VOLUME),6)))
+    Compute Alpha074 factor (inverted).
+    Formula: -(RANK(CORR(SUM(((LOW*0.35)+(VWAP*0.65)),20),SUM(MEAN(VOLUME,40),20),7))+RANK(CORR(RANK(VWAP),RANK(VOLUME),6)))
     """
     # Calculate VWAP if not available
     if 'vwap' in df.columns:
@@ -44,7 +44,7 @@ def alpha_074(df: pd.DataFrame) -> pd.Series:
     corr2 = rolling_corr(rank_vwap, rank_volume, 6)
     rank2 = rank(corr2)
     
-    result = rank1 + rank2
+    result = -(rank1 + rank2)
     
     return pd.Series(result, index=df.index, name='alpha_074')
 

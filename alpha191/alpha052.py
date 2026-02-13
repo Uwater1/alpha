@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_052(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha052 factor.
-    Formula: SUM(MAX(0,HIGH-DELAY((HIGH+LOW+CLOSE)/3,1)),26)/SUM(MAX(0,DELAY((HIGH+LOW+CLOSE)/3,1)-LOW),26)*100
+    Compute Alpha052 factor (inverted).
+    Formula: SUM(MAX(0,DELAY((HIGH+LOW+CLOSE)/3,1)-HIGH),26)/SUM(MAX(0,LOW-DELAY((HIGH+LOW+CLOSE)/3,1)),26)*100
     """
     # Calculate VWAP-like value (HIGH+LOW+CLOSE)/3
     vwap_like = (df['high'] + df['low'] + df['close']) / 3
@@ -15,10 +15,10 @@ def alpha_052(df: pd.DataFrame) -> pd.Series:
     delayed_vwap = delay(vwap_like, 1)
     
     # Calculate numerator: MAX(0, HIGH - DELAY((HIGH+LOW+CLOSE)/3, 1))
-    numerator = np.maximum(0, df['high'] - delayed_vwap)
+    numerator = np.maximum(0, delayed_vwap - df['high'])
     
     # Calculate denominator: MAX(0, DELAY((HIGH+LOW+CLOSE)/3, 1) - LOW)
-    denominator = np.maximum(0, delayed_vwap - df['low'])
+    denominator = np.maximum(0, df['low'] - delayed_vwap)
     
     # Calculate rolling sums over 26 periods
     sum_numerator = ts_sum(numerator, 26)

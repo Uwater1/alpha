@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_147(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha147 factor.
+    Compute Alpha147 factor (inverted).
     Formula: REGBETA(MEAN(CLOSE,12),SEQUENCE(12))
     """
     # Extract values as numpy arrays
@@ -31,7 +31,7 @@ def alpha_147(df: pd.DataFrame) -> pd.Series:
         # Calculate regression
         # Using numpy's polyfit to calculate beta (slope)
         coeffs = np.polyfit(sequence, window_data, 1)
-        result[i] = coeffs[0]  # The slope (beta)
+        result[i] = -coeffs[0]  # The negated slope (beta)
     
     return pd.Series(result, index=df.index, name='alpha_147')
 

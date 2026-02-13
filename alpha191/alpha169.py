@@ -5,15 +5,15 @@ from .utils import run_alpha_factor
 
 def alpha_169(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha169 factor.
+    Compute Alpha169 factor (inverted).
     Formula: SMA(MEAN(DELAY(SMA(CLOSE-DELAY(CLOSE,1),9,1),1),12)-MEAN(DELAY(SMA(CLOSE-DELAY(CLOSE,1),9,1),1),26),10,1)
     """
     # Extract values as numpy arrays
     close = df['close'].values
     
-    # Calculate CLOSE-DELAY(CLOSE,1)
+    # Calculate DELAY(CLOSE,1)-CLOSE
     delay_close = delay(close, 1)
-    close_diff = close - delay_close
+    close_diff = delay_close - close
     
     # Calculate SMA(CLOSE-DELAY(CLOSE,1),9,1) - EMA with alpha=1/9
     alpha_9 = 1.0 / 9
@@ -37,8 +37,8 @@ def alpha_169(df: pd.DataFrame) -> pd.Series:
     # Calculate MEAN(DELAY(SMA(CLOSE-DELAY(CLOSE,1),9,1),1),26)
     mean_26 = ts_mean(delay_sma_9, 26)
     
-    # Calculate difference
-    diff = mean_12 - mean_26
+    # Calculate MEAN(DELAY(SMA(DELAY(CLOSE,1)-CLOSE,9,1),1),26) - MEAN(DELAY(SMA(DELAY(CLOSE,1)-CLOSE,9,1),1),12)
+    diff = mean_26 - mean_12
     
     # Calculate SMA with alpha=1/10 (approximating SMA with alpha parameter)
     # Using exponential moving average with alpha=1/10

@@ -17,28 +17,8 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     # Calculate MEAN(VOLUME,20)
     mean_volume_20 = ts_mean(volume, 20)
     
-    # Calculate CORR((CLOSE),MEAN(VOLUME,20),5)
-    # Note: We'll use a rolling window correlation
-    corr_close_volume = np.full(len(df), np.nan)
-    window = 5
-    
-    for i in range(window - 1, len(df)):
-        # Get the window of data
-        close_window = close[i-window+1:i+1]
-        volume_window = mean_volume_20[i-window+1:i+1]
-        
-        # Calculate correlation
-        if not np.isnan(close_window).all() and not np.isnan(volume_window).all():
-            # Remove NaN values
-            valid_mask = ~(np.isnan(close_window) | np.isnan(volume_window))
-            if valid_mask.sum() > 1:  # Need at least 2 valid points for correlation
-                close_valid = close_window[valid_mask]
-                volume_valid = volume_window[valid_mask]
-                if len(close_valid) > 1:
-                    with np.errstate(invalid='ignore', divide='ignore'):
-                        corr = np.corrcoef(close_valid, volume_valid)[0, 1]
-                    if not np.isnan(corr):
-                        corr_close_volume[i] = corr
+    # Calculate CORR((CLOSE),MEAN(VOLUME,20),5) using Numba-accelerated rolling_corr
+    corr_close_volume = rolling_corr(close, mean_volume_20, 5)
     
     # Calculate RANK(CORR(...))
     rank_corr_close_volume = rank(corr_close_volume)
@@ -62,27 +42,8 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     # Calculate MEAN(VOLUME,60)
     mean_volume_60 = ts_mean(volume, 60)
     
-    # Calculate CORR((VWAP),MEAN(VOLUME,60),3)
-    corr_vwap_volume = np.full(len(df), np.nan)
-    window = 3
-    
-    for i in range(window - 1, len(df)):
-        # Get the window of data
-        vwap_window = vwap[i-window+1:i+1]
-        volume_window = mean_volume_60[i-window+1:i+1]
-        
-        # Calculate correlation
-        if not np.isnan(vwap_window).all() and not np.isnan(volume_window).all():
-            # Remove NaN values
-            valid_mask = ~(np.isnan(vwap_window) | np.isnan(volume_window))
-            if valid_mask.sum() > 1:  # Need at least 2 valid points for correlation
-                vwap_valid = vwap_window[valid_mask]
-                volume_valid = volume_window[valid_mask]
-                if len(vwap_valid) > 1:
-                    with np.errstate(invalid='ignore', divide='ignore'):
-                        corr = np.corrcoef(vwap_valid, volume_valid)[0, 1]
-                    if not np.isnan(corr):
-                        corr_vwap_volume[i] = corr
+    # Calculate CORR((VWAP),MEAN(VOLUME,60),3) using Numba-accelerated rolling_corr
+    corr_vwap_volume = rolling_corr(vwap, mean_volume_60, 3)
     
     # Calculate RANK(CORR((VWAP),MEAN(VOLUME,60),3))
     rank_corr_vwap_volume = rank(corr_vwap_volume)

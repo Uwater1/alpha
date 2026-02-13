@@ -13,10 +13,10 @@ from .utils import run_alpha_factor
 
 def alpha_010(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha010 factor.
+    Compute Alpha010 factor (inverted).
 
-    Formula:
-        alpha_010 = (RANK(MAX(((RET<0)?STD(RET,20):CLOSE)^2),5))
+    Formula (inverted):
+        alpha_010 = (RANK(MAX(((RET>=0)?STD(RET,20):CLOSE)^2),5))
     """
     # Ensure we have required columns
     required_cols = ['close']
@@ -44,7 +44,7 @@ def alpha_010(df: pd.DataFrame) -> pd.Series:
 
     # Step 3: Compute ((RET<0)?STD(RET,20):CLOSE)
     # If RET < 0, use STD(RET,20), otherwise use CLOSE
-    conditional_value = np.where(ret < 0, std_ret, close)
+    conditional_value = np.where(ret >= 0, std_ret, close)
 
     # Step 4: Compute squared value
     squared_value = conditional_value ** 2

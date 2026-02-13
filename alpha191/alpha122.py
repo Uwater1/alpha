@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_122(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha122 factor.
+    Compute Alpha122 factor (inverted).
     Formula: (SMA(SMA(SMA(LOG(CLOSE),13,2),13,2),13,2)-DELAY(SMA(SMA(SMA(LOG(CLOSE),13,2),13,2),13,2),1))/DELAY(SMA(SMA(SMA(LOG(CLOSE),13,2),13,2),13,2),1)
     """
     # Extract values as numpy arrays
@@ -27,7 +27,7 @@ def alpha_122(df: pd.DataFrame) -> pd.Series:
     delay_sma_sma_sma_log_close = delay(sma_sma_sma_log_close, 1)
     
     # Calculate final result
-    result = (sma_sma_sma_log_close - delay_sma_sma_sma_log_close) / delay_sma_sma_sma_log_close
+    result = (delay_sma_sma_sma_log_close - sma_sma_sma_log_close) / delay_sma_sma_sma_log_close
     
     return pd.Series(result, index=df.index, name='alpha_122')
 

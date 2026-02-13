@@ -5,14 +5,14 @@ from .utils import run_alpha_factor
 
 def alpha_067(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha067 factor.
-    Formula: SMA(MAX(CLOSE-DELAY(CLOSE,1),0),24,1)/SMA(ABS(CLOSE-DELAY(CLOSE,1)),24,1)*100
+    Compute Alpha067 factor (inverted).
+    Formula: SMA(MAX(DELAY(CLOSE,1)-CLOSE,0),24,1)/SMA(ABS(CLOSE-DELAY(CLOSE,1)),24,1)*100
     """
     # Calculate DELAY(CLOSE, 1)
     delayed_close = delay(df['close'], 1)
     
-    # Calculate CLOSE - DELAY(CLOSE, 1)
-    price_diff = df['close'] - delayed_close
+    # Calculate DELAY(CLOSE, 1) - CLOSE
+    price_diff = delayed_close - df['close']
     
     # Calculate MAX(CLOSE - DELAY(CLOSE, 1), 0)
     max_diff = np.maximum(price_diff, 0)

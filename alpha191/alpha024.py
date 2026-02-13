@@ -13,10 +13,10 @@ from .utils import run_alpha_factor
 
 def alpha_024(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha024 factor.
+    Compute Alpha024 factor (inverted).
 
-    Formula:
-        alpha_024 = SMA(CLOSE-DELAY(CLOSE,5),5,1)
+    Formula (inverted):
+        alpha_024 = SMA(DELAY(CLOSE,5)-CLOSE,5,1)
     """
     # Ensure we have required columns
     required_cols = ['close']
@@ -34,8 +34,8 @@ def alpha_024(df: pd.DataFrame) -> pd.Series:
     # Step 1: Compute DELAY(CLOSE, 5)
     delay_close = delay(close, 5)
 
-    # Step 2: Compute CLOSE - DELAY(CLOSE, 5)
-    diff = close - delay_close
+    # Step 2: Compute DELAY(CLOSE, 5) - CLOSE
+    diff = delay_close - close
 
     # Step 3: Compute SMA(..., 5, 1)
     alpha_values = sma(diff, 5, 1)

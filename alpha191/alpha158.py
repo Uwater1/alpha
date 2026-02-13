@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_158(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha158 factor.
+    Compute Alpha158 factor (inverted).
     Formula: ((HIGH-SMA(CLOSE,15,2))-(LOW-SMA(CLOSE,15,2)))/CLOSE
     """
     # Extract values as numpy arrays
@@ -29,8 +29,8 @@ def alpha_158(df: pd.DataFrame) -> pd.Series:
     # Calculate (HIGH-SMA(CLOSE,15,2))-(LOW-SMA(CLOSE,15,2))
     numerator = (high - sma_close) - (low - sma_close)
     
-    # Calculate final result: numerator / CLOSE
-    result = numerator / close
+    # Calculate final result: -((HIGH-SMA(CLOSE,15,2))-(LOW-SMA(CLOSE,15,2)))/CLOSE
+    result = -numerator / close
     
     return pd.Series(result, index=df.index, name='alpha_158')
 

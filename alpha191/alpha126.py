@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_126(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha126 factor.
+    Compute Alpha126 factor (inverted).
     Formula: (CLOSE+HIGH+LOW)/3
     """
     # Extract values as numpy arrays
@@ -13,8 +13,8 @@ def alpha_126(df: pd.DataFrame) -> pd.Series:
     high = df['high'].values
     low = df['low'].values
     
-    # Calculate final result
-    result = (close + high + low) / 3
+    # Calculate -(CLOSE+HIGH+LOW)/3
+    result = -(close + high + low) / 3
     
     return pd.Series(result, index=df.index, name='alpha_126')
 

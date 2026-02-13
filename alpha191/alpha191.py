@@ -25,28 +25,8 @@ def alpha_191(df: pd.DataFrame) -> pd.Series:
     # Calculate MEAN(VOLUME,40)
     mean_volume_40 = ts_mean(volume, 40)
     
-    # Calculate CORR((MEAN(VOLUME,40)),LOW,5)
-    # Note: We'll use a rolling window correlation
-    corr_values = np.full(len(df), np.nan)
-    window = 5
-    
-    for i in range(window - 1, len(df)):
-        # Get the window of data
-        volume_window = mean_volume_40[i-window+1:i+1]
-        low_window = low[i-window+1:i+1]
-        
-        # Calculate correlation
-        if not np.isnan(volume_window).all() and not np.isnan(low_window).all():
-            # Remove NaN values
-            valid_mask = ~(np.isnan(volume_window) | np.isnan(low_window))
-            if valid_mask.sum() > 1:  # Need at least 2 valid points for correlation
-                volume_valid = volume_window[valid_mask]
-                low_valid = low_window[valid_mask]
-                if len(volume_valid) > 1:
-                    with np.errstate(invalid='ignore', divide='ignore'):
-                        corr = np.corrcoef(volume_valid, low_valid)[0, 1]
-                    if not np.isnan(corr):
-                        corr_values[i] = corr
+    # Calculate CORR((MEAN(VOLUME,40)),LOW,5) using Numba-accelerated rolling_corr
+    corr_values = rolling_corr(mean_volume_40, low, 5)
     
     # Calculate RANK(CORR(...))
     rank_corr = rank(corr_values)

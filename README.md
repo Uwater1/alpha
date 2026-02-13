@@ -315,3 +315,59 @@ Data is automatically loaded from:
 
 ## Notes:
 In this project we treat zz800 (中证800) as the combination of hs300 (沪深300) and zz500 (中证500)
+
+## Alpha Inversion
+
+The following alpha factors have been inverted (IC_Mean < -0.02 in performance analysis). The inversion changes the sign/direction of the alpha to improve its predictive power.
+
+### Inverted Alphas
+
+| Alpha | Original IC_Mean | Inversion Method | Description |
+|-------|-----------------|------------------|-------------|
+| alpha010 | -0.0237 | Changed `RET<0` to `RET>=0` | Inverted conditional in formula |
+| alpha024 | -0.0224 | Changed `CLOSE-DELAY(5)` to `DELAY(5)-CLOSE` | Swapped operands |
+| alpha027 | -0.0269 | Changed `(CLOSE-DELAY)` to `(DELAY-CLOSE)` | Swapped operands |
+| alpha040 | -0.0320 | Swapped `CLOSE>DELAY` ↔ `CLOSE<=DELAY` | Inverted conditions |
+| alpha052 | -0.0264 | Swapped `HIGH-DELAY` ↔ `DELAY-HIGH` | Swapped operands |
+| alpha055 | -0.0309 | Negated entire formula | Simple negation |
+| alpha067 | -0.0243 | Changed `CLOSE-DELAY` to `DELAY-CLOSE` | Swapped operands |
+| alpha069 | -0.0274 | Changed `sum_dtm>sum_dbm` to `sum_dtm<sum_dbm` | Inverted conditions |
+| alpha070 | -0.0627 | Negated `STD(AMOUNT,6)` | Simple negation |
+| alpha071 | -0.0296 | Changed `(CLOSE-MEAN)` to `(MEAN-CLOSE)` | Swapped operands |
+| alpha074 | -0.0248 | Negated result | Simple negation |
+| alpha081 | -0.0408 | Negated `SMA(VOLUME,21,2)` | Simple negation |
+| alpha084 | -0.0330 | Swapped conditions | Inverted conditions |
+| alpha088 | -0.0347 | Changed `(CLOSE-DELAY20)` to `(DELAY20-CLOSE)` | Swapped operands |
+| alpha091 | -0.0205 | Removed *-1, changed `CLOSE-MAX` to `MAX-CLOSE` | Full inversion |
+| alpha094 | -0.0401 | Swapped conditions | Inverted conditions |
+| alpha095 | -0.0674 | Negated `STD(AMOUNT,20)` | Simple negation |
+| alpha097 | -0.0438 | Negated `STD(VOLUME,10)` | Simple negation |
+| alpha100 | -0.0442 | Negated `STD(VOLUME,20)` | Simple negation |
+| alpha106 | -0.0323 | Changed `CLOSE-DELAY20` to `DELAY20-CLOSE` | Swapped operands |
+| alpha107 | -0.0296 | Full inversion of all operands | Full inversion |
+| alpha116 | -0.0306 | Negated `REGBETA` | Simple negation |
+| alpha118 | -0.0266 | Swapped `HIGH-OPEN` ↔ `OPEN-HIGH` | Swapped operands |
+| alpha122 | -0.0240 | Swapped SMA result and delay | Swapped operands |
+| alpha126 | -0.0239 | Negated `(CLOSE+HIGH+LOW)/3` | Simple negation |
+| alpha129 | -0.0260 | Changed `<0` to `>=0` | Inverted conditions |
+| alpha132 | -0.0589 | Negated `MEAN(AMOUNT,20)` | Simple negation |
+| alpha133 | -0.0241 | Swapped the two terms | Swapped operands |
+| alpha134 | -0.0224 | Changed `(CLOSE-DELAY)/DELAY` to `(DELAY-CLOSE)/DELAY` | Swapped operands |
+| alpha147 | -0.0302 | Negated `REGBETA` result | Simple negation |
+| alpha150 | -0.0681 | Negated `(CLOSE+HIGH+LOW)/3*VOLUME` | Simple negation |
+| alpha151 | -0.0322 | Changed `CLOSE-DELAY20` to `DELAY20-CLOSE` | Swapped operands |
+| alpha152 | -0.0232 | Negated MACD-like difference | Simple negation |
+| alpha153 | -0.0227 | Negated average of means | Simple negation |
+| alpha158 | -0.0283 | Negated result | Simple negation |
+| alpha159 | -0.0393 | Changed `(CLOSE-SUM)` to `(SUM-CLOSE)` | Swapped operands |
+| alpha160 | -0.0215 | Changed `CLOSE<=DELAY` to `CLOSE>DELAY` | Inverted conditions |
+| alpha161 | -0.0303 | Negated result | Simple negation |
+| alpha167 | -0.0344 | Changed `>0` to `<=0` and negated value | Inverted conditions |
+| alpha169 | -0.0212 | Full inversion of operands and differences | Full inversion |
+
+### Inversion Methods
+
+1. **Simple Negation**: Multiplying the entire result by -1
+2. **Swapped Operands**: Changing `A-B` to `B-A` or similar
+3. **Inverted Conditions**: Changing `>` to `<=`, `>` to `<`, etc.
+4. **Full Inversion**: Multiple changes to completely flip the alpha logic

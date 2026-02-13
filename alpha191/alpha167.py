@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_167(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha167 factor.
+    Compute Alpha167 factor (inverted).
     Formula: SUM((CLOSE-DELAY(CLOSE,1)>0?CLOSE-DELAY(CLOSE,1):0),12
     Note: The formula seems to be missing a closing parenthesis, assuming it's SUM(...,12)
     """
@@ -18,11 +18,11 @@ def alpha_167(df: pd.DataFrame) -> pd.Series:
     # Calculate CLOSE-DELAY(CLOSE,1)
     close_diff = close - delay_close
     
-    # Calculate CLOSE-DELAY(CLOSE,1)>0
-    condition = close_diff > 0
+    # Calculate CLOSE-DELAY(CLOSE,1)<=0
+    condition = close_diff <= 0
     
-    # Calculate (CLOSE-DELAY(CLOSE,1)>0?CLOSE-DELAY(CLOSE,1):0)
-    conditional_value = np.where(condition, close_diff, 0)
+    # Calculate (CLOSE-DELAY(CLOSE,1)<=0?-(CLOSE-DELAY(CLOSE,1)):0)
+    conditional_value = np.where(condition, -close_diff, 0)
     
     # Calculate SUM(...,12)
     result = ts_sum(conditional_value, 12)

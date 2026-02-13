@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_129(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha129 factor.
+    Compute Alpha129 factor (inverted).
     Formula: SUM((CLOSE-DELAY(CLOSE,1)<0?ABS(CLOSE-DELAY(CLOSE,1)):0),12)
     """
     # Extract values as numpy arrays
@@ -14,8 +14,8 @@ def alpha_129(df: pd.DataFrame) -> pd.Series:
     # Calculate close change
     close_change = close - delay(close, 1)
     
-    # Calculate negative close change
-    negative_close_change = np.where(close_change < 0, np.abs(close_change), 0)
+    # Calculate positive close change
+    negative_close_change = np.where(close_change >= 0, np.abs(close_change), 0)
     
     # Calculate sum of negative close change
     result = ts_sum(negative_close_change, 12)

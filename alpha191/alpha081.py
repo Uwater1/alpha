@@ -5,13 +5,13 @@ from .utils import run_alpha_factor
 
 def alpha_081(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha081 factor.
-    Formula: SMA(VOLUME,21,2)
+    Compute Alpha081 factor (inverted).
+    Formula: -SMA(VOLUME,21,2)
     """
     volume = df['volume'].values
     
-    # Calculate SMA(VOLUME,21,2)
-    result = sma(volume, 21, 2)
+    # Calculate -SMA(VOLUME,21,2)
+    result = -sma(volume, 21, 2)
     
     return pd.Series(result, index=df.index, name='alpha_081')
 

@@ -5,11 +5,11 @@ from .utils import run_alpha_factor
 
 def alpha_097(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha097 factor.
-    Formula: STD(VOLUME,10)
+    Compute Alpha097 factor (inverted).
+    Formula: -STD(VOLUME,10)
     """
-    # Calculate STD(VOLUME,10)
-    result = ts_std(df['volume'], 10)
+    # Calculate -STD(VOLUME,10)
+    result = -ts_std(df['volume'], 10)
     
     return pd.Series(result, index=df.index, name='alpha_097')
 

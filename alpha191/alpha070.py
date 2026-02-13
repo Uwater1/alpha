@@ -5,11 +5,11 @@ from .utils import run_alpha_factor
 
 def alpha_070(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha070 factor.
-    Formula: STD(AMOUNT,6)
+    Compute Alpha070 factor (inverted).
+    Formula: -STD(AMOUNT,6)
     """
-    # Calculate STD(AMOUNT, 6)
-    result = ts_std(df['amount'], 6)
+    # Calculate -STD(AMOUNT, 6)
+    result = -ts_std(df['amount'], 6)
     
     return pd.Series(result, index=df.index, name='alpha_070')
 

@@ -5,14 +5,14 @@ from .utils import run_alpha_factor
 
 def alpha_132(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha132 factor.
+    Compute Alpha132 factor (inverted).
     Formula: MEAN(AMOUNT,20)
     """
     # Extract values as numpy arrays
     amount = df['amount'].values
     
-    # Calculate mean of amount
-    result = ts_mean(amount, 20)
+    # Calculate -MEAN(AMOUNT,20)
+    result = -ts_mean(amount, 20)
     
     return pd.Series(result, index=df.index, name='alpha_132')
 

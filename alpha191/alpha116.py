@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_116(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha116 factor.
-    Formula: REGBETA(CLOSE,SEQUENCE,20)
+    Compute Alpha116 factor (inverted).
+    Formula: -REGBETA(CLOSE,SEQUENCE,20)
     """
     # Extract values as numpy arrays
     close = df['close'].values
@@ -14,8 +14,8 @@ def alpha_116(df: pd.DataFrame) -> pd.Series:
     # Calculate sequence
     sequence = np.arange(len(close))
     
-    # Calculate regression beta
-    result = regression_beta(close, sequence, 20)
+    # Calculate -REGBETA(CLOSE,SEQUENCE,20)
+    result = -regression_beta(close, sequence, 20)
     
     return pd.Series(result, index=df.index, name='alpha_116')
 

@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_161(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha161 factor.
+    Compute Alpha161 factor (inverted).
     Formula: MEAN(MAX(MAX((HIGH-LOW),ABS(DELAY(CLOSE,1)-HIGH)),ABS(DELAY(CLOSE,1)-LOW)),12)
     """
     # Extract values as numpy arrays
@@ -31,8 +31,8 @@ def alpha_161(df: pd.DataFrame) -> pd.Series:
     # Calculate MAX(MAX((HIGH-LOW),ABS(DELAY(CLOSE,1)-HIGH)),ABS(DELAY(CLOSE,1)-LOW))
     max2 = np.maximum(max1, abs_delay_low)
     
-    # Calculate MEAN(...,12)
-    result = ts_mean(max2, 12)
+    # Calculate MEAN(...,12) and negate
+    result = -ts_mean(max2, 12)
     
     return pd.Series(result, index=df.index, name='alpha_161')
 

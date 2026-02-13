@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_159(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha159 factor.
+    Compute Alpha159 factor (inverted).
     Formula: ((CLOSE-SUM(MIN(LOW,DELAY(CLOSE,1)),6))/SUM(MAX(HGIH,DELAY(CLOSE,1))-MIN(LOW,DELAY(CLOSE,1)),6)*12*24+(CLOSE-SUM(MIN(LOW,DELAY(CLOSE,1)),12))/SUM(MAX(HGIH,DELAY(CLOSE,1))-MIN(LOW,DELAY(CLOSE,1)),12)*6*24+(CLOSE-SUM(MIN(LOW,DELAY(CLOSE,1)),24))/SUM(MAX(HGIH,DELAY(CLOSE,1))-MIN(LOW,DELAY(CLOSE,1)),24)*6*24)*100/(6*12+6*24+12*24)
     """
     # Extract values as numpy arrays
@@ -52,9 +52,9 @@ def alpha_159(df: pd.DataFrame) -> pd.Series:
     sum_diff_24_safe = sum_diff_24.copy()
     sum_diff_24_safe[sum_diff_24_safe == 0] = np.nan
     
-    term1 = (close - sum_min_6) / sum_diff_6_safe * 12 * 24
-    term2 = (close - sum_min_12) / sum_diff_12_safe * 6 * 24
-    term3 = (close - sum_min_24) / sum_diff_24_safe * 6 * 24
+    term1 = (sum_min_6 - close) / sum_diff_6_safe * 12 * 24
+    term2 = (sum_min_12 - close) / sum_diff_12_safe * 6 * 24
+    term3 = (sum_min_24 - close) / sum_diff_24_safe * 6 * 24
     
     # Calculate denominator
     denominator = 6 * 12 + 6 * 24 + 12 * 24

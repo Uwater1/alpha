@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_160(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha160 factor.
+    Compute Alpha160 factor (inverted).
     Formula: SMA((CLOSE<=DELAY(CLOSE,1)?STD(CLOSE,20):0),20,1)
     """
     # Extract values as numpy arrays
@@ -14,8 +14,8 @@ def alpha_160(df: pd.DataFrame) -> pd.Series:
     # Calculate DELAY(CLOSE,1)
     delay_close = delay(close, 1)
     
-    # Calculate CLOSE<=DELAY(CLOSE,1)
-    condition = close <= delay_close
+    # Calculate CLOSE>DELAY(CLOSE,1)
+    condition = close > delay_close
     
     # Calculate STD(CLOSE,20)
     std_close_20 = ts_std(close, 20)

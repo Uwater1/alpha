@@ -13,10 +13,10 @@ from .utils import run_alpha_factor
 
 def alpha_027(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha027 factor.
+    Compute Alpha027 factor (inverted).
 
-    Formula:
-        alpha_027 = WMA((CLOSE-DELAY(CLOSE,3))/DELAY(CLOSE,3)*100+(CLOSE-DELAY(CLOSE,6))/DELAY(CLOSE,6)*100,12)
+    Formula (inverted):
+        alpha_027 = WMA((DELAY(CLOSE,3)-CLOSE)/DELAY(CLOSE,3)*100+(DELAY(CLOSE,6)-CLOSE)/DELAY(CLOSE,6)*100,12)
     """
     # Ensure we have required columns
     required_cols = ['close']
@@ -40,12 +40,12 @@ def alpha_027(df: pd.DataFrame) -> pd.Series:
     # Step 3: Compute (CLOSE-DELAY(CLOSE,3))/DELAY(CLOSE,3)*100
     ratio_3 = np.full(len(close), np.nan)
     valid_mask_3 = ~np.isnan(delay_close_3) & (delay_close_3 != 0)
-    ratio_3[valid_mask_3] = (close[valid_mask_3] - delay_close_3[valid_mask_3]) / delay_close_3[valid_mask_3] * 100
+    ratio_3[valid_mask_3] = (delay_close_3[valid_mask_3] - close[valid_mask_3]) / delay_close_3[valid_mask_3] * 100
 
     # Step 4: Compute (CLOSE-DELAY(CLOSE,6))/DELAY(CLOSE,6)*100
     ratio_6 = np.full(len(close), np.nan)
     valid_mask_6 = ~np.isnan(delay_close_6) & (delay_close_6 != 0)
-    ratio_6[valid_mask_6] = (close[valid_mask_6] - delay_close_6[valid_mask_6]) / delay_close_6[valid_mask_6] * 100
+    ratio_6[valid_mask_6] = (delay_close_6[valid_mask_6] - close[valid_mask_6]) / delay_close_6[valid_mask_6] * 100
 
     # Step 5: Compute sum of the two ratios
     combined = ratio_3 + ratio_6

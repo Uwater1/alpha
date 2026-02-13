@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_094(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha094 factor.
-    Formula: SUM((CLOSE>DELAY(CLOSE,1)?VOLUME:(CLOSE<DELAY(CLOSE,1)?-VOLUME:0)),30)
+    Compute Alpha094 factor (inverted).
+    Formula: SUM((CLOSE<DELAY(CLOSE,1)?VOLUME:(CLOSE>DELAY(CLOSE,1)?-VOLUME:0)),30)
     """
     close = df['close'].values
     volume = df['volume'].values
@@ -18,8 +18,8 @@ def alpha_094(df: pd.DataFrame) -> pd.Series:
     condition1 = close > delayed_close
     condition2 = close < delayed_close
     
-    result_volume = np.where(condition1, volume, 
-                            np.where(condition2, -volume, 0))
+    result_volume = np.where(condition2, volume, 
+                            np.where(condition1, -volume, 0))
     
     # Calculate SUM(...,30)
     result = ts_sum(result_volume, 30)

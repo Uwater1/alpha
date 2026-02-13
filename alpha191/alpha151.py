@@ -5,15 +5,15 @@ from .utils import run_alpha_factor
 
 def alpha_151(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha151 factor.
+    Compute Alpha151 factor (inverted).
     Formula: SMA(CLOSE-DELAY(CLOSE,20),20,1)
     """
     # Extract values as numpy arrays
     close = df['close'].values
     
-    # Calculate CLOSE - DELAY(CLOSE,20)
+    # Calculate DELAY(CLOSE,20) - CLOSE
     delay_close_20 = delay(close, 20)
-    diff = close - delay_close_20
+    diff = delay_close_20 - close
     
     # Calculate SMA with alpha=1/20 (approximating SMA with alpha parameter)
     # Using exponential moving average with alpha=1/20

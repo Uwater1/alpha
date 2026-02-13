@@ -38,28 +38,8 @@ def alpha_176(df: pd.DataFrame) -> pd.Series:
     # Calculate RANK(VOLUME)
     rank_volume = rank(volume)
     
-    # Calculate CORR(RANK(...),RANK(VOLUME),6)
-    # Note: We'll use a rolling window correlation
-    corr_values = np.full(len(df), np.nan)
-    window = 6
-    
-    for i in range(window - 1, len(df)):
-        # Get the window of data
-        rank_ratio_window = rank_ratio[i-window+1:i+1]
-        rank_volume_window = rank_volume[i-window+1:i+1]
-        
-        # Calculate correlation
-        if not np.isnan(rank_ratio_window).all() and not np.isnan(rank_volume_window).all():
-            # Remove NaN values
-            valid_mask = ~(np.isnan(rank_ratio_window) | np.isnan(rank_volume_window))
-            if valid_mask.sum() > 1:  # Need at least 2 valid points for correlation
-                rank_ratio_valid = rank_ratio_window[valid_mask]
-                rank_volume_valid = rank_volume_window[valid_mask]
-                if len(rank_ratio_valid) > 1:
-                    with np.errstate(invalid='ignore', divide='ignore'):
-                        corr = np.corrcoef(rank_ratio_valid, rank_volume_valid)[0, 1]
-                    if not np.isnan(corr):
-                        corr_values[i] = corr
+    # Calculate CORR(RANK(...),RANK(VOLUME),6) using Numba-accelerated rolling_corr
+    corr_values = rolling_corr(rank_ratio, rank_volume, 6)
     
     return pd.Series(corr_values, index=df.index, name='alpha_176')
 

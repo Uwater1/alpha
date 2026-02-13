@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_088(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha088 factor.
-    Formula: (CLOSE-DELAY(CLOSE,20))/DELAY(CLOSE,20)*100
+    Compute Alpha088 factor (inverted).
+    Formula: (DELAY(CLOSE,20)-CLOSE)/DELAY(CLOSE,20)*100
     """
     close = df['close'].values
     
@@ -15,7 +15,7 @@ def alpha_088(df: pd.DataFrame) -> pd.Series:
     
     # Handle division by zero
     delayed_close[delayed_close == 0] = np.nan
-    result = (close - delayed_close) / delayed_close * 100
+    result = (delayed_close - close) / delayed_close * 100
     
     return pd.Series(result, index=df.index, name='alpha_088')
 

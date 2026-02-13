@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_153(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha153 factor.
+    Compute Alpha153 factor (inverted).
     Formula: (MEAN(CLOSE,3)+MEAN(CLOSE,6)+MEAN(CLOSE,12)+MEAN(CLOSE,24))/4
     """
     # Extract values as numpy arrays
@@ -18,7 +18,7 @@ def alpha_153(df: pd.DataFrame) -> pd.Series:
     mean_close_24 = ts_mean(close, 24)
     
     # Calculate final result
-    result = (mean_close_3 + mean_close_6 + mean_close_12 + mean_close_24) / 4
+    result = -((mean_close_3 + mean_close_6 + mean_close_12 + mean_close_24) / 4)
     
     return pd.Series(result, index=df.index, name='alpha_153')
 
