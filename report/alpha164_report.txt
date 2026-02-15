@@ -1,3 +1,4 @@
+SMA((((CLOSE>DELAY(CLOSE,1))?1/(CLOSE-DELAY(CLOSE,1)):1)-MIN(((CLOSE>DELAY(CLOSE,1))?1/(CLOSE-D ELAY(CLOSE,1)):1),12))/(HIGH-LOW)\*100,13,2)
 ================================================================================
 ALPHA TEST REPORT: alpha164
 Benchmark: zz800

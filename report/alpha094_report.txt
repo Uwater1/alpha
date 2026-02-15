@@ -1,3 +1,4 @@
+SUM((CLOSE>DELAY(CLOSE,1)?VOLUME:(CLOSE<DELAY(CLOSE,1)?-VOLUME:0)),30)
 ================================================================================
 ALPHA TEST REPORT: alpha094
 Benchmark: zz800

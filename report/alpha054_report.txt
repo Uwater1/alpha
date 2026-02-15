@@ -1,3 +1,4 @@
+(-1\*RANK((STD(ABS(CLOSE-OPEN))+(CLOSE-OPEN))+CORR(CLOSE,OPEN,10)))
 ================================================================================
 ALPHA TEST REPORT: alpha054
 Benchmark: zz800

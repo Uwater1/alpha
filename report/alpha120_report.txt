@@ -1,3 +1,4 @@
+(RANK((VWAP-CLOSE))/RANK((VWAP+CLOSE)))
 ================================================================================
 ALPHA TEST REPORT: alpha120
 Benchmark: zz800

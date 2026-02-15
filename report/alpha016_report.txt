@@ -1,3 +1,4 @@
+(-1\*TSMAX(RANK(CORR(RANK(VOLUME),RANK(VWAP),5)),5))
 ================================================================================
 ALPHA TEST REPORT: alpha016
 Benchmark: zz800

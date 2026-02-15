@@ -1,3 +1,5 @@
+(-1\*TSMAX(CORR(TSRANK(VOLUME,5),YSRANK(HIGH,5),5),3))
+When Volume and Price are high, the stock is likely to be overvalued and will underperform in the future.
 ================================================================================
 ALPHA TEST REPORT: alpha005
 Benchmark: zz800

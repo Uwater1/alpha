@@ -1,3 +1,4 @@
+BANCHMARKINDEXCLOSE<BANCHMARKINDEXOPEN,50)/COUNT(BANCHMARKINDEXCLOSE<BANCHMARKIN DEXOPEN,50)
 ================================================================================
 ALPHA TEST REPORT: alpha075
 Benchmark: zz800
