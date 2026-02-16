@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_069(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha069 factor (inverted).
-    Formula: (SUM(DTM,20)>SUM(DBM,20)?(SUM(DTM,20)-SUM(DBM,20))/SUM(DTM,20):(SUM(DTM,20)=SUM(DBM,20)？0:(SUM(DTM,20)-SUM(DBM,20))/SUM(DBM,20)))
+    Compute Alpha069 factor.
+    Formula: (SUM(DTM,20)>SUM(DBM,20)?(SUM(DTM,20)-SUM(DBM,20))/SUM(DTM,20):(SUM(DTM,20)=SUM(DBM,20)?0:(SUM(DTM,20)-SUM(DBM,20))/SUM(DBM,20)))
     """
     # Calculate DTM and DBM using the utility functions
     dtm = compute_dtm(df['open'], df['high'])
@@ -33,7 +33,7 @@ def alpha_069(df: pd.DataFrame) -> pd.Series:
     sum_dbm_safe[sum_dbm_safe == 0] = np.nan
     
     result = np.where(
-        sum_dtm < sum_dbm,
+        sum_dtm > sum_dbm,
         diff / sum_dtm_safe,
         np.where(
             sum_dtm == sum_dbm,

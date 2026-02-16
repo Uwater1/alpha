@@ -5,16 +5,16 @@ from .utils import run_alpha_factor
 
 def alpha_091(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha091 factor (inverted).
-    Formula: ((RANK((MAX(CLOSE,5)-CLOSE))*RANK(CORR((MEAN(VOLUME,40)),LOW,5)))
+    Compute Alpha091 factor.
+    Formula: ((RANK((CLOSE-MAX(CLOSE,5))))*RANK(CORR((MEAN(VOLUME,40)),LOW,5)))
     """
     close = df['close'].values
     volume = df['volume'].values
     low = df['low'].values
     
-    # Calculate MAX(CLOSE,5)-CLOSE
+    # Calculate CLOSE-MAX(CLOSE,5)
     max_close_5 = ts_max(close, 5)
-    diff = max_close_5 - close
+    diff = close - max_close_5
     
     # Calculate RANK(CLOSE-MAX(CLOSE,5))
     rank_diff = ts_rank(diff, 20)

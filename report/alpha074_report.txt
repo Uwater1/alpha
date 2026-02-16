@@ -1,3 +1,4 @@
+# Notice that this alpha is inversed
 ================================================================================
 ALPHA TEST REPORT: alpha074
 Benchmark: zz800

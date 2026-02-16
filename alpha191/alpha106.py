@@ -5,8 +5,8 @@ from .utils import run_alpha_factor
 
 def alpha_106(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha106 factor (inverted).
-    Formula: DELAY(CLOSE,20)-CLOSE
+    Compute Alpha106 factor.
+    Formula: CLOSE-DELAY(CLOSE,20)
     """
     # Extract values as numpy arrays
     close = df['close'].values
@@ -15,7 +15,7 @@ def alpha_106(df: pd.DataFrame) -> pd.Series:
     delay_close = delay(close, 20)
     
     # Calculate final result
-    result = delay_close - close
+    result = close - delay_close
     
     return pd.Series(result, index=df.index, name='alpha_106')
 

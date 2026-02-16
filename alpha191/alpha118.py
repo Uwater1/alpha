@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_118(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha118 factor (inverted).
+    Compute Alpha118 factor.
     Formula: SUM(HIGH-OPEN,20)/SUM(OPEN-LOW,20)*100
     """
     # Extract values as numpy arrays
@@ -13,10 +13,10 @@ def alpha_118(df: pd.DataFrame) -> pd.Series:
     open_price = df['open'].values
     low = df['low'].values
     
-    # Calculate OPEN-HIGH (inverted from HIGH-OPEN)
-    high_minus_open = open_price - high
+    # Calculate HIGH-OPEN
+    high_minus_open = high - open_price
     
-    # Calculate OPEN-LOW (unchanged)
+    # Calculate OPEN-LOW
     open_minus_low = open_price - low
     
     # Calculate sum of high minus open

@@ -5,7 +5,7 @@ from .utils import run_alpha_factor
 
 def alpha_134(df: pd.DataFrame) -> pd.Series:
     """
-    Compute Alpha134 factor (inverted).
+    Compute Alpha134 factor.
     Formula: (CLOSE-DELAY(CLOSE,12))/DELAY(CLOSE,12)*VOLUME
     """
     # Extract values as numpy arrays
@@ -15,8 +15,8 @@ def alpha_134(df: pd.DataFrame) -> pd.Series:
     # Calculate delay of close
     delay_close = delay(close, 12)
     
-    # Calculate delay close minus close
-    close_change = delay_close - close
+    # Calculate close minus delay close
+    close_change = close - delay_close
     
     # Calculate final result
     result = close_change / delay_close * volume
