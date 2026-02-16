@@ -31,7 +31,7 @@ from assessment import get_clean_factor_and_forward_returns, compute_performance
 
 # Configuration
 BENCHMARK = 'zz800'
-HORIZONS = [1, 5, 10, 20]
+HORIZONS = [5, 10, 20, 60]
 OUTPUT_FILE = 'alpha_performance.csv'
 
 def get_alpha_function(alpha_name):
