@@ -34,7 +34,7 @@ def alpha_092(df: pd.DataFrame) -> pd.Series:
     weighted_sum = (close * 0.35) + (vwap * 0.65)
     delta_weighted = delta(weighted_sum, 2)
     decay1 = decay_linear(delta_weighted, 3)
-    rank1 = rank(decay1)
+    rank1 = ts_rank(decay1, 20)
     
     # Calculate second part: TSRANK(DECAYLINEAR(ABS(CORR((MEAN(VOLUME,180)),CLOSE,13)),5),15)
     mean_volume_180 = ts_mean(volume, 180)

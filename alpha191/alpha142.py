@@ -31,9 +31,9 @@ def alpha_142(df: pd.DataFrame) -> pd.Series:
     ts_rank_volume = ts_rank(volume_ratio, 5)
     
     # Calculate ranks
-    rank_ts_rank_close = rank(ts_rank_close)
-    rank_delta_delta_close = rank(delta_delta_close)
-    rank_ts_rank_volume = rank(ts_rank_volume)
+    rank_ts_rank_close = ts_rank(ts_rank_close, 20)
+    rank_delta_delta_close = ts_rank(delta_delta_close, 20)
+    rank_ts_rank_volume = ts_rank(ts_rank_volume, 20)
     
     # Calculate final result
     result = (-1 * rank_ts_rank_close) * rank_delta_delta_close * rank_ts_rank_volume

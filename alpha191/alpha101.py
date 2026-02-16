@@ -43,22 +43,22 @@ def alpha_101(df: pd.DataFrame) -> pd.Series:
     corr_close_volume = rolling_corr(close, sum_mean_volume_37, 15)
     
     # Calculate rank of correlation
-    rank_corr_close_volume = rank(corr_close_volume)
+    rank_corr_close_volume = ts_rank(corr_close_volume, 20)
     
     # Calculate average of high and low
     avg_high_low = (high + low) / 2
     
     # Calculate rank of average high and low
-    rank_avg_high_low = rank(avg_high_low)
+    rank_avg_high_low = ts_rank(avg_high_low, 20)
     
     # Calculate rank of volume
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate correlation between rank of average high and low and rank of volume
     corr_rank_high_low_volume = rolling_corr(rank_avg_high_low, rank_volume, 12)
     
     # Calculate rank of correlation
-    rank_corr_rank_high_low_volume = rank(corr_rank_high_low_volume)
+    rank_corr_rank_high_low_volume = ts_rank(corr_rank_high_low_volume, 20)
     
     # Calculate final result
     result = np.where(rank_corr_close_volume < rank_corr_rank_high_low_volume, -1, 0)

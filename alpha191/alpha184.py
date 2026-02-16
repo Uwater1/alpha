@@ -41,10 +41,10 @@ def alpha_184(df: pd.DataFrame) -> pd.Series:
                         corr_values[i] = corr
     
     # Calculate RANK(CORR(...))
-    rank_corr = rank(corr_values)
+    rank_corr = ts_rank(corr_values, 20)
     
     # Calculate RANK((OPEN-CLOSE))
-    rank_open_close = rank(open_close_diff)
+    rank_open_close = ts_rank(open_close_diff, 20)
     
     # Calculate final result: RANK(CORR(...)) + RANK((OPEN-CLOSE))
     result = rank_corr + rank_open_close

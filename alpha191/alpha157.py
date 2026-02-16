@@ -16,11 +16,11 @@ def alpha_157(df: pd.DataFrame) -> pd.Series:
     delta_close = delta(close_minus_1, 5)
     
     # Calculate -1*RANK(DELTA((CLOSE-1),5))
-    rank_delta = rank(delta_close)
+    rank_delta = ts_rank(delta_close, 20)
     neg_rank_delta = -1 * rank_delta
     
     # Calculate RANK(RANK((-1*RANK(DELTA((CLOSE-1),5)))))
-    rank_rank_neg = rank(neg_rank_delta)
+    rank_rank_neg = ts_rank(neg_rank_delta, 20)
     
     # Calculate TSMIN(RANK(RANK((-1*RANK(DELTA((CLOSE-1),5))))),2)
     min_rank_rank = ts_min(rank_rank_neg, 2)
@@ -36,10 +36,10 @@ def alpha_157(df: pd.DataFrame) -> pd.Series:
     log_sum = np.log(log_input)
     
     # Calculate RANK(LOG(SUM(...)))
-    rank_log_sum = rank(log_sum)
+    rank_log_sum = ts_rank(log_sum, 20)
     
     # Calculate RANK(RANK(LOG(SUM(...))))
-    rank_rank_log_sum = rank(rank_log_sum)
+    rank_rank_log_sum = ts_rank(rank_log_sum, 20)
     
     # Calculate PROD(RANK(RANK(LOG(SUM(...)))),1)
     # Since window is 1, product is just the value itself

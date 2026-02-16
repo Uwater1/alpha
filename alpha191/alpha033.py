@@ -48,7 +48,7 @@ def alpha_033(df: pd.DataFrame) -> pd.Series:
 
     # Step 3: Compute RANK((SUM(RET, 240) - SUM(RET, 20)) / 220)
     target_value = (sum_ret_240 - sum_ret_20) / 220
-    ranked_value = rank(target_value)
+    ranked_value = ts_rank(target_value, 20)
 
     # Step 4: Compute TSRANK(VOLUME, 5)
     tsrank_vol = ts_rank(volume, 5)

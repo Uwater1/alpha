@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delta, rank, rolling_corr, ts_mean
+from .operators import delta, rank, rolling_corr, ts_mean, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -59,7 +59,7 @@ def alpha_045(df: pd.DataFrame) -> pd.Series:
     delta_weighted = delta(weighted_price, 1)
 
     # Step 3: Compute RANK(DELTA((((CLOSE*0.6)+(OPEN*0.4))), 1))
-    rank_delta = rank(delta_weighted)
+    rank_delta = ts_rank(delta_weighted, 20)
 
     # Step 4: Compute MEAN(VOLUME, 150)
     mean_volume = ts_mean(volume, 150)
@@ -68,7 +68,7 @@ def alpha_045(df: pd.DataFrame) -> pd.Series:
     corr_vwap_volume = rolling_corr(vwap, mean_volume, 15)
 
     # Step 6: Compute RANK(CORR(VWAP, MEAN(VOLUME, 150), 15))
-    rank_corr = rank(corr_vwap_volume)
+    rank_corr = ts_rank(corr_vwap_volume, 20)
 
     # Step 7: Multiply the two ranks
     alpha_values = rank_delta * rank_corr

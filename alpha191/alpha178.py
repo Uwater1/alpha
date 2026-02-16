@@ -21,7 +21,7 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     corr_close_volume = rolling_corr(close, mean_volume_20, 5)
     
     # Calculate RANK(CORR(...))
-    rank_corr_close_volume = rank(corr_close_volume)
+    rank_corr_close_volume = ts_rank(corr_close_volume, 20)
     
     # Calculate (OPEN-CLOSE)/(CLOSE)
     open_close_diff = open_price - close
@@ -34,7 +34,7 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
         ratio1 = open_close_diff / denom
     
     # Calculate RANK(((OPEN-CLOSE)/(CLOSE)))
-    rank_ratio1 = rank(ratio1)
+    rank_ratio1 = ts_rank(ratio1, 20)
     
     # Calculate RANK((OPEN-CLOSE)/CLOSE) - same as above
     rank_ratio2 = rank_ratio1
@@ -46,7 +46,7 @@ def alpha_178(df: pd.DataFrame) -> pd.Series:
     corr_vwap_volume = rolling_corr(vwap, mean_volume_60, 3)
     
     # Calculate RANK(CORR((VWAP),MEAN(VOLUME,60),3))
-    rank_corr_vwap_volume = rank(corr_vwap_volume)
+    rank_corr_vwap_volume = ts_rank(corr_vwap_volume, 20)
     
     # Calculate final result: (rank_corr_close_volume * rank_ratio1 + rank_ratio2) * rank_corr_vwap_volume
     result = (rank_corr_close_volume * rank_ratio1 + rank_ratio2) * rank_corr_vwap_volume

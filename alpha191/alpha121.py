@@ -19,7 +19,7 @@ def alpha_121(df: pd.DataFrame) -> pd.Series:
     vwap_minus_min_vwap = vwap - min_vwap
     
     # Calculate rank of VWAP minus minimum of VWAP
-    rank_vwap_minus_min_vwap = rank(vwap_minus_min_vwap)
+    rank_vwap_minus_min_vwap = ts_rank(vwap_minus_min_vwap, 20)
     
     # Calculate TSRANK of VWAP
     tsrank_vwap = ts_rank(vwap, 20)

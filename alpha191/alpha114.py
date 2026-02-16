@@ -46,13 +46,13 @@ def alpha_114(df: pd.DataFrame) -> pd.Series:
     delay_ratio = delay(ratio, 2)
     
     # Calculate rank of delay of ratio
-    rank_delay_ratio = rank(delay_ratio)
+    rank_delay_ratio = ts_rank(delay_ratio, 20)
     
     # Calculate rank of volume
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate rank of rank of volume
-    rank_rank_volume = rank(rank_volume)
+    rank_rank_volume = ts_rank(rank_volume, 20)
     
     # Calculate denominator
     # Protect against division by zero

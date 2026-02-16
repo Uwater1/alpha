@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delta, ts_mean, decay_linear, ts_sum, compute_ret, rank
+from .operators import delta, ts_mean, decay_linear, ts_sum, compute_ret, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -45,7 +45,7 @@ def alpha_025(df: pd.DataFrame) -> pd.Series:
     decay_vol = decay_linear(vol_ratio, 9)
 
     # Step 4: Compute RANK(DECAYLINEAR(...))
-    rank_decay = rank(decay_vol)
+    rank_decay = ts_rank(decay_vol, 20)
 
     # Step 5: Compute (1-RANK(DECAYLINEAR(...)))
     one_minus_rank = 1 - rank_decay
@@ -54,7 +54,7 @@ def alpha_025(df: pd.DataFrame) -> pd.Series:
     product = delta_close * one_minus_rank
 
     # Step 7: Compute RANK(DELTA(CLOSE,7)*(1-RANK(...)))
-    rank_product = rank(product)
+    rank_product = ts_rank(product, 20)
 
     # Step 8: Compute RET = delta(close, 1) / delay(close, 1)
     ret = compute_ret(close)
@@ -63,7 +63,7 @@ def alpha_025(df: pd.DataFrame) -> pd.Series:
     sum_ret = ts_sum(ret, 250)
 
     # Step 10: Compute RANK(SUM(RET, 250))
-    rank_sum_ret = rank(sum_ret)
+    rank_sum_ret = ts_rank(sum_ret, 20)
 
     # Step 11: Compute (1+RANK(SUM(RET,250)))
     one_plus_rank = 1 + rank_sum_ret

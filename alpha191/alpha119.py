@@ -26,13 +26,13 @@ def alpha_119(df: pd.DataFrame) -> pd.Series:
     decay_linear_corr = decay_linear(corr_vwap_sum_mean_volume, 7)
     
     # Calculate rank of decay linear of correlation
-    rank_decay_linear_corr = rank(decay_linear_corr)
+    rank_decay_linear_corr = ts_rank(decay_linear_corr, 20)
     
     # Calculate mean volume
     mean_volume_15 = ts_mean(volume, 15)
     
     # Calculate correlation between rank of open and rank of mean volume
-    corr_rank_open_rank_mean_volume = rolling_corr(rank(open_price), rank(mean_volume_15), 21)
+    corr_rank_open_rank_mean_volume = rolling_corr(ts_rank(open_price, 20), ts_rank(mean_volume_15, 20), 21)
     
     # Calculate minimum of correlation
     min_corr = np.minimum(corr_rank_open_rank_mean_volume, 9)
@@ -44,7 +44,7 @@ def alpha_119(df: pd.DataFrame) -> pd.Series:
     decay_linear_tsrank = decay_linear(tsrank_min_corr, 8)
     
     # Calculate rank of decay linear of TSRANK
-    rank_decay_linear_tsrank = rank(decay_linear_tsrank)
+    rank_decay_linear_tsrank = ts_rank(decay_linear_tsrank, 20)
     
     # Calculate final result
     result = rank_decay_linear_corr - rank_decay_linear_tsrank

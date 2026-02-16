@@ -20,13 +20,13 @@ def alpha_190(df: pd.DataFrame) -> pd.Series:
     open_high_low = open_price + high - low
     
     # Calculate RANK((OPEN+HIGH-LOW))
-    rank_open_high_low = rank(open_high_low)
+    rank_open_high_low = ts_rank(open_high_low, 20)
     
     # Calculate CLOSE-RANK((OPEN+HIGH-LOW))
     close_diff = close - rank_open_high_low
     
     # Calculate RANK(VOLUME)
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Protect against division by zero
     denom = rank_volume
@@ -39,7 +39,7 @@ def alpha_190(df: pd.DataFrame) -> pd.Series:
     scaled_ratio = ratio * 128
     
     # Calculate RANK(scaled_ratio)
-    rank_scaled_ratio = rank(scaled_ratio)
+    rank_scaled_ratio = ts_rank(scaled_ratio, 20)
     
     # Calculate MEAN(VOLUME,20)
     mean_volume_20 = ts_mean(volume, 20)

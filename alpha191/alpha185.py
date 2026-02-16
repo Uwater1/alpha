@@ -42,7 +42,7 @@ def alpha_185(df: pd.DataFrame) -> pd.Series:
     negative_ratio = -1 * ratio
     
     # Calculate RANK(...)
-    result = rank(negative_ratio)
+    result = ts_rank(negative_ratio, 20)
     
     return pd.Series(result, index=df.index, name='alpha_185')
 

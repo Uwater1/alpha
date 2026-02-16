@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delta, decay_linear, rolling_corr, rank
+from .operators import delta, decay_linear, rolling_corr, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -39,7 +39,7 @@ def alpha_035(df: pd.DataFrame) -> pd.Series:
     decay_open = decay_linear(delta_open, 15)
 
     # Step 3: Compute RANK(DECAYLINEAR(DELTA(OPEN,1),15))
-    rank_decay_open = rank(decay_open)
+    rank_decay_open = ts_rank(decay_open, 20)
 
     # Step 4: Compute (OPEN*0.65)+(OPEN*0.35) = OPEN
     weighted_open = open_price * 0.65 + open_price * 0.35
@@ -51,7 +51,7 @@ def alpha_035(df: pd.DataFrame) -> pd.Series:
     decay_corr = decay_linear(corr_vol_open, 7)
 
     # Step 7: Compute RANK(DECAYLINEAR(CORR(...),7))
-    rank_decay_corr = rank(decay_corr)
+    rank_decay_corr = ts_rank(decay_corr, 20)
 
     # Step 8: Compute MIN(RANK(...), RANK(...))
     min_val = np.minimum(rank_decay_open, rank_decay_corr)

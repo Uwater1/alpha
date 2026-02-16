@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delay, ts_sum, sign, rank
+from .operators import delay, ts_sum, sign, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -63,7 +63,7 @@ def alpha_048(df: pd.DataFrame) -> pd.Series:
     sum_signs = sign_1 + sign_2 + sign_3
 
     # Step 11: Compute RANK of the sum of signs
-    ranked_sum_signs = rank(sum_signs)
+    ranked_sum_signs = ts_rank(sum_signs, 20)
 
     # Step 12: Compute SUM(VOLUME, 5)
     sum_volume_5 = ts_sum(volume, 5)

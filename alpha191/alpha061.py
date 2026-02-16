@@ -41,7 +41,7 @@ def alpha_061(df: pd.DataFrame) -> pd.Series:
     decay_vwap = decay_linear(vwap_delta, 12)
     
     # Calculate RANK(DECAYLINEAR(DELTA(VWAP, 1), 12))
-    rank_decay_vwap = rank(decay_vwap)
+    rank_decay_vwap = ts_rank(decay_vwap, 20)
     
     # Calculate MEAN(VOLUME, 80)
     mean_volume = ts_mean(df['volume'], 80)
@@ -50,13 +50,13 @@ def alpha_061(df: pd.DataFrame) -> pd.Series:
     correlation = rolling_corr(df['low'], mean_volume, 8)
     
     # Calculate RANK(CORR(LOW, MEAN(VOLUME, 80), 8))
-    rank_corr = rank(correlation)
+    rank_corr = ts_rank(correlation, 20)
     
     # Calculate DECAYLINEAR(RANK(CORR(LOW, MEAN(VOLUME, 80), 8)), 17)
     decay_rank_corr = decay_linear(rank_corr, 17)
     
     # Calculate RANK(DECAYLINEAR(RANK(CORR(LOW, MEAN(VOLUME, 80), 8)), 17))
-    rank_decay_rank_corr = rank(decay_rank_corr)
+    rank_decay_rank_corr = ts_rank(decay_rank_corr, 20)
     
     # Calculate MAX of the two ranks
     max_rank = np.maximum(rank_decay_vwap, rank_decay_rank_corr)

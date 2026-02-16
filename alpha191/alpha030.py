@@ -122,9 +122,10 @@ def alpha_030(df: pd.DataFrame) -> pd.Series:
 
     if missing_factors:
         raise ValueError(
-            f"Alpha030 requires Fama-French factors {factor_cols}. "
+            f"Alpha030 (Factor 30) requires Fama-French factors {factor_cols} to be present in the DataFrame. "
             f"Missing columns: {missing_factors}. "
-            "Please merge these factors into the DataFrame before calculating this alpha."
+            "Standard stock data loading does not include these market-wide factors. "
+            "You must manually merge 'mkt', 'smb', and 'hml' columns into your stock DataFrame before calling this alpha."
         )
 
     # Get date index
@@ -165,6 +166,8 @@ def alpha030(
     Compute Alpha030 factor value for a stock at a specific date.
 
     Note: This requires the underlying data source to provide 'mkt', 'smb', 'hml' columns.
-    If using standard load_stock_csv, this will likely fail unless data is augmented.
+    The standard load_stock_csv function DOES NOT provide these columns.
+    Using this convenience function will fail with a ValueError unless you have modified
+    load_stock_csv or the underlying CSV files to include these factors.
     """
     return run_alpha_factor(alpha_030, code, benchmark, end_date, lookback)

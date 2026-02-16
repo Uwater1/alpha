@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delta, ts_max, rank
+from .operators import delta, ts_max, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -49,7 +49,7 @@ def alpha_041(df: pd.DataFrame) -> pd.Series:
     max_delta = ts_max(delta_vwap, 5)
 
     # Step 3: Compute RANK(MAX(DELTA(VWAP, 3), 5))
-    ranked = rank(max_delta)
+    ranked = ts_rank(max_delta, 20)
 
     # Step 4: Multiply by -1
     alpha_values = ranked * -1

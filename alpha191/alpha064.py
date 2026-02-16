@@ -35,10 +35,10 @@ def alpha_064(df: pd.DataFrame) -> pd.Series:
         vwap = df['vwap']
     
     # Calculate RANK(VWAP)
-    ranked_vwap = rank(vwap)
+    ranked_vwap = ts_rank(vwap, 20)
     
     # Calculate RANK(VOLUME)
-    ranked_volume = rank(df['volume'])
+    ranked_volume = ts_rank(df['volume'], 20)
     
     # Calculate CORR(RANK(VWAP), RANK(VOLUME), 4)
     corr_vwap_volume = rolling_corr(ranked_vwap, ranked_volume, 4)
@@ -47,16 +47,16 @@ def alpha_064(df: pd.DataFrame) -> pd.Series:
     decay_corr_vwap_volume = decay_linear(corr_vwap_volume, 4)
     
     # Calculate RANK(DECAYLINEAR(CORR(RANK(VWAP), RANK(VOLUME), 4), 4))
-    rank_decay_corr_vwap_volume = rank(decay_corr_vwap_volume)
+    rank_decay_corr_vwap_volume = ts_rank(decay_corr_vwap_volume, 20)
     
     # Calculate MEAN(VOLUME, 60)
     mean_volume = ts_mean(df['volume'], 60)
     
     # Calculate RANK(CLOSE)
-    ranked_close = rank(df['close'])
+    ranked_close = ts_rank(df['close'], 20)
     
     # Calculate RANK(MEAN(VOLUME, 60))
-    ranked_mean_volume = rank(mean_volume)
+    ranked_mean_volume = ts_rank(mean_volume, 20)
     
     # Calculate CORR(RANK(CLOSE), RANK(MEAN(VOLUME, 60)), 4)
     corr_close_mean_volume = rolling_corr(ranked_close, ranked_mean_volume, 4)
@@ -68,7 +68,7 @@ def alpha_064(df: pd.DataFrame) -> pd.Series:
     decay_max_corr = decay_linear(max_corr, 14)
     
     # Calculate RANK(DECAYLINEAR(MAX(CORR(RANK(CLOSE), RANK(MEAN(VOLUME, 60)), 4), 13), 14))
-    rank_decay_max_corr = rank(decay_max_corr)
+    rank_decay_max_corr = ts_rank(decay_max_corr, 20)
     
     # Calculate MAX of the two ranks
     max_rank = np.maximum(rank_decay_corr_vwap_volume, rank_decay_max_corr)

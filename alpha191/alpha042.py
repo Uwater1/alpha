@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import ts_std, rank, rolling_corr
+from .operators import ts_std, rank, rolling_corr, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -36,7 +36,7 @@ def alpha_042(df: pd.DataFrame) -> pd.Series:
     std_high = ts_std(high, 10)
 
     # Step 2: Compute RANK(STD(HIGH, 10))
-    ranked_std = rank(std_high)
+    ranked_std = ts_rank(std_high, 20)
 
     # Step 3: Compute -1 * RANK(STD(HIGH, 10))
     neg_ranked_std = -1 * ranked_std

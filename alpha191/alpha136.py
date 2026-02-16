@@ -17,7 +17,7 @@ def alpha_136(df: pd.DataFrame) -> pd.Series:
     delta_ret = delta(ret, 3)
     
     # Calculate rank of delta of ret
-    rank_delta_ret = rank(delta_ret)
+    rank_delta_ret = ts_rank(delta_ret, 20)
     
     # Calculate correlation between open and volume
     corr_open_volume = rolling_corr(open_price, volume, 10)
