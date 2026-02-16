@@ -35,13 +35,13 @@ def alpha_077(df: pd.DataFrame) -> pd.Series:
     hl_avg = (high + low) / 2
     term1 = (((hl_avg + high) - (vwap + high)))
     decay1 = decay_linear(term1, 20)
-    rank1 = rank(decay1)
+    rank1 = ts_rank(decay1, 20)
     
     # Calculate second part: RANK(DECAYLINEAR(CORR(((HIGH+LOW)/2),MEAN(VOLUME,40),3),6))
     mean_volume_40 = ts_mean(volume, 40)
     corr = rolling_corr(hl_avg, mean_volume_40, 3)
     decay2 = decay_linear(corr, 6)
-    rank2 = rank(decay2)
+    rank2 = ts_rank(decay2, 20)
     
     result = np.minimum(rank1, rank2)
     

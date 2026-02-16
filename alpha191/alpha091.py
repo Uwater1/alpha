@@ -17,7 +17,7 @@ def alpha_091(df: pd.DataFrame) -> pd.Series:
     diff = max_close_5 - close
     
     # Calculate RANK(CLOSE-MAX(CLOSE,5))
-    rank_diff = rank(diff)
+    rank_diff = ts_rank(diff, 20)
     
     # Calculate MEAN(VOLUME,40)
     mean_volume_40 = ts_mean(volume, 40)
@@ -26,7 +26,7 @@ def alpha_091(df: pd.DataFrame) -> pd.Series:
     corr = rolling_corr(mean_volume_40, low, 5)
     
     # Calculate RANK(CORR(...))
-    rank_corr = rank(corr)
+    rank_corr = ts_rank(corr, 20)
     
     # Calculate final result
     result = rank_diff * rank_corr

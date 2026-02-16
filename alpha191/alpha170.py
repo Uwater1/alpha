@@ -18,7 +18,7 @@ def alpha_170(df: pd.DataFrame) -> pd.Series:
     inv_close = 1 / close
     
     # Calculate RANK((1/CLOSE))
-    rank_inv_close = rank(inv_close)
+    rank_inv_close = ts_rank(inv_close, 20)
     
     # Calculate RANK((1/CLOSE))*VOLUME
     product1 = rank_inv_close * volume
@@ -33,7 +33,7 @@ def alpha_170(df: pd.DataFrame) -> pd.Series:
     high_close_diff = high - close
     
     # Calculate RANK((HIGH-CLOSE))
-    rank_high_close = rank(high_close_diff)
+    rank_high_close = ts_rank(high_close_diff, 20)
     
     # Calculate HIGH*RANK((HIGH-CLOSE))
     product2 = high * rank_high_close
@@ -55,7 +55,7 @@ def alpha_170(df: pd.DataFrame) -> pd.Series:
     vwap_diff = vwap - delay_vwap
     
     # Calculate RANK((VWAP-DELAY(VWAP,5)))
-    rank_vwap_diff = rank(vwap_diff)
+    rank_vwap_diff = ts_rank(vwap_diff, 20)
     
     # Calculate final result: product3 - RANK(...)
     result = product3 - rank_vwap_diff

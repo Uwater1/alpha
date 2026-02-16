@@ -13,19 +13,19 @@ def alpha_141(df: pd.DataFrame) -> pd.Series:
     volume = df['volume'].values
     
     # Calculate rank of high
-    rank_high = rank(high)
+    rank_high = ts_rank(high, 20)
     
     # Calculate mean volume
     mean_volume = ts_mean(volume, 15)
     
     # Calculate rank of mean volume
-    rank_mean_volume = rank(mean_volume)
+    rank_mean_volume = ts_rank(mean_volume, 20)
     
     # Calculate correlation between rank of high and rank of mean volume
     corr_rank_high_rank_mean_volume = rolling_corr(rank_high, rank_mean_volume, 9)
     
     # Calculate rank of correlation
-    rank_corr = rank(corr_rank_high_rank_mean_volume)
+    rank_corr = ts_rank(corr_rank_high_rank_mean_volume, 20)
     
     # Calculate final result
     result = rank_corr * -1

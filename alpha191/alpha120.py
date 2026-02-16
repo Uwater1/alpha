@@ -19,10 +19,10 @@ def alpha_120(df: pd.DataFrame) -> pd.Series:
     vwap_plus_close = vwap + close
     
     # Calculate rank of VWAP minus close
-    rank_vwap_minus_close = rank(vwap_minus_close)
+    rank_vwap_minus_close = ts_rank(vwap_minus_close, 20)
     
     # Calculate rank of VWAP plus close
-    rank_vwap_plus_close = rank(vwap_plus_close)
+    rank_vwap_plus_close = ts_rank(vwap_plus_close, 20)
     
     # Protect against division by zero
     denom = rank_vwap_plus_close

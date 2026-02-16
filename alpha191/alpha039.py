@@ -9,7 +9,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import delta, decay_linear, rolling_corr, ts_mean, ts_sum, rank
+from .operators import delta, decay_linear, rolling_corr, ts_mean, ts_sum, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -61,7 +61,7 @@ def alpha_039(df: pd.DataFrame) -> pd.Series:
     # Step 1: RANK(DECAYLINEAR(DELTA((CLOSE), 2), 8))
     delta_close = delta(close, 2)
     decay_delta = decay_linear(delta_close, 8)
-    part1 = rank(decay_delta)
+    part1 = ts_rank(decay_delta, 20)
 
     # Step 2: RANK(DECAYLINEAR(CORR(((VWAP * 0.3) + (OPEN * 0.7)), SUM(MEAN(VOLUME, 180), 37), 14), 12))
     weighted_price = vwap * 0.3 + open_price * 0.7
@@ -70,7 +70,7 @@ def alpha_039(df: pd.DataFrame) -> pd.Series:
     
     correlation = rolling_corr(weighted_price, sum_mean_vol, 14)
     decay_corr = decay_linear(correlation, 12)
-    part2 = rank(decay_corr)
+    part2 = ts_rank(decay_corr, 20)
 
     # Step 3: Final result
     alpha_values = (part1 - part2) * -1

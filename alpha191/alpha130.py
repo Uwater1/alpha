@@ -27,16 +27,16 @@ def alpha_130(df: pd.DataFrame) -> pd.Series:
     decay_linear_corr = decay_linear(corr_avg_high_low_mean_volume, 10)
     
     # Calculate rank of decay linear of correlation
-    rank_decay_linear_corr = rank(decay_linear_corr)
+    rank_decay_linear_corr = ts_rank(decay_linear_corr, 20)
     
     # Calculate correlation between rank of VWAP and rank of volume
-    corr_rank_vwap_rank_volume = rolling_corr(rank(vwap), rank(volume), 7)
+    corr_rank_vwap_rank_volume = rolling_corr(ts_rank(vwap, 20), ts_rank(volume, 20), 7)
     
     # Calculate decay linear of correlation
     decay_linear_corr_rank = decay_linear(corr_rank_vwap_rank_volume, 3)
     
     # Calculate rank of decay linear of correlation
-    rank_decay_linear_corr_rank = rank(decay_linear_corr_rank)
+    rank_decay_linear_corr_rank = ts_rank(decay_linear_corr_rank, 20)
     
     # Protect against division by zero
     denom = rank_decay_linear_corr_rank

@@ -7,7 +7,7 @@ Formula:
 
 import numpy as np
 import pandas as pd
-from .operators import ts_sum, delay, compute_ret, rank
+from .operators import ts_sum, delay, compute_ret, rank, ts_rank
 from .utils import run_alpha_factor
 
 
@@ -51,7 +51,7 @@ def alpha_037(df: pd.DataFrame) -> pd.Series:
     diff = product - delay_product
 
     # Step 7: Compute RANK(...)
-    rank_val = rank(diff)
+    rank_val = ts_rank(diff, 20)
 
     # Step 8: Compute final formula
     alpha_values = -1 * rank_val

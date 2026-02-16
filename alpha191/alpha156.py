@@ -32,8 +32,8 @@ def alpha_156(df: pd.DataFrame) -> pd.Series:
     decay_weighted = decay_linear(-ratio, 3)
     
     # Calculate ranks
-    rank_vwap = rank(decay_vwap)
-    rank_weighted = rank(decay_weighted)
+    rank_vwap = ts_rank(decay_vwap, 20)
+    rank_weighted = ts_rank(decay_weighted, 20)
     
     # Calculate MAX(RANK(DECAYLINEAR(DELTA(VWAP,5),3)),RANK(DECAYLINEAR(...)))
     max_rank = np.maximum(rank_vwap, rank_weighted)

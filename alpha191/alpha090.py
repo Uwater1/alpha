@@ -30,16 +30,16 @@ def alpha_090(df: pd.DataFrame) -> pd.Series:
     volume = df['volume'].values
     
     # Calculate RANK(VWAP)
-    rank_vwap = rank(vwap)
+    rank_vwap = ts_rank(vwap, 20)
     
     # Calculate RANK(VOLUME)
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate CORR(RANK(VWAP),RANK(VOLUME),5)
     corr = rolling_corr(rank_vwap, rank_volume, 5)
     
     # Calculate RANK(CORR(...))
-    rank_corr = rank(corr)
+    rank_corr = ts_rank(corr, 20)
     
     # Calculate -1 * RANK(...)
     result = -1 * rank_corr

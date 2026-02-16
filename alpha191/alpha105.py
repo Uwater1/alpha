@@ -13,10 +13,10 @@ def alpha_105(df: pd.DataFrame) -> pd.Series:
     volume = df['volume'].values
     
     # Calculate rank of open price
-    rank_open = rank(open_price)
+    rank_open = ts_rank(open_price, 20)
     
     # Calculate rank of volume
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate correlation between rank of open price and rank of volume
     corr_rank_open_volume = rolling_corr(rank_open, rank_volume, 10)

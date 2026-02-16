@@ -16,7 +16,7 @@ def alpha_113(df: pd.DataFrame) -> pd.Series:
     sum_delay_close = ts_sum(delay(close, 5), 20)
     
     # Calculate rank of sum of delay of close
-    rank_sum_delay_close = rank(sum_delay_close / 20)
+    rank_sum_delay_close = ts_rank(sum_delay_close / 20, 20)
     
     # Calculate correlation between close and volume
     corr_close_volume = rolling_corr(close, volume, 2)
@@ -29,7 +29,7 @@ def alpha_113(df: pd.DataFrame) -> pd.Series:
     corr_sum_close = rolling_corr(sum_close_5, sum_close_20, 2)
     
     # Calculate rank of correlation
-    rank_corr_sum_close = rank(corr_sum_close)
+    rank_corr_sum_close = ts_rank(corr_sum_close, 20)
     
     # Calculate final result
     result = -1 * (rank_sum_delay_close * corr_close_volume) * rank_corr_sum_close

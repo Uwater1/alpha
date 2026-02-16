@@ -33,10 +33,10 @@ def alpha_176(df: pd.DataFrame) -> pd.Series:
     ratio = close_min_diff / range_diff
     
     # Calculate RANK(...)
-    rank_ratio = rank(ratio)
+    rank_ratio = ts_rank(ratio, 20)
     
     # Calculate RANK(VOLUME)
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate CORR(RANK(...),RANK(VOLUME),6) using Numba-accelerated rolling_corr
     corr_values = rolling_corr(rank_ratio, rank_volume, 6)

@@ -27,13 +27,13 @@ def alpha_056(df: pd.DataFrame) -> pd.Series:
     correlation = rolling_corr(sum_high_low, sum_mean_volume, 13)
     
     # Calculate RANK(CORR(...))^5
-    ranked_corr_power5 = rank(correlation) ** 5
+    ranked_corr_power5 = ts_rank(correlation, 20) ** 5
     
     # Calculate RANK(OPEN - TSMIN(OPEN, 12))
-    ranked_open_diff = rank(open_min_diff)
+    ranked_open_diff = ts_rank(open_min_diff, 20)
     
     # Calculate RANK(RANK(CORR(...))^5)
-    ranked_ranked_corr = rank(ranked_corr_power5)
+    ranked_ranked_corr = ts_rank(ranked_corr_power5, 20)
     
     # Calculate final result: RANK(OPEN-TSMIN(OPEN,12)) < RANK((RANK(CORR(...))^5))
     result = ranked_open_diff < ranked_ranked_corr

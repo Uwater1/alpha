@@ -17,7 +17,7 @@ def alpha_131(df: pd.DataFrame) -> pd.Series:
     delta_vwap = delta(vwap, 1)
     
     # Calculate rank of delta of VWAP
-    rank_delta_vwap = rank(delta_vwap)
+    rank_delta_vwap = ts_rank(delta_vwap, 20)
     
     # Calculate mean volume
     mean_volume = ts_mean(volume, 50)

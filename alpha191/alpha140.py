@@ -16,16 +16,16 @@ def alpha_140(df: pd.DataFrame) -> pd.Series:
     volume = df['volume'].values
     
     # Calculate rank of open
-    rank_open = rank(open_price)
+    rank_open = ts_rank(open_price, 20)
     
     # Calculate rank of low
-    rank_low = rank(low)
+    rank_low = ts_rank(low, 20)
     
     # Calculate rank of high
-    rank_high = rank(high)
+    rank_high = ts_rank(high, 20)
     
     # Calculate rank of close
-    rank_close = rank(close)
+    rank_close = ts_rank(close, 20)
     
     # Calculate rank of open plus rank of low minus rank of high minus rank of close
     rank_open_plus_rank_low_minus_rank_high_minus_rank_close = rank_open + rank_low - rank_high - rank_close
@@ -34,7 +34,7 @@ def alpha_140(df: pd.DataFrame) -> pd.Series:
     decay_linear_rank = decay_linear(rank_open_plus_rank_low_minus_rank_high_minus_rank_close, 8)
     
     # Calculate rank of decay linear of rank
-    rank_decay_linear_rank = rank(decay_linear_rank)
+    rank_decay_linear_rank = ts_rank(decay_linear_rank, 20)
     
     # Calculate TSRANK of close
     tsrank_close = ts_rank(close, 8)

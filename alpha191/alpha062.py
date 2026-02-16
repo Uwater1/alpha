@@ -9,7 +9,7 @@ def alpha_062(df: pd.DataFrame) -> pd.Series:
     Formula: (-1*CORR(HIGH,RANK(VOLUME),5))
     """
     # Calculate RANK(VOLUME)
-    ranked_volume = rank(df['volume'])
+    ranked_volume = ts_rank(df['volume'], 20)
     
     # Calculate CORR(HIGH, RANK(VOLUME), 5)
     correlation = rolling_corr(df['high'], ranked_volume, 5)

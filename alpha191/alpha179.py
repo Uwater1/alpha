@@ -39,13 +39,13 @@ def alpha_179(df: pd.DataFrame) -> pd.Series:
                         corr_vwap_volume[i] = corr
     
     # Calculate RANK(CORR(VWAP,VOLUME,4))
-    rank_corr_vwap_volume = rank(corr_vwap_volume)
+    rank_corr_vwap_volume = ts_rank(corr_vwap_volume, 20)
     
     # Calculate RANK(LOW)
-    rank_low = rank(low)
+    rank_low = ts_rank(low, 20)
     
     # Calculate RANK(MEAN(VOLUME,50))
-    rank_mean_volume_50 = rank(mean_volume_50)
+    rank_mean_volume_50 = ts_rank(mean_volume_50, 20)
     
     # Calculate CORR(RANK(LOW),RANK(MEAN(VOLUME,50)),12)
     corr_rank_low_volume = np.full(len(df), np.nan)
@@ -69,7 +69,7 @@ def alpha_179(df: pd.DataFrame) -> pd.Series:
                         corr_rank_low_volume[i] = corr
     
     # Calculate RANK(CORR(RANK(LOW),RANK(MEAN(VOLUME,50)),12))
-    rank_corr_rank_low_volume = rank(corr_rank_low_volume)
+    rank_corr_rank_low_volume = ts_rank(corr_rank_low_volume, 20)
     
     # Calculate final result: RANK(CORR(VWAP,VOLUME,4)) * RANK(CORR(RANK(LOW),RANK(MEAN(VOLUME,50)),12))
     result = rank_corr_vwap_volume * rank_corr_rank_low_volume

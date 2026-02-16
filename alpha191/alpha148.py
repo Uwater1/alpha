@@ -26,8 +26,8 @@ def alpha_148(df: pd.DataFrame) -> pd.Series:
     open_minus_min = open_price - min_open_14
     
     # Calculate ranks
-    rank_corr = rank(corr_result)
-    rank_open_minus_min = rank(open_minus_min)
+    rank_corr = ts_rank(corr_result, 20)
+    rank_open_minus_min = ts_rank(open_minus_min, 20)
     
     # Calculate final result: (RANK(CORR) < RANK(OPEN-TSMIN)) * -1
     result = np.where(rank_corr < rank_open_minus_min, -1, 1)

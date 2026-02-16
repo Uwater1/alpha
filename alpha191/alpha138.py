@@ -23,7 +23,7 @@ def alpha_138(df: pd.DataFrame) -> pd.Series:
     decay_linear_delta = decay_linear(delta_weighted_avg, 20)
     
     # Calculate rank of decay linear of delta
-    rank_decay_linear_delta = rank(decay_linear_delta)
+    rank_decay_linear_delta = ts_rank(decay_linear_delta, 20)
     
     # Calculate TSRANK of low
     tsrank_low = ts_rank(low, 8)

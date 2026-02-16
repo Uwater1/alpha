@@ -23,7 +23,7 @@ def alpha_125(df: pd.DataFrame) -> pd.Series:
     decay_linear_corr = decay_linear(corr_vwap_mean_volume, 20)
     
     # Calculate rank of decay linear of correlation
-    rank_decay_linear_corr = rank(decay_linear_corr)
+    rank_decay_linear_corr = ts_rank(decay_linear_corr, 20)
     
     # Calculate weighted average of close and VWAP
     weighted_avg = (close * 0.5) + (vwap * 0.5)
@@ -35,7 +35,7 @@ def alpha_125(df: pd.DataFrame) -> pd.Series:
     decay_linear_delta = decay_linear(delta_weighted_avg, 16)
     
     # Calculate rank of decay linear of delta
-    rank_decay_linear_delta = rank(decay_linear_delta)
+    rank_decay_linear_delta = ts_rank(decay_linear_delta, 20)
     
     # Protect against division by zero
     denom = rank_decay_linear_delta

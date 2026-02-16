@@ -36,13 +36,13 @@ def alpha_074(df: pd.DataFrame) -> pd.Series:
     mean_volume_40 = ts_mean(volume, 40)
     sum_mean_volume = ts_sum(mean_volume_40, 20)
     corr1 = rolling_corr(sum_weighted, sum_mean_volume, 7)
-    rank1 = rank(corr1)
+    rank1 = ts_rank(corr1, 20)
     
     # Calculate second part: RANK(CORR(RANK(VWAP),RANK(VOLUME),6))
-    rank_vwap = rank(vwap)
-    rank_volume = rank(volume)
+    rank_vwap = ts_rank(vwap, 20)
+    rank_volume = ts_rank(volume, 20)
     corr2 = rolling_corr(rank_vwap, rank_volume, 6)
-    rank2 = rank(corr2)
+    rank2 = ts_rank(corr2, 20)
     
     result = -(rank1 + rank2)
     

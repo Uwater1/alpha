@@ -23,7 +23,7 @@ def alpha_104(df: pd.DataFrame) -> pd.Series:
     std_close = ts_std(close, 20)
     
     # Calculate rank of standard deviation
-    rank_std_close = rank(std_close)
+    rank_std_close = ts_rank(std_close, 20)
     
     # Calculate final result
     result = -1 * delta_corr * rank_std_close

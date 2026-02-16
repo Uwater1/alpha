@@ -34,7 +34,7 @@ def alpha_087(df: pd.DataFrame) -> pd.Series:
     # Calculate first part: RANK(DECAYLINEAR(DELTA(VWAP,4),7))
     delta_vwap = delta(vwap, 4)
     decay1 = decay_linear(delta_vwap, 7)
-    rank1 = rank(decay1)
+    rank1 = ts_rank(decay1, 20)
     
     # Calculate second part: TSRANK(DECAYLINEAR(((((LOW*0.9)+(LOW*0.1))-VWAP)/(OPEN-((HIGH+LOW)/2))),11),7)
     weighted_low = (low * 0.9) + (low * 0.1)

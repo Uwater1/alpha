@@ -12,16 +12,16 @@ def alpha_083(df: pd.DataFrame) -> pd.Series:
     volume = df['volume'].values
     
     # Calculate RANK(HIGH)
-    rank_high = rank(high)
+    rank_high = ts_rank(high, 20)
     
     # Calculate RANK(VOLUME)
-    rank_volume = rank(volume)
+    rank_volume = ts_rank(volume, 20)
     
     # Calculate COVIANCE(RANK(HIGH),RANK(VOLUME),5)
     cov = covariance(rank_high, rank_volume, 5)
     
     # Calculate RANK(COVIANCE(...))
-    rank_cov = rank(cov)
+    rank_cov = ts_rank(cov, 20)
     
     # Calculate -1 * RANK(...)
     result = -1 * rank_cov

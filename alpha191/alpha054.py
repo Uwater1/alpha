@@ -27,7 +27,7 @@ def alpha_054(df: pd.DataFrame) -> pd.Series:
     total = combined + correlation
     
     # Apply cross-sectional rank
-    ranked = rank(total)
+    ranked = ts_rank(total, 20)
     
     # Apply negative sign
     result = -1 * ranked

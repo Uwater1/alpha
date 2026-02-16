@@ -38,7 +38,7 @@ def alpha_163(df: pd.DataFrame) -> pd.Series:
     final_product = product2 * high_close_diff
     
     # Calculate RANK
-    result = rank(final_product)
+    result = ts_rank(final_product, 20)
     
     return pd.Series(result, index=df.index, name='alpha_163')
 

@@ -15,13 +15,13 @@ def alpha_107(df: pd.DataFrame) -> pd.Series:
     low = df['low'].values
     
     # Calculate rank of delay of high minus open
-    rank_open_minus_delay_high = rank(delay(high, 1) - open_price)
+    rank_open_minus_delay_high = ts_rank(delay(high, 1) - open_price, 20)
     
     # Calculate rank of delay of close minus open
-    rank_open_minus_delay_close = rank(delay(close, 1) - open_price)
+    rank_open_minus_delay_close = ts_rank(delay(close, 1) - open_price, 20)
     
     # Calculate rank of delay of low minus open
-    rank_open_minus_delay_low = rank(delay(low, 1) - open_price)
+    rank_open_minus_delay_low = ts_rank(delay(low, 1) - open_price, 20)
     
     # Calculate final result
     result = rank_open_minus_delay_high * rank_open_minus_delay_close * rank_open_minus_delay_low

@@ -19,7 +19,7 @@ def alpha_124(df: pd.DataFrame) -> pd.Series:
     tsmax_close = ts_max(close, 30)
     
     # Calculate rank of TSMAX of close
-    rank_tsmax_close = rank(tsmax_close)
+    rank_tsmax_close = ts_rank(tsmax_close, 20)
     
     # Calculate decay linear of rank of TSMAX of close
     decay_linear_rank_tsmax_close = decay_linear(rank_tsmax_close, 2)

@@ -35,7 +35,7 @@ def alpha_108(df: pd.DataFrame) -> pd.Series:
     min_high_2 = ts_min(high, 2)
     
     # Calculate rank of high minus minimum of high
-    rank_high_minus_min_high = rank(high - min_high_2)
+    rank_high_minus_min_high = ts_rank(high - min_high_2, 20)
     
     # Calculate mean volume over 120 days
     mean_volume_120 = ts_mean(volume, 120)
@@ -44,7 +44,7 @@ def alpha_108(df: pd.DataFrame) -> pd.Series:
     corr_vwap_mean_volume = rolling_corr(vwap, mean_volume_120, 6)
     
     # Calculate rank of correlation
-    rank_corr_vwap_mean_volume = rank(corr_vwap_mean_volume)
+    rank_corr_vwap_mean_volume = ts_rank(corr_vwap_mean_volume, 20)
     
     # Calculate final result
     result = (rank_high_minus_min_high ** rank_corr_vwap_mean_volume) * -1

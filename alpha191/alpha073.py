@@ -40,7 +40,7 @@ def alpha_073(df: pd.DataFrame) -> pd.Series:
     mean_volume_30 = ts_mean(volume, 30)
     corr_vwap_volume = rolling_corr(vwap, mean_volume_30, 4)
     decay3 = decay_linear(corr_vwap_volume, 3)
-    rank_result = rank(decay3)
+    rank_result = ts_rank(decay3, 20)
     
     result = (tsrank_result - rank_result) * -1
     

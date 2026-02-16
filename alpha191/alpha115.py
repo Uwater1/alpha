@@ -24,7 +24,7 @@ def alpha_115(df: pd.DataFrame) -> pd.Series:
     corr_weighted_avg_mean_volume = rolling_corr(weighted_avg, mean_volume, 10)
     
     # Calculate rank of correlation
-    rank_corr_weighted_avg_mean_volume = rank(corr_weighted_avg_mean_volume)
+    rank_corr_weighted_avg_mean_volume = ts_rank(corr_weighted_avg_mean_volume, 20)
     
     # Calculate average of high and low
     avg_high_low = (high + low) / 2
@@ -39,7 +39,7 @@ def alpha_115(df: pd.DataFrame) -> pd.Series:
     corr_tsrank_avg_high_low_volume = rolling_corr(tsrank_avg_high_low, tsrank_volume, 7)
     
     # Calculate rank of correlation
-    rank_corr_tsrank_avg_high_low_volume = rank(corr_tsrank_avg_high_low_volume)
+    rank_corr_tsrank_avg_high_low_volume = ts_rank(corr_tsrank_avg_high_low_volume, 20)
     
     # Calculate final result
     result = rank_corr_weighted_avg_mean_volume ** rank_corr_tsrank_avg_high_low_volume
