@@ -1,5 +1,6 @@
 import itertools
 import os
+import re
 from lark import Lark, Transformer
 import pandas as pd
 import numpy as np
@@ -258,6 +259,9 @@ class ExpressionAlpha:
         self.parser = Lark(self.grammar, start='value')
 
     def to_python(self, func_name='alpha_expr'):
+        if not isinstance(func_name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', func_name):
+            raise ValueError(f"Invalid function name: {func_name}. Must be a valid Python identifier.")
+
         tree = self.parser.parse(self.expr_string)
         transformer = ExpressionTransformer()
         final_v, cmds, cols = transformer.transform(tree)
@@ -279,24 +283,29 @@ class ExpressionAlpha:
         return "\n".join(lines)
 
     def get_func(self, func_name='alpha_expr'):
+        # Validation is already done in to_python, but for extra safety:
+        if not isinstance(func_name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', func_name):
+            raise ValueError(f"Invalid function name: {func_name}")
+
         code = self.to_python(func_name)
-        # We need the operators in the namespace
-        from ..operators import delay, delta, rank, ts_rank, ts_sum, ts_mean, ts_std, ts_min, ts_max, \
-                               ts_count, ts_prod, rolling_corr, covariance, regression_beta, \
-                               regression_residual, sma, wma, decay_linear, sign, compute_ret, \
-                               compute_dtm, compute_dbm, compute_tr, compute_hd, compute_ld, \
-                               ind_neutralize
         
-        # Local namespace for exec
-        loc = locals()
-        # Ensure numpy and pandas are available
+        from .. import operators
         import numpy as np
         import pandas as pd
-        loc['np'] = np
-        loc['pd'] = pd
-        
-        exec(code, loc)
-        return loc[func_name]
+
+        # Explicitly define the namespace for exec to avoid using locals()
+        exec_globals = {
+            'np': np,
+            'pd': pd,
+        }
+        # Add all operators to the namespace
+        for op_name in operators.__all__:
+            exec_globals[op_name] = getattr(operators, op_name)
+
+        exec_locals = {}
+        compiled_code = compile(code, '<string>', 'exec')
+        exec(compiled_code, exec_globals, exec_locals)
+        return exec_locals[func_name]
 
 if __name__ == "__main__":
     expr = "rank(delta(log(close), 1))"
