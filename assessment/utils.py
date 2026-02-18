@@ -71,11 +71,12 @@ def get_clean_factor_and_forward_returns(
         
         # 1-indexed quantiles: ceil(rank * quantiles) - optimized calculation
         quantized = np.ceil(long_ranks.values * quantiles)
-        # Clip just in case of precision issues
-        merged_data['factor_quantile'] = pd.Series(quantized, index=long_ranks.index).clip(1, quantiles).astype(np.int8)
+        # Clip just in case of precision issues; use nullable Int8 to handle NaN
+        q_series = pd.Series(quantized, index=long_ranks.index).clip(1, quantiles)
+        merged_data['factor_quantile'] = q_series.where(q_series.notna()).astype('Int8')
         
         # Quantized wide matrix
-        q_wide = np.ceil(ranks * quantiles).clip(1, quantiles).fillna(-1).astype(np.int8)
+        q_wide = np.ceil(ranks * quantiles).clip(1, quantiles).fillna(-1).astype('Int8')
         
     # 6. Groupby (if provided)
     if groupby is not None:

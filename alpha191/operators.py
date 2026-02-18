@@ -201,6 +201,9 @@ def _ts_min_core(x: np.ndarray, n: int) -> np.ndarray:
         # Skip NaN values - they don't affect min
         if np.isnan(x[i]):
             # Still need to record result if we have enough data
+            # But first, expire entries outside the current window
+            while back > front and deque_idx[front] <= i - n:
+                front += 1
             if i >= n - 1 and back > front:
                 result[i] = deque_val[front]
             continue
@@ -245,6 +248,9 @@ def _ts_max_core(x: np.ndarray, n: int) -> np.ndarray:
         # Skip NaN values - they don't affect max
         if np.isnan(x[i]):
             # Still need to record result if we have enough data
+            # But first, expire entries outside the current window
+            while back > front and deque_idx[front] <= i - n:
+                front += 1
             if i >= n - 1 and back > front:
                 result[i] = deque_val[front]
             continue

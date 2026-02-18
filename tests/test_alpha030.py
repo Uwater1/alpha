@@ -57,7 +57,7 @@ class TestAlpha030(unittest.TestCase):
 
     def test_missing_columns(self):
         df_incomplete = self.df.drop(columns=['mkt'])
-        with self.assertRaisesRegex(ValueError, "Alpha030 requires Fama-French factors"):
+        with self.assertRaisesRegex(ValueError, "Alpha030.*requires Fama-French factors"):
             alpha_030(df_incomplete)
 
 if __name__ == '__main__':

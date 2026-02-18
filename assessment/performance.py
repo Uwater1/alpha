@@ -771,3 +771,66 @@ def compute_performance_metrics(factor_data: pd.DataFrame, f_wide: Optional[pd.D
         'q_stats': q_stats,
         'port_returns': port_returns
     }
+
+
+def compute_performance_metrics_light(factor_data: pd.DataFrame, f_wide: Optional[pd.DataFrame] = None, q_wide: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """
+    Lightweight version of compute_performance_metrics.
+    Skips: factor_alpha_beta, autocorrelation, port_returns.
+    Only computes Long-Short row for quantile stats (not all quantiles).
+    """
+    if f_wide is None:
+        f_wide = factor_data['factor'].unstack().astype(np.float32)
+    if q_wide is None:
+        q_wide = factor_data['factor_quantile'].unstack().fillna(-1).astype(np.int8)
+
+    ic = factor_information_coefficient(factor_data, f_wide=f_wide)
+    mean_ret = mean_return_by_quantile(factor_data, q_wide=q_wide)
+    mono_score = monotonicity_score(mean_ret)
+    q_turnover = average_quantile_turnover(factor_data, period=1, q_wide=q_wide)
+    rre_mean = factor_rre(factor_data, f_wide=f_wide).mean()
+
+    # IC summary stats
+    ic_winrate, ic_skew, ic_max_drawdown = {}, {}, {}
+    for col in ic.columns:
+        ic_s = ic[col].dropna()
+        n = len(ic_s)
+        ic_winrate[col] = (ic_s > 0).sum() / n if n > 0 else np.nan
+        ic_skew[col] = ic_s.skew()
+        cum_ic = ic_s.cumsum()
+        ic_max_drawdown[col] = (cum_ic - cum_ic.expanding().max()).min()
+
+    ic_summary = pd.DataFrame({
+        'IC Mean': ic.mean(),
+        'IC Std.': ic.std(),
+        'Risk-Adjusted IC (IR)': ic.mean() / ic.std(),
+        't-stat(IC)': (ic.mean() / ic.std()) * np.sqrt(len(ic)),
+        'IC Winrate': pd.Series(ic_winrate),
+        'IC Skew': pd.Series(ic_skew),
+        'IC Max Drawdown': pd.Series(ic_max_drawdown),
+    }).T
+
+    # Lightweight Long-Short stats only (skip per-quantile stats)
+    return_cols = [c for c in factor_data.columns if c.endswith('D')]
+    date_col = [n for n in factor_data.index.names if 'date' in str(n).lower()][0]
+    q_stats = {}
+    for col in return_cols:
+        daily_q_ret = factor_data.groupby([date_col, 'factor_quantile'])[col].mean().unstack()
+        max_q = daily_q_ret.columns.max()
+        min_q = daily_q_ret.columns.min()
+        if pd.notna(max_q) and pd.notna(min_q):
+            ls_daily = daily_q_ret[max_q] - daily_q_ret[min_q]
+            ls_perf = calculate_portfolio_performance(ls_daily)
+            ls_data = {'Mean': ls_daily.mean(), 'sharpe': ls_perf['sharpe'],
+                       'ann_ret': ls_perf['ann_ret'], 'max_dd': ls_perf['max_dd'],
+                       'calmar': ls_perf['calmar']}
+            q_stats[col] = pd.DataFrame({'Long-Short': ls_data}).T
+
+    return {
+        'ic_summary': ic_summary,
+        'mean_ret': mean_ret,
+        'mono_score': mono_score,
+        'quantile_turnover': q_turnover,
+        'rre': rre_mean,
+        'q_stats': q_stats,
+    }
