@@ -966,5 +966,32 @@ class TestAlphas(unittest.TestCase):
         self.assertEqual(len(result), len(self.df))
 
 
+class TestUtils(unittest.TestCase):
+    def test_format_alpha_name_numeric(self):
+        """Test numeric strings are converted to zero-padded alpha format."""
+        from alpha191.utils import format_alpha_name
+        self.assertEqual(format_alpha_name("1"), "alpha001")
+        self.assertEqual(format_alpha_name("42"), "alpha042")
+        self.assertEqual(format_alpha_name("191"), "alpha191")
+        self.assertEqual(format_alpha_name("001"), "alpha001")
+
+    def test_format_alpha_name_already_starts_with_alpha(self):
+        """Test strings already starting with 'alpha' are returned lowercased."""
+        from alpha191.utils import format_alpha_name
+        self.assertEqual(format_alpha_name("alpha001"), "alpha001")
+        self.assertEqual(format_alpha_name("Alpha042"), "alpha042")
+        self.assertEqual(format_alpha_name("ALPHA191"), "alpha191")
+
+    def test_format_alpha_name_invalid(self):
+        """Test invalid inputs raise ValueError."""
+        from alpha191.utils import format_alpha_name
+        with self.assertRaises(ValueError) as cm:
+            format_alpha_name("abc")
+        self.assertIn("Invalid alpha name: abc", str(cm.exception))
+
+        with self.assertRaises(ValueError):
+            format_alpha_name("a123")
+
+
 if __name__ == '__main__':
     unittest.main()

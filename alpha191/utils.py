@@ -179,7 +179,7 @@ def get_benchmark_members(benchmark: str) -> List[str]:
 
 def format_alpha_name(alpha_name: str) -> str:
     """Convert input like '1' or '42' to 'alpha001' or 'alpha042' format.
-    If input already starts with 'alpha', return it as-is."""
+    If input already starts with 'alpha', return it in lowercase format."""
     if alpha_name.lower().startswith("alpha"):
         return alpha_name.lower()
     else:
