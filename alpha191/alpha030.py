@@ -65,13 +65,13 @@ def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, windo
 
         # Solve OLS: coeffs = (X'X)^-1 X'Y
         # Using lstsq for stability
-        # coeffs, residuals, rank, s = np.linalg.lstsq(X_window, y_window)
+        # coeffs, residuals, rank, s = np.linalg.lstsq(X_window, y_window, rcond=None)
         # Numba's lstsq returns a tuple/struct-like object.
         # We assume recent numba/numpy behavior where it returns 4 values.
         # However, to be safe and efficient in Numba, we can rely on np.linalg.lstsq
 
         try:
-            coeffs, _, _, _ = np.linalg.lstsq(X_window, y_window)
+            coeffs, _, _, _ = np.linalg.lstsq(X_window, y_window, rcond=None)
         except np.linalg.LinAlgError:
             # Handle singular matrix or other errors
             continue
