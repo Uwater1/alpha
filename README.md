@@ -316,64 +316,9 @@ Data is automatically loaded from:
 ## Notes:
 In this project we treat zz800 (中证800) as the combination of hs300 (沪深300) and zz500 (中证500)
 
-## Final Alpha Selections
-
-Based on comprehensive research analyzing "almost" every factor including IC performance, monotonicity, stability, and market regime analysis, the following 32 alpha factors have been selected and categorized:
-
-### **Top Category** (High-Performance Factors - Unstarred)
-
-**Exceptional Performers** (IC_Mean_20D > 0.06, Sharpe > 20)
-- **alpha042**: `(-1*RANK(STD(HIGH,10))*CORR(HIGH,VOLUME,10))` - IC: 0.083, Sharpe: 64.44
-- **alpha041**: `(RANK(MAX(DELTA((VWAP),3),5))*-1)` - IC: 0.062, Sharpe: 22.46  
-- **alpha150**: `(CLOSE+HIGH+LOW)/3*VOLUME` - IC: 0.068, Sharpe: 62.64
-- **alpha170**: Complex volume-price correlation - IC: 0.048, Sharpe: 46.19
-
-**Strong Performers** (IC_Mean_20D 0.04-0.06, Sharpe > 10)
-- **alpha100**: `STD(VOLUME,20)` - IC: 0.044, Sharpe: 15.31 (Volume volatility)
-- **alpha144**: Volume-weighted return factor - IC: 0.046, Sharpe: 38.80
-- **alpha077**: Multi-factor ranking with decay linear - IC: 0.026, Sharpe: 16.63
-
-**Solid Performers** (IC_Mean_20D 0.025-0.04)
-- **alpha016**: `(-1*TSMAX(RANK(CORR(RANK(VOLUME),RANK(VWAP),5)),5))` - IC: 0.035, Sharpe: 2.68
-- **alpha054**: `(-1*RANK((STD(ABS(CLOSE-OPEN))+(CLOSE-OPEN))+CORR(CLOSE,OPEN,10)))` - IC: 0.033, Sharpe: 7.77
-- **alpha056**: Complex ranking condition - IC: 0.028, Sharpe: 0.00
-- **alpha062**: `(-1*CORR(HIGH,RANK(VOLUME),5))` - IC: 0.033, Sharpe: 2.77
-- **alpha074**: Multi-timeframe correlation - IC: 0.025, Sharpe: 2.67
-- **alpha088**: `(CLOSE-DELAY(CLOSE,20))/DELAY(CLOSE,20)*100` - IC: 0.035, Sharpe: 0.40
-- **alpha094**: `SUM((CLOSE>DELAY(CLOSE,1)?VOLUME:(CLOSE<DELAY(CLOSE,1)?-VOLUME:0)),30)` - IC: 0.040, Sharpe: 2.36
-- **alpha106**: `CLOSE-DELAY(CLOSE,20)` - IC: 0.032, Sharpe: 1.02
-- **alpha113**: Complex correlation factor - IC: 0.032, Sharpe: 6.95
-- **alpha135**: `-SMA(DELAY(CLOSE/DELAY(CLOSE,20),1),20,1)` - IC: 0.039, Sharpe: 0.13
-- **alpha148**: Complex ranking logic - IC: 0.030, Sharpe: 0.00
-- **alpha151**: `SMA(CLOSE-DELAY(CLOSE,20),20,1)` - IC: 0.032, Sharpe: 0.27
-- **alpha156**: Complex decay factor - IC: 0.028, Sharpe: 1.99
-- **alpha157**: Log-based ranking - IC: 0.030, Sharpe: 4.81
-- **alpha158**: Price range factor - IC: 0.028, Sharpe: -0.80
-- **alpha159**: Complex weighted returns - IC: 0.039, Sharpe: -0.90
-- **alpha164**: Conditional volume factor - IC: 0.031, Sharpe: -0.54
-
-### **Lower Category** (Specialized/Lower-Performance Factors with some flaws)
-
-*Market Regime Specialists*
-- **alpha075**: Bear market specialist (Chinese government intervention)
-- **alpha120**: Large cap focused - IC: 0.132, Sharpe: 10979
-
-*Other Starred Factors*
-- **alpha077**: Multi-factor ranking with decay linear - IC: 0.026, Sharpe: 16.63
-- **alpha103**: Low day position - IC: 0.025, Sharpe: -0.16
-- **alpha118**: High-Open ratio - IC: 0.027, Sharpe: -0.56
-- **alpha126**: Inverse price factor - IC: 0.024, Sharpe: 0.09
-- **alpha134**: Volume-weighted momentum - IC: 0.022, Sharpe: -0.08
-- **alpha175**: Range-based volatility - IC: 0.031, Sharpe: 9.70
-- **alpha190**: Complex log correlation - IC: 0.021, Sharpe: 45.20
-
 ## Alpha Inversion
 
 The following alpha factors have been inverted (IC_Mean < -0.02 in performance analysis). The inversion changes the sign/direction of the alpha to improve its predictive power.
-
-### Inverted Alphas
-
-alpha010, alpha024, alpha027, alpha040, alpha052, alpha055, alpha067, alpha069, alpha070, alpha071, alpha074, alpha081, alpha084, alpha088, alpha091, alpha094, alpha095, alpha097, alpha100, alpha106, alpha107, alpha116, alpha118, alpha122, alpha126, alpha129, alpha132, alpha133, alpha134, alpha147, alpha150, alpha151
 
 ### Inversion Methods
 
