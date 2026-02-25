@@ -71,7 +71,7 @@ def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, windo
         # However, to be safe and efficient in Numba, we can rely on np.linalg.lstsq
 
         try:
-            coeffs, _, _, _ = np.linalg.lstsq(X_window, y_window)
+            coeffs, _, _, _ = np.linalg.lstsq(X_window, y_window, rcond=None)
         except Exception:
             # Handle singular matrix or other errors
             continue

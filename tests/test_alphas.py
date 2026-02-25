@@ -7,7 +7,7 @@ from alpha191 import (
     alpha_011, alpha_012, alpha_013, alpha_014, alpha_015,
     alpha_016, alpha_017, alpha_018, alpha_019, alpha_020,
     alpha_021, alpha_022, alpha_023, alpha_024, alpha_025,
-    alpha_026, alpha_027, alpha_028, alpha_029, alpha_031,
+    alpha_026, alpha_027, alpha_028, alpha_029, alpha_030, alpha_031,
     alpha_032, alpha_033, alpha_034, alpha_035, alpha_036,
     alpha_037, alpha_038, alpha_039, alpha_040, alpha_041,
     alpha_042, alpha_043, alpha_044, alpha_045, alpha_046,
@@ -66,6 +66,10 @@ class TestAlphas(unittest.TestCase):
         self.df['ret'] = self.df['close'].pct_change()
         # Add benchmark_close column needed by alpha149
         self.df['benchmark_close'] = close * 0.95  # Some benchmark close values
+        # Add Fama-French factors for alpha030
+        self.df['mkt'] = np.random.randn(n) * 0.01
+        self.df['smb'] = np.random.randn(n) * 0.01
+        self.df['hml'] = np.random.randn(n) * 0.01
     
     def test_alpha001(self):
         result = alpha_001(self.df)
@@ -200,6 +204,14 @@ class TestAlphas(unittest.TestCase):
     def test_alpha029(self):
         result = alpha_029(self.df)
         self.assertEqual(len(result), len(self.df))
+
+    def test_alpha030(self):
+        result = alpha_030(self.df)
+        self.assertEqual(len(result), len(self.df))
+        # Warmup: return(1) + regression(60) + wma(20) - 2?
+        # Actually it should be around index 80.
+        self.assertTrue(np.isnan(result.values[0]))
+        self.assertFalse(np.isnan(result.values[-1]))
 
     def test_alpha031(self):
         result = alpha_031(self.df)

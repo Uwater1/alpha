@@ -60,5 +60,29 @@ class TestAlpha030(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Alpha030.*requires Fama-French factors"):
             alpha_030(df_incomplete)
 
+    def test_alpha030_error_handling(self):
+        """Test that Alpha030 handles linalg errors (via inf values) gracefully."""
+        # Create a copy of the dataframe
+        df_inf = self.df.copy()
+
+        # Inject inf into 'close' which will result in inf in 'returns'
+        # One inf should cause 60 windows to fail (because window=60)
+        # We use a valid index in the middle of the data
+        df_inf.iloc[100, df_inf.columns.get_loc('close')] = np.inf
+
+        # The factor should still compute without raising an exception
+        # because of the try-except block in the core function.
+        result = alpha_030(df_inf)
+
+        self.assertIsInstance(result, pd.Series)
+        # Some values should be NaN due to the inf
+        # Specifically, windows containing index 100 should skip regression and result in NaN
+        self.assertTrue(np.isnan(result.iloc[100]), "Value at index of inf should be NaN")
+        self.assertTrue(np.isnan(result.iloc[159]), "Value 59 days after inf should still be affected by it and be NaN")
+
+        # Values well after should still be valid if enough data
+        # WMA(20) adds some delay too. 160 + 20 = 180
+        self.assertFalse(np.isnan(result.iloc[190]), "Values well after inf should be valid")
+
 if __name__ == '__main__':
     unittest.main()
