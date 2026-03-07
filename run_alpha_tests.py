@@ -39,55 +39,62 @@ def get_alphas_from_csv(csv_path: str = "20D_top_cleaned.csv") -> list:
     return alphas
 
 
-def run_ic_test_for_alpha(alpha_name: str, benchmark: str = "zz800", horizons: list = [1, 5, 10, 20, 30, 60], n_jobs: int = -1) -> str:
+def run_combined_test_for_alpha(alpha_name: str, benchmark: str = "zz800", ic_horizons: list = [1, 5, 10, 20, 30, 60], group_horizons: list = [20], n_jobs: int = -1) -> tuple:
     """
-    Run IC test for a single alpha and capture the output as a string.
+    Run both IC and Group tests for a single alpha, sharing the computation.
+    Returns (ic_output, group_output) as strings.
     """
-    print(f"Running IC test for {alpha_name}...")
+    print(f"Running combined tests for {alpha_name}...")
     
-    output_buffer = io.StringIO()
-    
-    with contextlib.redirect_stdout(output_buffer):
+    output_buffer_ic = io.StringIO()
+    output_buffer_group = io.StringIO()
+
+    try:
+        alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
+        func_name = alpha_name[:5] + "_" + alpha_name[5:]
+        alpha_func = getattr(alpha_module, func_name)
+    except (ImportError, AttributeError) as e:
         try:
-            alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
-            func_name = alpha_name[:5] + "_" + alpha_name[5:]
-            alpha_func = getattr(alpha_module, func_name)
-        except (ImportError, AttributeError) as e:
-            print(f"Error importing {alpha_name}: {e}")
-            try:
-                alpha_func = getattr(alpha_module, alpha_name)
-            except AttributeError:
-                return f"ERROR: Could not load alpha {alpha_name}\n{str(e)}"
-        
-        codes = get_benchmark_members(benchmark)
-        benchmark_df = load_benchmark_csv(benchmark)
-        timeline = benchmark_df.index
-        
-        factor_results, price_results = parallel_load_stocks_with_alpha(
-            codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
-        )
+            alpha_func = getattr(alpha_module, alpha_name)
+        except (AttributeError, NameError):
+            err_msg = f"ERROR: Could not load alpha {alpha_name}: {e}"
+            return err_msg, err_msg
 
-        if not factor_results:
-            return f"ERROR: No data loaded for alpha {alpha_name}"
+    codes = get_benchmark_members(benchmark)
+    benchmark_df = load_benchmark_csv(benchmark)
+    timeline = benchmark_df.index
 
-        factor_matrix = pd.DataFrame(factor_results, dtype=np.float32).reindex(timeline)
-        price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
-        
-        factor_data, f_wide, q_wide = get_clean_factor_and_forward_returns(
-            factor_matrix,
-            price_matrix,
-            periods=horizons,
-            quantiles=10,
-            max_loss=0.35,
-            return_wide=True
-        )
-        
-        valid_dates = factor_data.index.get_level_values('date').unique()
-        f_wide = f_wide.reindex(valid_dates)
-        q_wide = q_wide.reindex(valid_dates)
-        
-        full_results = compute_performance_metrics(factor_data, f_wide=f_wide, q_wide=q_wide)
-        
+    factor_results, price_results = parallel_load_stocks_with_alpha(
+        codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
+    )
+
+    if not factor_results:
+        err_msg = f"ERROR: No data loaded for alpha {alpha_name}"
+        return err_msg, err_msg
+
+    factor_matrix = pd.DataFrame(factor_results, dtype=np.float32).reindex(timeline)
+    price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
+
+    # Process all horizons at once
+    all_horizons = sorted(list(set(ic_horizons + group_horizons)))
+
+    factor_data, f_wide, q_wide = get_clean_factor_and_forward_returns(
+        factor_matrix,
+        price_matrix,
+        periods=all_horizons,
+        quantiles=10,
+        max_loss=0.35,
+        return_wide=True
+    )
+
+    valid_dates = factor_data.index.get_level_values('date').unique()
+    f_wide = f_wide.reindex(valid_dates)
+    q_wide = q_wide.reindex(valid_dates)
+
+    full_results = compute_performance_metrics(factor_data, f_wide=f_wide, q_wide=q_wide)
+
+    # 1. IC Test Output
+    with contextlib.redirect_stdout(output_buffer_ic):
         last_date = factor_data.index.get_level_values('date').max()
         three_years_ago = last_date - pd.DateOffset(years=3)
         recent_data = factor_data[factor_data.index.get_level_values('date') >= three_years_ago]
@@ -100,11 +107,69 @@ def run_ic_test_for_alpha(alpha_name: str, benchmark: str = "zz800", horizons: l
             recent_results = None
         
         stability_results = compute_stability_metrics(factor_data, ic=full_results['ic'])
-        
-        # Generate the IC test report
         generate_ic_report(alpha_name, benchmark, full_results, recent_results, stability_results)
+
+    # 2. Group Test Output
+    with contextlib.redirect_stdout(output_buffer_group):
+        generate_group_report(alpha_name, benchmark, group_horizons, full_results)
+
+    return output_buffer_ic.getvalue(), output_buffer_group.getvalue()
+
+
+def generate_group_report(alpha_name: str, benchmark: str, horizons: list, results: dict, m_quantiles: int = 10):
+    """Generate Group test report output."""
+    header = f" ALPHA ASSESSMENT: {alpha_name.upper()} "
+    print("\n" + "="*80)
+    print(f"{header:^80}")
+    print("="*80)
+    print(f"Benchmark: {benchmark:<10} | Quantiles: {m_quantiles:<5} | Horizons: {str(horizons)}")
+    print("-" * 80)
     
-    return output_buffer.getvalue()
+    for h in horizons:
+        h_str = f"{h}D"
+        if h_str not in results['q_stats']:
+            continue
+
+        q_stats = results['q_stats'][h_str]
+        turnover = results['quantile_turnover']
+
+        print(f"\n[ QUANTILE RETURNS & STATS ({h_str}) ]")
+        print("-" * 85)
+        print(f"{'Group':^8} | {'Mean Ret (%)':^15} | {'Std Error (%)':^15} | {'t-stat':^10} | {'p-value':^10} | {'Turnover':^10}")
+        print("-" * 85)
+
+        for q in range(1, m_quantiles + 1):
+            m_ret = q_stats.loc[q, 'Mean'] * 100
+            m_se = q_stats.loc[q, 'Std. Error'] * 100
+            t_stat = q_stats.loc[q, 't-stat']
+            p_val = q_stats.loc[q, 'p-value']
+            q_turnover = turnover.get(q, np.nan)
+            print(f"{q:^8} | {m_ret:15.4f}% | {m_se:15.4f}% | {t_stat:10.2f} | {p_val:10.4f} | {q_turnover:10.4f}")
+
+        ls_row = q_stats.loc['Long-Short']
+        print("-" * 85)
+        print(f"{'L-S (T-B)':^8} | {ls_row['Mean']*100:14.4f}% | {ls_row['Std. Error']*100:15.4f}% | {ls_row['t-stat']:10.2f} | {ls_row['p-value']:10.4f} | {'-':^10}")
+        print("-" * 85)
+
+        print(f"\n[ L-S PORTFOLIO PERFORMANCE ({h_str}) ]")
+        metrics = [
+            ("Annualized Return", f"{ls_row['ann_ret']*100:.2f}%"),
+            ("Annualized Vol", f"{ls_row['ann_vol']*100:.2f}%"),
+            ("Sharpe Ratio", f"{ls_row['sharpe']:.2f}"),
+            ("Max Drawdown", f"{ls_row['max_dd']*100:.2f}%"),
+            ("Calmar Ratio", f"{ls_row['calmar']:.2f}"),
+            ("Monotonicity", f"{results['mono_score'][h_str]:.4f}"),
+            ("RRE (Stability)", f"{results.get('rre', np.nan):.4f}")
+        ]
+
+        for name, val in metrics:
+            print(f"{name:<20}: {val:>10}")
+
+        print("\n" + "-" * 40)
+
+    print("\n" + "="*80)
+    print(f"{'ASSESSMENT COMPLETE':^80}")
+    print("="*80 + "\n")
 
 
 def generate_ic_report(alpha_name: str, benchmark: str, full: dict, recent: dict, stability: dict = None):
@@ -185,109 +250,6 @@ def generate_ic_report(alpha_name: str, benchmark: str, full: dict, recent: dict
     print("\n" + "="*80)
 
 
-def run_group_test_for_alpha(alpha_name: str, benchmark: str = "zz800", horizons: list = [20], m_quantiles: int = 10, n_jobs: int = -1) -> str:
-    """
-    Run Group test for a single alpha and capture the output as a string.
-    """
-    print(f"Running Group test for {alpha_name}...")
-    
-    output_buffer = io.StringIO()
-    
-    with contextlib.redirect_stdout(output_buffer):
-        try:
-            alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
-            func_name = alpha_name[:5] + "_" + alpha_name[5:]
-            alpha_func = getattr(alpha_module, func_name)
-        except (ImportError, AttributeError) as e:
-            try:
-                alpha_func = getattr(alpha_module, alpha_name)
-            except (AttributeError, NameError):
-                print(f"Error importing {alpha_name}: {e}")
-                return
-        
-        codes = get_benchmark_members(benchmark)
-        benchmark_df = load_benchmark_csv(benchmark)
-        timeline = benchmark_df.index
-        
-        factor_results, price_results = parallel_load_stocks_with_alpha(
-            codes, alpha_func, benchmark, n_jobs=n_jobs, show_progress=True
-        )
-
-        if not factor_results:
-            print("No data available for testing.")
-            return
-
-        factor_matrix = pd.DataFrame(factor_results, dtype=np.float32).reindex(timeline)
-        price_matrix = pd.DataFrame(price_results, dtype=np.float32).reindex(timeline)
-        
-        factor_data, f_wide, q_wide = get_clean_factor_and_forward_returns(
-            factor_matrix,
-            price_matrix,
-            periods=horizons,
-            quantiles=m_quantiles,
-            max_loss=0.35,
-            return_wide=True
-        )
-        
-        valid_dates = factor_data.index.get_level_values('date').unique()
-        f_wide = f_wide.reindex(valid_dates)
-        q_wide = q_wide.reindex(valid_dates)
-        
-        results = compute_performance_metrics(factor_data, f_wide=f_wide, q_wide=q_wide)
-        
-        # Display Results
-        header = f" ALPHA ASSESSMENT: {alpha_name.upper()} "
-        print("\n" + "="*80)
-        print(f"{header:^80}")
-        print("="*80)
-        print(f"Benchmark: {benchmark:<10} | Quantiles: {m_quantiles:<5} | Horizons: {str(horizons)}")
-        print("-" * 80)
-        
-        for h in horizons:
-            h_str = f"{h}D"
-            mean_returns = results['mean_ret'][h_str]
-            q_stats = results['q_stats'][h_str]
-            turnover = results['quantile_turnover']
-            
-            print(f"\n[ QUANTILE RETURNS & STATS ({h_str}) ]")
-            print("-" * 85)
-            print(f"{'Group':^8} | {'Mean Ret (%)':^15} | {'Std Error (%)':^15} | {'t-stat':^10} | {'p-value':^10} | {'Turnover':^10}")
-            print("-" * 85)
-            
-            for q in range(1, m_quantiles + 1):
-                m_ret = q_stats.loc[q, 'Mean'] * 100
-                m_se = q_stats.loc[q, 'Std. Error'] * 100
-                t_stat = q_stats.loc[q, 't-stat']
-                p_val = q_stats.loc[q, 'p-value']
-                q_turnover = turnover.get(q, np.nan)
-                print(f"{q:^8} | {m_ret:15.4f}% | {m_se:15.4f}% | {t_stat:10.2f} | {p_val:10.4f} | {q_turnover:10.4f}")
-            
-            ls_row = q_stats.loc['Long-Short']
-            print("-" * 85)
-            print(f"{'L-S (T-B)':^8} | {ls_row['Mean']*100:14.4f}% | {ls_row['Std. Error']*100:15.4f}% | {ls_row['t-stat']:10.2f} | {ls_row['p-value']:10.4f} | {'-':^10}")
-            print("-" * 85)
-            
-            print(f"\n[ L-S PORTFOLIO PERFORMANCE ({h_str}) ]")
-            metrics = [
-                ("Annualized Return", f"{ls_row['ann_ret']*100:.2f}%"),
-                ("Annualized Vol", f"{ls_row['ann_vol']*100:.2f}%"),
-                ("Sharpe Ratio", f"{ls_row['sharpe']:.2f}"),
-                ("Max Drawdown", f"{ls_row['max_dd']*100:.2f}%"),
-                ("Calmar Ratio", f"{ls_row['calmar']:.2f}"),
-                ("Monotonicity", f"{results['mono_score'][h_str]:.4f}"),
-                ("RRE (Stability)", f"{results.get('rre', np.nan):.4f}")
-            ]
-            
-            for name, val in metrics:
-                print(f"{name:<20}: {val:>10}")
-            
-            print("\n" + "-" * 40)
-        
-        print("\n" + "="*80)
-        print(f"{'ASSESSMENT COMPLETE':^80}")
-        print("="*80 + "\n")
-    
-    return output_buffer.getvalue()
 
 
 def main():
@@ -302,57 +264,71 @@ def main():
     print(f"Found {len(alphas)} alphas in 20D_top_cleaned.csv")
     print(f"Alphas: {alphas}")
     
-    # Process each alpha
-    for i, alpha_name in enumerate(alphas, 1):
-        print(f"\n{'='*80}")
-        print(f"[{i}/{len(alphas)}] Processing {alpha_name}...")
-        print(f"{'='*80}")
-        
-        try:
-            # Run IC test
-            ic_output = run_ic_test_for_alpha(alpha_name, benchmark="zz800", horizons=[1, 5, 10, 20, 30, 60])
+    # Open master report file once
+    master_report_path = report_dir / "master_alpha_report.txt"
+    with open(master_report_path, 'w') as master_f:
+        master_f.write("="*80 + "\n")
+        master_f.write("MASTER ALPHA TEST REPORT\n")
+        master_f.write(f"Generated on: {pd.Timestamp.now()}\n")
+        master_f.write("="*80 + "\n\n")
+
+        # Process each alpha
+        for i, alpha_name in enumerate(alphas, 1):
+            print(f"\n{'='*80}")
+            print(f"[{i}/{len(alphas)}] Processing {alpha_name}...")
+            print(f"{'='*80}")
             
-            # Run Group test
-            group_output = run_group_test_for_alpha(alpha_name, benchmark="zz800", horizons=[20])
-            
-            # Create combined report filename (e.g., alpha120_report.txt)
-            report_filename = f"{alpha_name}_report.txt"
-            report_path = report_dir / report_filename
-            
-            # Write combined report to file
-            with open(report_path, 'w') as f:
-                f.write("="*80 + "\n")
-                f.write(f"ALPHA TEST REPORT: {alpha_name}\n")
-                f.write(f"Benchmark: zz800\n")
-                f.write(f"Report generated by run_alpha_tests.py\n")
-                f.write("="*80 + "\n\n")
+            try:
+                # Run combined tests
+                ic_output, group_output = run_combined_test_for_alpha(
+                    alpha_name,
+                    benchmark="zz800",
+                    ic_horizons=[1, 5, 10, 20, 30, 60],
+                    group_horizons=[20]
+                )
                 
-                # IC Test Results
-                f.write("\n" + "="*80 + "\n")
-                f.write("IC TEST RESULTS\n")
-                f.write("="*80 + "\n\n")
-                f.write(ic_output)
+                # Prepare combined report content in memory (batching)
+                report_content = (
+                    "="*80 + "\n"
+                    f"ALPHA TEST REPORT: {alpha_name}\n"
+                    "Benchmark: zz800\n"
+                    "Report generated by run_alpha_tests.py\n"
+                    "="*80 + "\n\n"
+
+                    "\n" + "="*80 + "\n"
+                    "IC TEST RESULTS\n"
+                    "="*80 + "\n\n"
+                    f"{ic_output}"
+
+                    "\n" + "="*80 + "\n"
+                    "GROUP TEST RESULTS\n"
+                    "="*80 + "\n\n"
+                    f"{group_output}"
+                )
                 
-                # Group Test Results
-                f.write("\n" + "="*80 + "\n")
-                f.write("GROUP TEST RESULTS\n")
-                f.write("="*80 + "\n\n")
-                f.write(group_output)
-            
-            print(f"  -> Report saved to: {report_path}")
-            
-        except Exception as e:
-            print(f"  -> ERROR processing {alpha_name}: {e}")
-            import traceback
-            traceback.print_exc()
-            
-            # Write error to report file
-            error_report_path = report_dir / f"{alpha_name}_report.txt"
-            with open(error_report_path, 'w') as f:
-                f.write(f"ERROR: Failed to process {alpha_name}\n")
-                f.write(f"Error message: {str(e)}\n")
-                f.write(f"\nTraceback:\n{traceback.format_exc()}")
-            print(f"  -> Error report saved to: {error_report_path}")
+                # Write to individual report file in one go
+                report_path = report_dir / f"{alpha_name}_report.txt"
+                with open(report_path, 'w') as f:
+                    f.write(report_content)
+
+                # Append to master report
+                master_f.write(report_content)
+                master_f.write("\n\n" + "*"*80 + "\n\n")
+
+                print(f"  -> Report saved to: {report_path}")
+
+            except Exception as e:
+                print(f"  -> ERROR processing {alpha_name}: {e}")
+                import traceback
+                traceback.print_exc()
+
+                # Write error to report file
+                error_report_path = report_dir / f"{alpha_name}_report.txt"
+                with open(error_report_path, 'w') as f:
+                    f.write(f"ERROR: Failed to process {alpha_name}\n")
+                    f.write(f"Error message: {str(e)}\n")
+                    f.write(f"\nTraceback:\n{traceback.format_exc()}")
+                print(f"  -> Error report saved to: {error_report_path}")
     
     print(f"\n{'='*80}")
     print(f"Complete! All reports saved to {report_dir}/")
