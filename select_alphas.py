@@ -12,7 +12,6 @@ Output:
 
 import pandas as pd
 import numpy as np
-import importlib
 import sys
 import os
 from pathlib import Path
@@ -26,7 +25,8 @@ sys.path.append(str(Path(__file__).parent))
 from alpha191.utils import (
     load_benchmark_csv, 
     get_benchmark_members, 
-    load_stock_csv
+    load_stock_csv,
+    get_alpha_func
 )
 from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics_light
 
@@ -36,22 +36,6 @@ HORIZONS = [5, 10, 20, 60]
 OUTPUT_FILE = 'alpha_performances.csv'
 
 warnings.filterwarnings("ignore")
-
-
-def get_alpha_function(alpha_name):
-    """Dynamically import alpha function."""
-    try:
-        module = importlib.import_module(f"alpha191.{alpha_name}")
-        func_name1 = alpha_name[:5] + "_" + alpha_name[5:]  # alpha_001
-        func_name2 = alpha_name  # alpha001
-
-        if hasattr(module, func_name1):
-            return getattr(module, func_name1)
-        elif hasattr(module, func_name2):
-            return getattr(module, func_name2)
-    except (ImportError, ModuleNotFoundError):
-        pass
-    return None
 
 
 def preload_data(benchmark):
@@ -106,7 +90,7 @@ def compute_alpha_for_all_stocks(alpha_func, stock_cache):
 
 def process_one_alpha(alpha_name, stock_cache, timeline):
     """Compute metrics for one alpha. Returns dict or None."""
-    alpha_func = get_alpha_function(alpha_name)
+    alpha_func = get_alpha_func(alpha_name, use_df=True, ignore_errors=True)
     if not alpha_func:
         return None
 

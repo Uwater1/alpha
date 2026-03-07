@@ -1,21 +1,9 @@
 
-import os
-import sys
 import pandas as pd
 import numpy as np
 import time
-from pathlib import Path
 from alpha191 import *
-from alpha191.utils import get_benchmark_members, load_stock_csv, load_benchmark_csv
-
-def get_alpha_func(alpha_num: int):
-    """Get the alpha function (the one that takes a DataFrame) by number."""
-    func_name = f"alpha_{alpha_num:03d}"
-    # Check in individual modules first or from alpha191 package
-    import alpha191
-    if hasattr(alpha191, func_name):
-        return getattr(alpha191, func_name)
-    return None
+from alpha191.utils import get_benchmark_members, load_stock_csv, load_benchmark_csv, get_alpha_func, get_stock_codes
 
 def main():
     benchmark = "hs300"
@@ -25,8 +13,7 @@ def main():
     except Exception as e:
         print(f"Error loading benchmark members: {e}")
         # Fallback to listing directory if needed
-        benchmark_dir = Path('bao') / benchmark
-        stock_codes = [f.stem for f in benchmark_dir.glob('*.csv')]
+        stock_codes = get_stock_codes(benchmark)
 
     print(f"Using all {len(stock_codes)} stocks for covariance calculation.")
 
@@ -60,7 +47,7 @@ def main():
                 if i in missing_alphas:
                     continue
                 
-                alpha_func = get_alpha_func(i)
+                alpha_func = get_alpha_func(i, use_df=True, ignore_errors=True)
                 if alpha_func:
                     try:
                         res = alpha_func(df)

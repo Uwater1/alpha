@@ -15,28 +15,8 @@ Default benchmark: hs300
 
 import sys
 import time
-from pathlib import Path
 from alpha191 import *
-
-
-def get_alpha_func(alpha_num: int):
-    """Get the alpha function by number (e.g., 17 -> alpha017)."""
-    func_name = f"alpha{alpha_num:03d}"
-    if hasattr(sys.modules['alpha191'], func_name):
-        return getattr(sys.modules['alpha191'], func_name)
-    raise ValueError(f"Alpha function '{func_name}' not found in alpha191 module")
-
-
-def get_stock_codes(benchmark: str) -> list:
-    """Get list of stock codes from the benchmark directory."""
-    benchmark_dir = Path('bao') / benchmark
-    if not benchmark_dir.exists():
-        raise FileNotFoundError(f"Benchmark directory not found: {benchmark_dir}")
-    
-    # Get all CSV files and extract stock codes (without .csv extension)
-    csv_files = sorted(benchmark_dir.glob('*.csv'))
-    stock_codes = [f.stem for f in csv_files]
-    return stock_codes
+from alpha191.utils import get_alpha_func, get_stock_codes
 
 
 def main():

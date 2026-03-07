@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
-import importlib
 
 # Add the current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +20,8 @@ from alpha191.utils import (
     load_benchmark_csv,
     get_benchmark_members,
     format_alpha_name,
-    parallel_load_stocks_with_alpha
+    parallel_load_stocks_with_alpha,
+    get_alpha_func
 )
 from assessment import (
     get_clean_factor_and_forward_returns, 
@@ -49,15 +49,9 @@ def run_ic_test_for_alpha(alpha_name: str, benchmark: str = "zz800", horizons: l
     
     with contextlib.redirect_stdout(output_buffer):
         try:
-            alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
-            func_name = alpha_name[:5] + "_" + alpha_name[5:]
-            alpha_func = getattr(alpha_module, func_name)
-        except (ImportError, AttributeError) as e:
-            print(f"Error importing {alpha_name}: {e}")
-            try:
-                alpha_func = getattr(alpha_module, alpha_name)
-            except AttributeError:
-                return f"ERROR: Could not load alpha {alpha_name}\n{str(e)}"
+            alpha_func = get_alpha_func(alpha_name, use_df=True)
+        except ValueError as e:
+            return f"ERROR: Could not load alpha {alpha_name}\n{str(e)}"
         
         codes = get_benchmark_members(benchmark)
         benchmark_df = load_benchmark_csv(benchmark)
@@ -195,15 +189,10 @@ def run_group_test_for_alpha(alpha_name: str, benchmark: str = "zz800", horizons
     
     with contextlib.redirect_stdout(output_buffer):
         try:
-            alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
-            func_name = alpha_name[:5] + "_" + alpha_name[5:]
-            alpha_func = getattr(alpha_module, func_name)
-        except (ImportError, AttributeError) as e:
-            try:
-                alpha_func = getattr(alpha_module, alpha_name)
-            except (AttributeError, NameError):
-                print(f"Error importing {alpha_name}: {e}")
-                return
+            alpha_func = get_alpha_func(alpha_name, use_df=True)
+        except ValueError as e:
+            print(f"Error importing {alpha_name}: {e}")
+            return
         
         codes = get_benchmark_members(benchmark)
         benchmark_df = load_benchmark_csv(benchmark)

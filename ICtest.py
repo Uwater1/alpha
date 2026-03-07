@@ -1,14 +1,12 @@
 import pandas as pd
 import numpy as np
-import sys
-import importlib
-from pathlib import Path
 from typing import List, Dict, Any, Optional
 from alpha191.utils import (
     load_benchmark_csv, 
     get_benchmark_members, 
     format_alpha_name,
-    parallel_load_stocks_with_alpha
+    parallel_load_stocks_with_alpha,
+    get_alpha_func
 )
 from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics, compute_stability_metrics
 from datetime import datetime
@@ -19,15 +17,10 @@ def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] 
     
     # Import alpha function
     try:
-        alpha_module = importlib.import_module(f"alpha191.{alpha_name}")
-        func_name = alpha_name[:5] + "_" + alpha_name[5:]
-        alpha_func = getattr(alpha_module, func_name)
-    except (ImportError, AttributeError) as e:
+        alpha_func = get_alpha_func(alpha_name, use_df=True)
+    except ValueError as e:
         print(f"Error importing {alpha_name}: {e}")
-        try:
-            alpha_func = getattr(alpha_module, alpha_name)
-        except AttributeError:
-            return
+        return
     
     codes = get_benchmark_members(benchmark)
     

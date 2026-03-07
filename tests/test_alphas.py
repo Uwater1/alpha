@@ -992,6 +992,46 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(ValueError):
             format_alpha_name("a123")
 
+    def test_get_alpha_func(self):
+        """Test get_alpha_func retrieves correct functions."""
+        from alpha191.utils import get_alpha_func
+        # Test getting code version (alphaXXX)
+        func = get_alpha_func(1, use_df=False)
+        self.assertTrue(callable(func))
+        self.assertEqual(func.__name__, "alpha001")
+
+        # Test getting df version (alpha_XXX)
+        func_df = get_alpha_func(1, use_df=True)
+        self.assertTrue(callable(func_df))
+        self.assertEqual(func_df.__name__, "alpha_001")
+
+        # Test with string name
+        func2 = get_alpha_func("alpha002")
+        self.assertEqual(func2.__name__, "alpha002")
+
+        # Test ignore_errors
+        func_none = get_alpha_func(999, ignore_errors=True)
+        self.assertIsNone(func_none)
+
+        # Test raising error
+        with self.assertRaises(ValueError):
+            get_alpha_func(999, ignore_errors=False)
+
+    def test_get_stock_codes(self):
+        """Test get_stock_codes lists files correctly."""
+        from alpha191.utils import get_stock_codes
+        from pathlib import Path
+
+        # This test depends on the existence of bao/hs300 directory
+        if Path("bao/hs300").exists():
+            codes = get_stock_codes("hs300")
+            self.assertIsInstance(codes, list)
+            if len(codes) > 0:
+                self.assertTrue(isinstance(codes[0], str))
+        else:
+            with self.assertRaises(FileNotFoundError):
+                get_stock_codes("nonexistent_benchmark")
+
 
 if __name__ == '__main__':
     unittest.main()

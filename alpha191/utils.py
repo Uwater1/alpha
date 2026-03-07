@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Optional, Union, Any
 
 # Cache for benchmark data
 _benchmark_cache = {}
@@ -189,6 +189,61 @@ def format_alpha_name(alpha_name: str) -> str:
             return f"alpha{num:03d}"
         except ValueError:
             raise ValueError(f"Invalid alpha name: {alpha_name}. Expected format: '1' or 'alpha001'")
+
+
+def get_alpha_func(alpha_id: Union[int, str], use_df: bool = False, ignore_errors: bool = False) -> Optional[Any]:
+    """
+    Get the alpha function by number or name.
+
+    Args:
+        alpha_id: Alpha number (e.g., 17) or name (e.g., "alpha017")
+        use_df: If True, return the function that takes a DataFrame (alpha_XXX).
+               If False, return the function that takes code/benchmark (alphaXXX).
+        ignore_errors: If True, return None on failure instead of raising ValueError.
+
+    Returns:
+        The alpha function or None if not found and ignore_errors is True.
+    """
+    import importlib
+    try:
+        alpha_name = format_alpha_name(str(alpha_id))
+        module = importlib.import_module(f"alpha191.{alpha_name}")
+
+        if use_df:
+            # Try alpha_XXX first (preferred for DataFrame input)
+            func_name = f"alpha_{int(alpha_name[5:]):03d}"
+            if hasattr(module, func_name):
+                return getattr(module, func_name)
+            # Fallback to alphaXXX
+            if hasattr(module, alpha_name):
+                return getattr(module, alpha_name)
+        else:
+            # Try alphaXXX first (preferred for code/benchmark input)
+            if hasattr(module, alpha_name):
+                return getattr(module, alpha_name)
+            # Fallback to alpha_XXX
+            func_name = f"alpha_{int(alpha_name[5:]):03d}"
+            if hasattr(module, func_name):
+                return getattr(module, func_name)
+
+    except (ImportError, ModuleNotFoundError, ValueError):
+        pass
+
+    if ignore_errors:
+        return None
+    raise ValueError(f"Alpha function for '{alpha_id}' not found")
+
+
+def get_stock_codes(benchmark: str) -> List[str]:
+    """Get list of stock codes available in the benchmark directory."""
+    benchmark_dir = PROJECT_ROOT / 'bao' / benchmark
+    if not benchmark_dir.exists():
+        raise FileNotFoundError(f"Benchmark directory not found: {benchmark_dir}")
+
+    # Get all CSV files and extract stock codes (without .csv extension)
+    csv_files = sorted(benchmark_dir.glob('*.csv'))
+    stock_codes = [f.stem for f in csv_files]
+    return stock_codes
 
 
 def _load_single_stock_with_alpha(args):
