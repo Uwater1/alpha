@@ -1,4 +1,15 @@
 import unittest
+import sys
+from unittest.mock import MagicMock
+
+# Mock missing dependencies to allow testing in restricted environments
+for module_name in ['numpy', 'pandas', 'tqdm', 'numba', 'scipy', 'scipy.stats', 'lark', 'assessment']:
+    if module_name not in sys.modules:
+        try:
+            __import__(module_name)
+        except ImportError:
+            sys.modules[module_name] = MagicMock()
+
 import numpy as np
 import pandas as pd
 from alpha191 import (
@@ -1004,6 +1015,100 @@ class TestUtils(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             format_alpha_name("a123")
+
+
+class TestSelectAlphas(unittest.TestCase):
+    def setUp(self):
+        # We need to mock select_alphas's dependencies before importing it
+        # because it has top-level imports and logic.
+        self.original_modules = sys.modules.copy()
+
+        # Mocking alpha191.utils specifically for select_alphas
+        sys.modules['alpha191.utils'] = MagicMock()
+
+        # Now import select_alphas
+        if 'select_alphas' in sys.modules:
+            import importlib
+            import select_alphas
+            importlib.reload(select_alphas)
+        else:
+            import select_alphas
+        self.select_alphas = select_alphas
+
+    def tearDown(self):
+        # Restore original modules to avoid side effects on other tests
+        sys.modules.clear()
+        sys.modules.update(self.original_modules)
+
+    def test_append_results_new_file(self):
+        from unittest.mock import patch, MagicMock
+
+        filepath = 'test_results.csv'
+        results = [{'Alpha': 'alpha001', 'IC': 0.1}]
+
+        mock_df = MagicMock()
+        with patch('pandas.DataFrame', return_value=mock_df), \
+             patch('os.path.exists', return_value=False):
+
+            self.select_alphas.append_results(filepath, results)
+
+            pd.DataFrame.assert_called_once_with(results)
+            mock_df.to_csv.assert_called_once_with(filepath, index=False)
+
+    def test_append_results_existing_file(self):
+        from unittest.mock import patch, MagicMock
+
+        filepath = 'test_results.csv'
+        results = [{'Alpha': 'alpha001', 'IC': 0.1}]
+
+        mock_df = MagicMock()
+        with patch('pandas.DataFrame', return_value=mock_df), \
+             patch('os.path.exists', return_value=True):
+
+            self.select_alphas.append_results(filepath, results)
+
+            pd.DataFrame.assert_called_once_with(results)
+            mock_df.to_csv.assert_called_once_with(filepath, mode='a', header=False, index=False)
+
+    def test_extract_detailed_metrics(self):
+        alpha_name = 'alpha001'
+
+        # Mock ic_summary as a DataFrame-like object
+        mock_ic_summary = MagicMock()
+        mock_ic_summary.columns = [5, 10]
+
+        # Define return values for loc
+        # ic_summary.loc['IC Mean', 5]
+        # We need to mock the .loc[..., ...] access pattern.
+        # loc.__getitem__ handles the first slice/index.
+        # If it's a 2D access, it might be passed as a tuple.
+        mock_ic_summary.loc.__getitem__.side_effect = lambda x: {
+            ('IC Mean', 5): 0.1,
+            ('IC Std.', 5): 0.05,
+            ('Risk-Adjusted IC (IR)', 5): 2.0,
+            ('IC Winrate', 5): 0.6,
+            ('IC Mean', 10): 0.15,
+            ('IC Std.', 10): 0.06,
+            ('Risk-Adjusted IC (IR)', 10): 2.5,
+            ('IC Winrate', 10): 0.65,
+        }[x]
+
+        metrics = {'ic_summary': mock_ic_summary}
+
+        row = self.select_alphas.extract_detailed_metrics(alpha_name, metrics)
+
+        expected_row = {
+            'Alpha': 'alpha001',
+            'IC_Mean_5': 0.1,
+            'IC_Std_5': 0.05,
+            'IC_IR_5': 2.0,
+            'IC_Winrate_5': 0.6,
+            'IC_Mean_10': 0.15,
+            'IC_Std_10': 0.06,
+            'IC_IR_10': 2.5,
+            'IC_Winrate_10': 0.65,
+        }
+        self.assertEqual(row, expected_row)
 
 
 if __name__ == '__main__':
