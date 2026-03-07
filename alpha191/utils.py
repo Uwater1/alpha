@@ -4,6 +4,8 @@ Utility functions for Alpha191 factors.
 
 import numpy as np
 import pandas as pd
+import re
+import os
 from pathlib import Path
 from functools import lru_cache
 from typing import List, Optional
@@ -50,6 +52,13 @@ def _load_stock_csv_cached(code: str, benchmark: str) -> pd.DataFrame:
     """
     Internal cached function to load stock data from CSV file.
     """
+    # Sanitize code to prevent path traversal
+    if not re.match(r'^[a-zA-Z0-9_.]+$', code) or '..' in code:
+        raise ValueError(f"Invalid stock code format: {code}")
+
+    # Use only the filename part to be extra safe
+    code = os.path.basename(code)
+
     if benchmark == 'hs300':
         search_paths = [_BAO_HS300_PATH / f'{code}.csv']
     elif benchmark == 'zz500':

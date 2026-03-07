@@ -1016,6 +1016,25 @@ class TestUtils(unittest.TestCase):
         with self.assertRaises(ValueError):
             format_alpha_name("a123")
 
+    def test_load_stock_csv_security(self):
+        """Test that load_stock_csv prevents path traversal and invalid codes."""
+        from alpha191.utils import load_stock_csv
+        # Path traversal should be rejected
+        with self.assertRaises(ValueError):
+            load_stock_csv("../../etc/passwd")
+        # Invalid characters should be rejected
+        with self.assertRaises(ValueError):
+            load_stock_csv("sh_600000;rm")
+        # Valid code should pass validation (might fail later due to missing file, which is fine)
+        try:
+            load_stock_csv("sh_600000")
+        except ValueError as e:
+            if "Invalid stock code format" in str(e):
+                self.fail(f"Valid code sh_600000 rejected: {e}")
+        except Exception:
+            # Expected to fail later if file doesn't exist or during processing
+            pass
+
 
 class TestSelectAlphas(unittest.TestCase):
     def setUp(self):
