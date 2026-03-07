@@ -18,7 +18,7 @@ from numba import njit
 from .utils import run_alpha_factor
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _alpha_183_impl(x: np.ndarray, window: int) -> np.ndarray:
     """
     Numba-accelerated implementation of Alpha183 (Rescaled Range).

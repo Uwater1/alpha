@@ -37,7 +37,7 @@ except ImportError:
 # Numba-accelerated core functions for rolling window operators
 # =============================================================================
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling sum."""
     n_len = len(x)
@@ -85,7 +85,7 @@ def _ts_sum_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling mean."""
     n_len = len(x)
@@ -126,7 +126,7 @@ def _ts_mean_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
     """Numba-accelerated core for rolling standard deviation."""
     n_len = len(x)
@@ -181,7 +181,7 @@ def _ts_std_core(x: np.ndarray, n: int, ddof: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_min_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling minimum using monotonic deque (O(n))."""
     n_len = len(x)
@@ -229,7 +229,7 @@ def _ts_min_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_max_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling maximum using monotonic deque (O(n))."""
     n_len = len(x)
@@ -276,7 +276,7 @@ def _ts_max_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling count of non-zero values."""
     n_len = len(x)
@@ -319,7 +319,7 @@ def _ts_count_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_prod_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling product using rolling multiplication (O(n))."""
     n_len = len(x)
@@ -371,7 +371,7 @@ def _ts_prod_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _covariance_core(x: np.ndarray, y: np.ndarray, n: int, ddof: int) -> np.ndarray:
     """Numba-accelerated core for rolling covariance."""
     n_len = len(x)
@@ -426,7 +426,7 @@ def _covariance_core(x: np.ndarray, y: np.ndarray, n: int, ddof: int) -> np.ndar
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _regression_beta_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling regression beta."""
     n_len = len(x)
@@ -471,7 +471,7 @@ def _regression_beta_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _regression_residual_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for rolling regression residual."""
     n_len = len(x)
@@ -525,7 +525,7 @@ def _regression_residual_core(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarra
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
     """Numba-accelerated core for time-series rank within a rolling window."""
     n_len = len(x)
@@ -567,7 +567,7 @@ def _ts_rank_core(x: np.ndarray, window: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _rolling_corr_core(a: np.ndarray, b: np.ndarray, window: int) -> np.ndarray:
     """Numba-accelerated core for rolling Pearson correlation."""
     n_len = len(a)
@@ -1502,7 +1502,7 @@ def regression_residual(x: np.ndarray, y: np.ndarray, n: int) -> np.ndarray:
     return _regression_residual_core(x, y, n)
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _wma_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for weighted moving average with exponential decay weights."""
     n_len = len(x)
@@ -1536,7 +1536,7 @@ def _wma_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
     """Numba-accelerated core for linear decay weighted average."""
     n_len = len(x)
@@ -1566,7 +1566,7 @@ def _decay_linear_core(x: np.ndarray, d: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _sma_core(x: np.ndarray, n: int, m: int) -> np.ndarray:
     """Numba-accelerated core for SMA."""
     n_len = len(x)
@@ -1739,7 +1739,7 @@ def decay_linear(x: np.ndarray, d: int) -> np.ndarray:
 # Numba-accelerated core functions for conditional and special operators
 # =============================================================================
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _sum_if_core(x: np.ndarray, n: int, condition: np.ndarray) -> np.ndarray:
     """Numba-accelerated core for rolling conditional sum."""
     n_len = len(x)
@@ -1768,7 +1768,7 @@ def _sum_if_core(x: np.ndarray, n: int, condition: np.ndarray) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _high_day_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for high_day."""
     n_len = len(x)
@@ -1798,7 +1798,7 @@ def _high_day_core(x: np.ndarray, n: int) -> np.ndarray:
     return result
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _low_day_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for low_day."""
     n_len = len(x)
@@ -2257,7 +2257,7 @@ def compute_ld(low: np.ndarray) -> np.ndarray:
 # Exponential decay weighted average
 # =============================================================================
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _decay_exp_core(x: np.ndarray, d: int) -> np.ndarray:
     """Numba-accelerated core for exponential decay weighted average."""
     n_len = len(x)
@@ -2328,7 +2328,7 @@ def decay_exp(x: np.ndarray, d: int) -> np.ndarray:
     return _decay_exp_core(x, d)
 
 
-@njit(cache=True)
+@njit(cache=True, nogil=True)
 def _rolling_cumsum_range_core(x: np.ndarray, n: int) -> np.ndarray:
     """Numba-accelerated core for range of cumulative deviations from mean."""
     n_len = len(x)

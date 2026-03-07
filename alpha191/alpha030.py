@@ -12,7 +12,7 @@ from .operators import wma, delay
 from .utils import run_alpha_factor
 
 
-@njit
+@njit(nogil=True)
 def _rolling_ols_residuals_multivariate_core(y: np.ndarray, x: np.ndarray, window: int) -> np.ndarray:
     """
     Numba-accelerated rolling OLS residuals for multiple independent variables.
