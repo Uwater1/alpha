@@ -107,9 +107,11 @@ def factor_information_coefficient(factor_data: pd.DataFrame, f_wide: Optional[p
             r_ranked = r_wide.rank(axis=1, method='average')
             
             correlations = []
-            for i in range(len(f_ranked)):
-                f_row = f_ranked.iloc[i].values
-                r_row = r_ranked.iloc[i].values
+            f_vals = f_ranked.values
+            r_vals = r_ranked.values
+            for i in range(len(f_vals)):
+                f_row = f_vals[i]
+                r_row = r_vals[i]
                 
                 # Remove NaN pairs
                 mask = ~(np.isnan(f_row) | np.isnan(r_row))
