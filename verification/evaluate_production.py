@@ -82,12 +82,13 @@ def main():
             # We must just sum the weighted raw values, but alpha scales differ wildly.
             # Time-series standardization (z-score) is the best proxy per-stock.
             if isinstance(res, pd.Series):
-                mean_val = res.mean()
-                std_val = res.std()
-                if std_val > 0:
-                    res = (res - mean_val) / std_val
-                else:
-                    res = res - mean_val
+                # Apply a rolling window Z-score to avoid look-ahead bias
+                roll = res.rolling(window=252, min_periods=20)
+                mean_val = roll.mean()
+                std_val = roll.std()
+                # To prevent division by zero, replace 0 std with NaN
+                std_val = std_val.replace(0, np.nan)
+                res = (res - mean_val) / std_val
 
             if combined_series is None:
                 combined_series = w * res
