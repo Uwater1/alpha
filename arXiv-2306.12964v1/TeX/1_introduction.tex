@@ -1,0 +1,44 @@
+\section{Introduction}
+
+Currently, it is almost a standard paradigm to transform raw historical stock data into indicative signals for the market trend in the field of quantitative trading~\cite{qian2007quantitative}.
+These signal patterns are called \emph{alpha factors}, or {alphas} in short~\cite{tulchinsky15}. Discovering alphas with high returns has been a trendy topic among investors and researchers due to the close relatedness between alphas and investment revenues.
+
+The prevailing methods of discovering alphas can be in general divided into two groups, namely machine learning-based and formulaic alphas. Most recent research has focused on the former ones. These more sophisticated alphas are often obtained via deep learning models, e.g., using sequential models like LSTM~\cite{lstm}, or more complex ones integrating non-standard data like HIST~\cite{hist} and REST~\cite{rest}, etc. 
+On the other end of the spectrum, we have the alphas that can be represented in simple formula forms. Such formulaic alphas are traditionally constructed by human experts using their domain knowledge and experience, often expressing clear economic principles. To name some, \cite{alpha101} demonstrates 101 alpha factors tested on the US stock market. Recently, research has also been conducted on frameworks that generate such formulaic alphas automatically \cite{alphaevolve,autoalpha,huataigp,huataigp2}. These approaches are able to find loads of new alphas rapidly without human supervision, while still maintaining relatively high interpretability compared to the more sophisticated machine learning-alphas.
+
+Despite the existing approaches achieving remarkable success, however, they still have disadvantages in different aspects. 
+Machine learning-based alpha factors are inherently complex and sometimes require more complex data other than the price/volume features.
+In addition, although they are often more expressive, they often suffer from relatively low explainability and interpretability. 
+As a result, when the performance of these ``black box'' models unexpectedly deteriorates, it is hard for human experts to tune the models accordingly.
+These algorithms are thus not favored under some circumstances due to concerns about risks.
+On the other hand, while formulaic alphas are more interpretable, previous research on this matter often focused on finding a single alpha factor that predicts well on its own. 
+Nonetheless, it is often impossible to describe a complex and chaotic system such as the stock market with simple rules that human researchers can comprehend.
+As a compromise, a set of these alphas are oftentimes used together in practice, instead of using them individually.
+However, when multiple of these independently mined formula alphas are combined, the final prediction performance may not improve much because not much consideration is put into the synergistic effect between factors~(see Section \ref{sec:ablation} for detail). 
+In addition, these alphas are often simple in their forms, and their underlying mechanisms are often quite understandable. 
+Once they are released to the public and become well-known among practitioners, their performance may deteriorate rapidly~\cite{alpha101}. 
+
+Therefore, the question we are facing is: \emph{Are we able to find a way to automatically discover interpretable alpha factors, which work well with downstream predictive models, without suffering possible performance deterioration due to the alpha factors being widely known to the general public?}
+
+To solve the above challenge, we formulate a new research problem in this paper, which is to find \emph{synergistic formulaic alpha factor sets}. Using raw stock price/volume data as the input, we aim to search for a set of formulaic alpha factors instead of individual ones. 
+Recall that finding a single well-performing alpha on given data is already a hard problem to resolve since the search space of valid formulas is vast and hard to navigate. 
+The search space for alpha mining is often even larger than that of a typical symbolic regression problem~\cite{dsr}. 
+
+The most intuitive approach to this problem would be using genetic programming~(GP), performing mutations on expression trees to generate new alphas. In fact, most previous work on this matter is based on genetic programming~(GP) \cite{huataigp,huataigp2,alphaevolve,autoalpha}, which is of course not a serendipitous choice since GP methods generally excel at such problems with large search spaces. 
+However, GP algorithms often scale poorly due to the complexity of maintaining and mutating a huge population~\cite{dsr}. In addition, the main challenge remains that mining a set of synergistic alphas all at once is an even harder problem with a much larger search space, the scale of which makes most existing frameworks infeasible to solve. 
+
+Hence, previous works mostly tried to find ways to simplify the problem of alpha set mining, by mining alphas one by one and filtering out a subset of them with respect to some similarity metric. The mutual information coefficient~(IC) between the pairs of alpha in the set is often employed as the similarity ``metric''~\cite{alphaevolve,autoalpha,huataigp}. However, as we will demonstrate below, adding a new alpha that is of high IC to the ones in an existing pool of alpha may still bring a non-negligible boost of performance to the combined result, and vice versa. This phenomenon still exists even when the combination model is set to be a simple linear regressor. Therefore, the traditional approach to determining whether a set of alpha could be synergistic does not line up with the expected outcome.
+
+To tackle the challenge that GP methods could be inefficient at exploring the vast search space of formulaic alphas, our framework utilizes reinforcement learning~(RL) for achieving better results in exploration. 
+Combined with the strong expressiveness of deep neural networks, RL with its excellent exploratory ability plays a predominant role in numerous areas. To list a few examples, game playing~\cite{muzero}, natural language processing~\cite{rlnlp}, symbolic optimization~\cite{dsr}, and portfolio management~\cite{deeptrader}. 
+We implement a sequence generator with constraints to ensure valid formulaic alpha generation and employ a policy gradient-based algorithm to train the generator in the absence of a direct gradient.
+Since traditional mutual-IC filtering methods do not align well with the target of optimizing the combination model's performance, we propose to use directly the performance as the optimization objective of our alpha generator.
+Under this new optimization scheme, our generator is able to produce a synergistic set of alpha which fits the mine-and-combine procedure in a more suitable way. 
+To evaluate our alpha-mining framework, we conduct extensive experiments over real-world stock data. Our experiment results demonstrate that the formulaic alpha sets generated by our framework perform better than those generated with previous approaches, shown both on the prediction metrics and investment simulations.
+
+Our contributions can be summarized as follows.
+\begin{itemize}
+    \item We propose a new optimization scheme that produces a set of alpha that suits downstream tasks better, regardless of what actual form the combination model takes.
+    \item We introduce a new framework for searching formulaic alpha factors based on policy gradient algorithms, to utilize the strong exploratory power of reinforcement learning.
+    \item We present a series of experimental results demonstrating the effectiveness of our proposed framework. Additional experiments and case studies are also conducted to demonstrate why mutual IC-based filtering techniques that are previously commonly used may not work as expected when considering the combined performance of an alpha set.
+\end{itemize}

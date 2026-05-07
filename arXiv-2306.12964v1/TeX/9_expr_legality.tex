@@ -1,0 +1,21 @@
+\section{Expression Legality Guarantee} \label{sec:expr_legality}
+
+The legality of expressions divides into two parts: \emph{Formal} legality and \emph{semantic} legality.
+
+\subsection{Formal Legality}
+
+An RPN can be built with a stack of expressions, constants, or raw features. The RPN building procedure follows the rules below, and actions that may violate these rules will be masked. 
+
+\begin{itemize}
+    \item TS (time-series) operators must take a time-delta (e.g. 10d for a time-difference of 10 days) as its last parameter;
+    \item Excluding the aforementioned time-delta, each operator must take enough expressions as operands, according to the arity of the operator (one for *-Unary, two for *-Binary);
+    \item A multi-token expression should not be equivalent to a constant;
+    \item The special SEP token (end of expression) is only allowed when the generated sequence is already a valid RPN.
+\end{itemize}
+
+For example, when the stack (state) is currently [\$open, 0.5], we can choose the ``Add'' token (a binary operator), building an expression ``Add(\$open, 0.5)''. Meanwhile, the operator ``Log'' is not allowed here because ``Log'' will take ``0.5'' and ``Log(0.5)'' is a constant; similarly, the operator ``TS-Mean''
+is also invalid because ``Mean(\$open, 0.5)'' is illegal.
+
+\subsection{Semantic Legality}
+
+Some expressions with correct forms might still fail to evaluate due to more constraints imposed by the operators. For example, the logarithm operator cannot be applied to a non-positive value. This kind of semantic invalidity is not directly detected by the procedure mentioned in the last section. In our experiments, these expressions are given the reward of -1 (the minimum value of Pearson's correlation coefficient) to discourage the agent from generating these expressions.

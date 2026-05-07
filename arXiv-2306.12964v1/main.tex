@@ -1,0 +1,59 @@
+%%
+%% The first command in your LaTeX source must be the \documentclass
+%% command.
+%%
+%% For submission and review of your manuscript please change the
+%% command to \documentclass[manuscript, screen, review]{acmart}.
+%%
+%% When submitting camera-ready or to TAPS, please change the command
+%% to \documentclass[sigconf]{acmart} or whichever template is required
+%% for your publication.
+%%
+\documentclass[sigconf]{acmart}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage[noend]{algpseudocode}
+\usepackage{placeins}
+\usepackage{colortbl}
+\usepackage{siunitx}
+
+\input{TeX/preamble}
+
+\settopmatter{printacmref=true}
+\begin{document}
+
+\title{Generating Synergistic Formulaic Alpha Collections via Reinforcement Learning}
+
+\input{TeX/0_abstract}
+\input{TeX/misc}
+\input{TeX/authors}
+
+\maketitle
+
+\input{TeX/1_introduction}
+\input{TeX/3_formulation}
+\input{TeX/4_1_comb_model}
+\input{TeX/4_2_RL}
+\input{TeX/5_experiments}
+\input{TeX/2_related_work}
+\input{TeX/6_conclusion}
+\input{TeX/acknowledgments}
+
+\FloatBarrier
+
+\bibliographystyle{ACM-Reference-Format}
+\balance
+\bibliography{references}
+\appendix
+\input{TeX/7_operators}
+\input{TeX/8_proof}
+\input{TeX/9_expr_legality}
+\input{TeX/10_hyperparam}
+
+\end{document}
+\endinput

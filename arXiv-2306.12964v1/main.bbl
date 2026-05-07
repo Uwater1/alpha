@@ -1,0 +1,417 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{27}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Ashok et~al\mbox{.}(2018)]%
+        {disc2}
+\bibfield{author}{\bibinfo{person}{Aditya Ashok}, \bibinfo{person}{Manimaran
+  Govindarasu}, {and} \bibinfo{person}{Venkataramana Ajjarapu}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Online Detection of Stealthy False Data Injection
+  Attacks in Power System State Estimation}.
+\newblock \bibinfo{journal}{\emph{{IEEE} Trans. Smart Grid}}
+  \bibinfo{volume}{9}, \bibinfo{number}{3} (\bibinfo{year}{2018}),
+  \bibinfo{pages}{1636--1646}.
+\newblock
+
+
+\bibitem[Chen and Guestrin(2016)]%
+        {xgb}
+\bibfield{author}{\bibinfo{person}{Tianqi Chen} {and} \bibinfo{person}{Carlos
+  Guestrin}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{XGBoost: {A} Scalable Tree Boosting System}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 22nd {ACM} {SIGKDD}
+  International Conference on Knowledge Discovery and Data Mining, San
+  Francisco, CA, USA, August 13-17, 2016}},
+  \bibfield{editor}{\bibinfo{person}{Balaji Krishnapuram},
+  \bibinfo{person}{Mohak Shah}, \bibinfo{person}{Alexander~J. Smola},
+  \bibinfo{person}{Charu~C. Aggarwal}, \bibinfo{person}{Dou Shen}, {and}
+  \bibinfo{person}{Rajeev Rastogi}} (Eds.). \bibinfo{publisher}{{ACM}},
+  \bibinfo{pages}{785--794}.
+\newblock
+
+
+\bibitem[Cui et~al\mbox{.}(2021)]%
+        {alphaevolve}
+\bibfield{author}{\bibinfo{person}{Can Cui}, \bibinfo{person}{Wei Wang},
+  \bibinfo{person}{Meihui Zhang}, \bibinfo{person}{Gang Chen},
+  \bibinfo{person}{Zhaojing Luo}, {and} \bibinfo{person}{Beng~Chin Ooi}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{AlphaEvolve: {A} Learning Framework to Discover
+  Novel Alphas in Quantitative Investment}. In
+  \bibinfo{booktitle}{\emph{{SIGMOD} '21: International Conference on
+  Management of Data, Virtual Event, China, June 20-25, 2021}},
+  \bibfield{editor}{\bibinfo{person}{Guoliang Li}, \bibinfo{person}{Zhanhuai
+  Li}, \bibinfo{person}{Stratos Idreos}, {and} \bibinfo{person}{Divesh
+  Srivastava}} (Eds.). \bibinfo{publisher}{{ACM}}, \bibinfo{pages}{2208--2216}.
+\newblock
+
+
+\bibitem[Deb et~al\mbox{.}(2017)]%
+        {disc1}
+\bibfield{author}{\bibinfo{person}{Chirag Deb}, \bibinfo{person}{Fan Zhang},
+  \bibinfo{person}{Junjing Yang}, \bibinfo{person}{Siew~Eang Lee}, {and}
+  \bibinfo{person}{Kwok~Wei Shah}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{A review on time series forecasting techniques for
+  building energy consumption}.
+\newblock \bibinfo{journal}{\emph{Renewable and Sustainable Energy Reviews}}
+  \bibinfo{volume}{74} (\bibinfo{year}{2017}), \bibinfo{pages}{902--924}.
+\newblock
+
+
+\bibitem[Hochreiter and Schmidhuber(1997)]%
+        {lstm}
+\bibfield{author}{\bibinfo{person}{Sepp Hochreiter} {and}
+  \bibinfo{person}{J{\"{u}}rgen Schmidhuber}.} \bibinfo{year}{1997}\natexlab{}.
+\newblock \showarticletitle{Long Short-Term Memory}.
+\newblock \bibinfo{journal}{\emph{Neural Comput.}} \bibinfo{volume}{9},
+  \bibinfo{number}{8} (\bibinfo{year}{1997}), \bibinfo{pages}{1735--1780}.
+\newblock
+
+
+\bibitem[Huang and Onta{\~{n}}{\'{o}}n(2022)]%
+        {ppomask}
+\bibfield{author}{\bibinfo{person}{Shengyi Huang} {and}
+  \bibinfo{person}{Santiago Onta{\~{n}}{\'{o}}n}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{A Closer Look at Invalid Action Masking in Policy
+  Gradient Algorithms}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  Thirty-Fifth International Florida Artificial Intelligence Research Society
+  Conference, {FLAIRS} 2022, Hutchinson Island, Jensen Beach, Florida, USA, May
+  15-18, 2022}}, \bibfield{editor}{\bibinfo{person}{Roman Bart{\'{a}}k},
+  \bibinfo{person}{Fazel Keshtkar}, {and} \bibinfo{person}{Michael Franklin}}
+  (Eds.).
+\newblock
+
+
+\bibitem[Kakushadze(2016)]%
+        {alpha101}
+\bibfield{author}{\bibinfo{person}{Zura Kakushadze}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \bibinfo{title}{101 {Formulaic} {Alphas}}.
+\newblock
+\newblock
+\showeprint[arXiv]{1601.00991}
+
+
+\bibitem[Ke et~al\mbox{.}(2017)]%
+        {lgbm}
+\bibfield{author}{\bibinfo{person}{Guolin Ke}, \bibinfo{person}{Qi Meng},
+  \bibinfo{person}{Thomas Finley}, \bibinfo{person}{Taifeng Wang},
+  \bibinfo{person}{Wei Chen}, \bibinfo{person}{Weidong Ma},
+  \bibinfo{person}{Qiwei Ye}, {and} \bibinfo{person}{Tie{-}Yan Liu}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{LightGBM: {A} Highly Efficient Gradient Boosting
+  Decision Tree}. In \bibinfo{booktitle}{\emph{Advances in Neural Information
+  Processing Systems 30: Annual Conference on Neural Information Processing
+  Systems 2017, December 4-9, 2017, Long Beach, CA, {USA}}},
+  \bibfield{editor}{\bibinfo{person}{Isabelle Guyon}, \bibinfo{person}{Ulrike
+  von Luxburg}, \bibinfo{person}{Samy Bengio}, \bibinfo{person}{Hanna~M.
+  Wallach}, \bibinfo{person}{Rob Fergus}, \bibinfo{person}{S.~V.~N.
+  Vishwanathan}, {and} \bibinfo{person}{Roman Garnett}} (Eds.).
+  \bibinfo{pages}{3146--3154}.
+\newblock
+
+
+\bibitem[Lin et~al\mbox{.}(2019a)]%
+        {huataigp2}
+\bibfield{author}{\bibinfo{person}{Xiaoming Lin}, \bibinfo{person}{Ye Chen},
+  \bibinfo{person}{Ziyu Li}, {and} \bibinfo{person}{Kang He}.}
+  \bibinfo{year}{2019}\natexlab{a}.
+\newblock \bibinfo{booktitle}{\emph{Revisiting Stock Alpha Mining Based On
+  Genetic Algorithm}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport}. \bibinfo{institution}{Huatai
+  Securities Research Center}.
+\newblock
+\urldef\tempurl%
+\url{https://crm.htsc.com.cn/doc/2019/10750101/3f178e66-597a-4639-a34d-45f0558e2bce.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Lin et~al\mbox{.}(2019b)]%
+        {huataigp}
+\bibfield{author}{\bibinfo{person}{Xiaoming Lin}, \bibinfo{person}{Ye Chen},
+  \bibinfo{person}{Ziyu Li}, {and} \bibinfo{person}{Kang He}.}
+  \bibinfo{year}{2019}\natexlab{b}.
+\newblock \bibinfo{booktitle}{\emph{Stock Alpha Mining Based On Genetic
+  Algorithm}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport}. \bibinfo{institution}{Huatai
+  Securities Research Center}.
+\newblock
+\urldef\tempurl%
+\url{https://crm.htsc.com.cn/doc/2019/10750101/f75b4b6a-2bdd-4694-b696-4c62528791ea.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Liu et~al\mbox{.}(2020)]%
+        {rlnlp}
+\bibfield{author}{\bibinfo{person}{Qian Liu}, \bibinfo{person}{Yihong Chen},
+  \bibinfo{person}{Bei Chen}, \bibinfo{person}{Jian{-}Guang Lou},
+  \bibinfo{person}{Zixuan Chen}, \bibinfo{person}{Bin Zhou}, {and}
+  \bibinfo{person}{Dongmei Zhang}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{You Impress Me: Dialogue Generation via Mutual
+  Persona Perception}. In \bibinfo{booktitle}{\emph{Proceedings of the 58th
+  Annual Meeting of the Association for Computational Linguistics, {ACL} 2020,
+  Online, July 5-10, 2020}}, \bibfield{editor}{\bibinfo{person}{Dan Jurafsky},
+  \bibinfo{person}{Joyce Chai}, \bibinfo{person}{Natalie Schluter}, {and}
+  \bibinfo{person}{Joel~R. Tetreault}} (Eds.). \bibinfo{publisher}{Association
+  for Computational Linguistics}, \bibinfo{pages}{1417--1427}.
+\newblock
+
+
+\bibitem[Mundhenk et~al\mbox{.}(2021)]%
+        {dsrgp}
+\bibfield{author}{\bibinfo{person}{T.~Nathan Mundhenk}, \bibinfo{person}{Mikel
+  Landajuela}, \bibinfo{person}{Ruben Glatt}, \bibinfo{person}{Daniel~M.
+  Faissol}, {and} \bibinfo{person}{Brenden~K. Petersen}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Symbolic Regression via Neural-Guided Genetic
+  Programming Population Seeding}.
+\newblock  (\bibinfo{year}{2021}).
+\newblock
+\showeprint[arXiv]{2111.00053}
+
+
+\bibitem[Petersen et~al\mbox{.}(2021)]%
+        {dsr}
+\bibfield{author}{\bibinfo{person}{Brenden~K. Petersen}, \bibinfo{person}{Mikel
+  Landajuela}, \bibinfo{person}{T.~Nathan Mundhenk},
+  \bibinfo{person}{Cl{\'{a}}udio~Prata Santiago}, \bibinfo{person}{Sookyung
+  Kim}, {and} \bibinfo{person}{Joanne~Taery Kim}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Deep symbolic regression: Recovering mathematical
+  expressions from data via risk-seeking policy gradients}. In
+  \bibinfo{booktitle}{\emph{9th International Conference on Learning
+  Representations, {ICLR} 2021, Virtual Event, Austria, May 3-7, 2021}}.
+\newblock
+
+
+\bibitem[Qian(2007)]%
+        {qian2007quantitative}
+\bibfield{author}{\bibinfo{person}{Edward~E Qian}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Quantitative equity portfolio management:
+  modern techniques and applications}}.
+\newblock \bibinfo{publisher}{Chapman and Hall/CRC}.
+\newblock
+
+
+\bibitem[Sahoo et~al\mbox{.}(2018)]%
+        {srnn}
+\bibfield{author}{\bibinfo{person}{Subham~S. Sahoo},
+  \bibinfo{person}{Christoph~H. Lampert}, {and} \bibinfo{person}{Georg
+  Martius}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Learning Equations for Extrapolation and Control}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the 35th International Conference
+  on Machine Learning, {ICML} 2018, Stockholmsm{\"{a}}ssan, Stockholm, Sweden,
+  July 10-15, 2018}} \emph{(\bibinfo{series}{Proceedings of Machine Learning
+  Research}, Vol.~\bibinfo{volume}{80})},
+  \bibfield{editor}{\bibinfo{person}{Jennifer~G. Dy} {and}
+  \bibinfo{person}{Andreas Krause}} (Eds.). \bibinfo{publisher}{{PMLR}},
+  \bibinfo{pages}{4439--4447}.
+\newblock
+
+
+\bibitem[Schrittwieser et~al\mbox{.}(2020)]%
+        {muzero}
+\bibfield{author}{\bibinfo{person}{Julian Schrittwieser},
+  \bibinfo{person}{Ioannis Antonoglou}, \bibinfo{person}{Thomas Hubert},
+  \bibinfo{person}{Karen Simonyan}, \bibinfo{person}{Laurent Sifre},
+  \bibinfo{person}{Simon Schmitt}, \bibinfo{person}{Arthur Guez},
+  \bibinfo{person}{Edward Lockhart}, \bibinfo{person}{Demis Hassabis},
+  \bibinfo{person}{Thore Graepel}, {et~al\mbox{.}}}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Mastering atari, go, chess and shogi by planning
+  with a learned model}.
+\newblock \bibinfo{journal}{\emph{Nature}} \bibinfo{volume}{588},
+  \bibinfo{number}{7839} (\bibinfo{year}{2020}), \bibinfo{pages}{604--609}.
+\newblock
+
+
+\bibitem[Schulman et~al\mbox{.}(2017)]%
+        {ppo}
+\bibfield{author}{\bibinfo{person}{John Schulman}, \bibinfo{person}{Filip
+  Wolski}, \bibinfo{person}{Prafulla Dhariwal}, \bibinfo{person}{Alec Radford},
+  {and} \bibinfo{person}{Oleg Klimov}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Proximal Policy Optimization Algorithms}.
+\newblock  (\bibinfo{year}{2017}).
+\newblock
+\showeprint[arXiv]{1707.06347}
+
+
+\bibitem[Tuarob et~al\mbox{.}(2017)]%
+        {disc3}
+\bibfield{author}{\bibinfo{person}{Suppawong Tuarob},
+  \bibinfo{person}{Conrad~S. Tucker}, \bibinfo{person}{Soundar R.~T. Kumara},
+  \bibinfo{person}{C.~Lee Giles}, \bibinfo{person}{Aaron~L. Pincus},
+  \bibinfo{person}{David~E. Conroy}, {and} \bibinfo{person}{Nilam Ram}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{How are you feeling?: {A} personalized methodology
+  for predicting mental states from temporally observable physical and
+  behavioral information}.
+\newblock \bibinfo{journal}{\emph{J. Biomed. Informatics}}
+  \bibinfo{volume}{68} (\bibinfo{year}{2017}), \bibinfo{pages}{1--19}.
+\newblock
+
+
+\bibitem[Tulchinsky(2015)]%
+        {tulchinsky15}
+\bibfield{author}{\bibinfo{person}{I. Tulchinsky}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Finding Alphas: A Quantitative Approach to
+  Building Trading Strategies}}.
+\newblock 1--253 pages.
+\newblock
+
+
+\bibitem[Valipour et~al\mbox{.}(2021)]%
+        {symbolicgpt}
+\bibfield{author}{\bibinfo{person}{Mojtaba Valipour}, \bibinfo{person}{Bowen
+  You}, \bibinfo{person}{Maysum Panju}, {and} \bibinfo{person}{Ali Ghodsi}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{SymbolicGPT: {A} Generative Transformer Model for
+  Symbolic Regression}.
+\newblock  (\bibinfo{year}{2021}).
+\newblock
+\showeprint[arXiv]{2106.14131}
+
+
+\bibitem[Vaswani et~al\mbox{.}(2017)]%
+        {transformer}
+\bibfield{author}{\bibinfo{person}{Ashish Vaswani}, \bibinfo{person}{Noam
+  Shazeer}, \bibinfo{person}{Niki Parmar}, \bibinfo{person}{Jakob Uszkoreit},
+  \bibinfo{person}{Llion Jones}, \bibinfo{person}{Aidan~N. Gomez},
+  \bibinfo{person}{Lukasz Kaiser}, {and} \bibinfo{person}{Illia Polosukhin}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Attention is All you Need}. In
+  \bibinfo{booktitle}{\emph{Advances in Neural Information Processing Systems
+  30: Annual Conference on Neural Information Processing Systems 2017, December
+  4-9, 2017, Long Beach, CA, {USA}}},
+  \bibfield{editor}{\bibinfo{person}{Isabelle Guyon}, \bibinfo{person}{Ulrike
+  von Luxburg}, \bibinfo{person}{Samy Bengio}, \bibinfo{person}{Hanna~M.
+  Wallach}, \bibinfo{person}{Rob Fergus}, \bibinfo{person}{S.~V.~N.
+  Vishwanathan}, {and} \bibinfo{person}{Roman Garnett}} (Eds.).
+  \bibinfo{pages}{5998--6008}.
+\newblock
+
+
+\bibitem[Wang et~al\mbox{.}(2021)]%
+        {deeptrader}
+\bibfield{author}{\bibinfo{person}{Zhicheng Wang}, \bibinfo{person}{Biwei
+  Huang}, \bibinfo{person}{Shikui Tu}, \bibinfo{person}{Kun Zhang}, {and}
+  \bibinfo{person}{Lei Xu}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{DeepTrader: {A} Deep Reinforcement Learning
+  Approach for Risk-Return Balanced Portfolio Management with Market Conditions
+  Embedding}. In \bibinfo{booktitle}{\emph{Thirty-Fifth {AAAI} Conference on
+  Artificial Intelligence, {AAAI} 2021, Thirty-Third Conference on Innovative
+  Applications of Artificial Intelligence, {IAAI} 2021, The Eleventh Symposium
+  on Educational Advances in Artificial Intelligence, {EAAI} 2021, Virtual
+  Event, February 2-9, 2021}}. \bibinfo{publisher}{{AAAI} Press},
+  \bibinfo{pages}{643--650}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2021a)]%
+        {hist}
+\bibfield{author}{\bibinfo{person}{Wentao Xu}, \bibinfo{person}{Weiqing Liu},
+  \bibinfo{person}{Lewen Wang}, \bibinfo{person}{Yingce Xia},
+  \bibinfo{person}{Jiang Bian}, \bibinfo{person}{Jian Yin}, {and}
+  \bibinfo{person}{Tie{-}Yan Liu}.} \bibinfo{year}{2021}\natexlab{a}.
+\newblock \showarticletitle{{HIST:} {A} Graph-based Framework for Stock Trend
+  Forecasting via Mining Concept-Oriented Shared Information}.
+\newblock  (\bibinfo{year}{2021}).
+\newblock
+\showeprint[arXiv]{2110.13716}
+
+
+\bibitem[Xu et~al\mbox{.}(2021b)]%
+        {rest}
+\bibfield{author}{\bibinfo{person}{Wentao Xu}, \bibinfo{person}{Weiqing Liu},
+  \bibinfo{person}{Chang Xu}, \bibinfo{person}{Jiang Bian},
+  \bibinfo{person}{Jian Yin}, {and} \bibinfo{person}{Tie{-}Yan Liu}.}
+  \bibinfo{year}{2021}\natexlab{b}.
+\newblock \showarticletitle{{REST:} Relational Event-driven Stock Trend
+  Forecasting}. In \bibinfo{booktitle}{\emph{{WWW} '21: The Web Conference
+  2021, Virtual Event / Ljubljana, Slovenia, April 19-23, 2021}},
+  \bibfield{editor}{\bibinfo{person}{Jure Leskovec}, \bibinfo{person}{Marko
+  Grobelnik}, \bibinfo{person}{Marc Najork}, \bibinfo{person}{Jie Tang}, {and}
+  \bibinfo{person}{Leila Zia}} (Eds.). \bibinfo{publisher}{{ACM} / {IW3C2}},
+  \bibinfo{pages}{1--10}.
+\newblock
+
+
+\bibitem[Yang et~al\mbox{.}(2020)]%
+        {qlib}
+\bibfield{author}{\bibinfo{person}{Xiao Yang}, \bibinfo{person}{Weiqing Liu},
+  \bibinfo{person}{Dong Zhou}, \bibinfo{person}{Jiang Bian}, {and}
+  \bibinfo{person}{Tie{-}Yan Liu}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Qlib: An AI-oriented Quantitative Investment
+  Platform}.
+\newblock  (\bibinfo{year}{2020}).
+\newblock
+\showeprint[arXiv]{2009.11189}
+
+
+\bibitem[Zhang et~al\mbox{.}(2017)]%
+        {sfm}
+\bibfield{author}{\bibinfo{person}{Liheng Zhang}, \bibinfo{person}{Charu~C.
+  Aggarwal}, {and} \bibinfo{person}{Guo{-}Jun Qi}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Stock Price Prediction via Discovering
+  Multi-Frequency Trading Patterns}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the 23rd {ACM} {SIGKDD} International Conference on Knowledge Discovery
+  and Data Mining, Halifax, NS, Canada, August 13 - 17, 2017}}.
+  \bibinfo{publisher}{{ACM}}, \bibinfo{pages}{2141--2149}.
+\newblock
+
+
+\bibitem[Zhang et~al\mbox{.}(2020)]%
+        {autoalpha}
+\bibfield{author}{\bibinfo{person}{Tianping Zhang}, \bibinfo{person}{Yuanqi
+  Li}, \bibinfo{person}{Yifei Jin}, {and} \bibinfo{person}{Jian Li}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{AutoAlpha: an Efficient Hierarchical Evolutionary
+  Algorithm for Mining Alpha Factors in Quantitative Investment}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2002.08245}}
+  (\bibinfo{year}{2020}).
+\newblock
+
+
+\end{thebibliography}

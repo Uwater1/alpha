@@ -1,0 +1,31 @@
+\begin{table*}[]
+	\centering
+	\caption{All the operators used in our framework. CS: cross-section, TS: time-series, U: unary, B: binary.}
+    \begin{tabularx}{\textwidth}{>{\hsize=.4\hsize}XcX}
+        \toprule[1.5pt]
+        Operator & Category & Descriptions \\
+        \midrule
+        Abs($x$) & CS--U & The absolute value $|x|$. \\
+        Log($x$) & CS--U & Natural logarithmic function $\log(x)$. \\
+        \hline
+        $x+y$, $x-y$, $x \cdot y$, $x/y$ & CS--B & Arithmetic operators. \\
+        $\mathrm{Greater}(x, y)$, $\mathrm{Less}(x, y)$ & CS--B & The larger/smaller one of the two values. \\
+        \hline
+        $\mathrm{Ref}(x, t)$ & TS--U & The expression $x$ evaluated at $t$ days before the current day. \\
+        $\mathrm{Mean}(x, t)$, $\mathrm{Med}(x, t)$, $\mathrm{Sum}(x, t)$ & TS--U & The mean/median/sum value of the expression $x$ evaluated on the recent $t$ days. \\
+        $\mathrm{Std}(x, t)$, $\mathrm{Var}(x, t)$ & TS--U & The standard deviation/variance of the expression $x$ evaluated on recent $t$ days. \\
+        $\mathrm{Max}(x, t)$, $\mathrm{Min}(x, t)$ & TS--U & The maximum/minimum value of the expression $x$ evaluated on the recent $t$ days. \\
+        $\mathrm{Mad}(x, t)$ & TS--U & The mean absolute deviation $\mathbb{E}\brackets{|x - \mathbb{E}\brackets{x}|}$ of the expression $x$ evaluated on the recent $t$ days. \\
+        $\mathrm{Delta}(x, t)$ & TS--U & The relative difference of $x$ compared to $t$ days ago, $x - \mathrm{Ref}(x, t)$. \\
+        $\mathrm{WMA}(x, t)$, $\mathrm{EMA}(x, t)$ & TS--U & Weighted moving average and exponential moving average of the expression $x$ evaluated on the recent $t$ days. \\
+        \hline
+        $\mathrm{Cov}(x, y, t)$ & TS--B & The covariance between two time series $x$ and $y$ in the recent $t$ days. \\
+        $\mathrm{Corr}(x, y, t)$ & TS--B & The Pearson's correlation coefficient between two time series $x$ and $y$ in recent $t$ days. \\
+        \bottomrule[1.5pt]
+    \end{tabularx}
+	\label{tab:operators}
+\end{table*}
+
+\section{List of Operators} \label{sec:ops}
+
+There are four types of operators used in our framework. The four types break down into two groups: cross-section operators, and time-series operators. Cross-section operators (denoted with ``CS'' in the table) only deal with data on the current trading day, while time-series operators (denoted with ``TS'') take into consideration data from a consecutive period of time. Each of the two groups further separates into unary (denoted with ``U'') and binary (denoted with ``B'') operators that apply to one or two series respectively.

@@ -1,0 +1,53 @@
+\section{Proof of Theorem \ref{thm:loss_transformation}} \label{sec:thm_proof}
+
+\begin{proof}
+    
+We know that the elements of a vector $u$ that is centralized and normalized (using the $\mathcal{N}$ operator mentioned above) have a variance of $1/n$, since:
+\begin{equation}
+    \begin{aligned}
+        \var\brackets{u}
+        & = \expectation{i}{u_i^2} - \expectation{i}{u_i}^2 \\
+        & = \frac{1}{n}\|u\|^2 - 0 \\
+        & = \frac{1}{n}.
+    \end{aligned}
+\end{equation}
+
+Using the original definition of Pearson's correlation coefficient, we have:
+\begin{equation}
+    \begin{aligned}
+        \sigma(u, v)
+        & = \frac{\cov\brackets{u, v}}{\sqrt{\var\brackets{u} \cdot \var\brackets{v}}} \\
+        & = \expectation{i}{
+            \frac{(u_i - \bar{u})}{\sqrt{\var\brackets{u}}}
+            \cdot
+            \frac{(v_i - \bar{v})}{\sqrt{\var\brackets{v}}}
+        } \\
+        & = \expectation{i}{
+            \frac{\brackets{\mathcal{N}(u)}_i}{\sqrt{1/n}}
+            \cdot
+            \frac{\brackets{\mathcal{N}(v)}_i}{\sqrt{1/n}}
+        } \\
+        & = n\expectation{i}{\brackets{\mathcal{N}(u)}_i \brackets{\mathcal{N}(v)}_i} \\
+        & = \angles{\mathcal{N}(u), \mathcal{N}(v)}.
+    \end{aligned}
+\end{equation}
+That is to say, the Pearson's correlation coefficient between two vectors equals the inner product of the two vectors centralized and normalized.
+
+Therefore the theorem can be proved as follows. Recall that $f_i(x_t)$ and $y_t$ are normalized.
+\begin{equation}
+    \begin{aligned}
+        n\mathcal{L}(w)
+        & = \frac{1}{T} \sum_{t=1}^T \|z_t - y_t\|_2^2 \\
+        & = \expectation{t}{\|z_t\|^2 - 2\angles{z_t, y_t} + \|y_t\|^2} \\
+        & = \expectation{t}{
+            \Verts{\sum_{i=1}^k w_if_i(X_t)}^2
+            - 2 \angles{\sum_{i=1}^k w_if_i(X_t), y_t}
+            + 1
+        } \\
+        & = \mathbb{E}_t\left[ \sum_{i=1}^k\sum_{j=1}^k w_iw_j \sigma(f_i(X_t), f_j(X_t))\right. \\
+        & \qquad \left. -\ 2\sum_{i=1}^k w_i\angles{f_i(X_t), y_t} + 1 \right] \\
+        & = \sum_{i=1}^k\sum_{j=1}^k w_iw_j \bar{\sigma}(f_i(X), f_j(X)) - 2\sum_{i=1}^k w_i \bar{\sigma}_y(f_i) + 1.
+    \end{aligned}
+\end{equation}
+
+\end{proof}
