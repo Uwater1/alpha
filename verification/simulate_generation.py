@@ -80,8 +80,8 @@ def evaluate_alpha(expr_str, df, target, valid_idx):
             if np.sum(mask) > 10:
                 corr = np.corrcoef(res_vals[mask], target[mask])[0, 1]
                 return corr
-    except Exception as e:
-        # Invalid formula, parsing error, execution error, etc.
+    except (ValueError, TypeError, SyntaxError, RuntimeError):
+        # Expected errors for invalid random formulas
         pass
 
     return np.nan
