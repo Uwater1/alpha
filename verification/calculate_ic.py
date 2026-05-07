@@ -48,7 +48,7 @@ def main():
                 continue
 
             # Cap at 250 rows for memory/speed
-            df = df.iloc[-250:]
+            df = df.iloc[-400:]
 
             target = (df['close'].shift(-20) / df['close']) - 1
 
