@@ -64,7 +64,7 @@ class IncrementalCombinationModel:
                 bounds=bounds
             )
             return res.x, res.fun
-        except Exception:
+        except (RuntimeError, ValueError):
             return initial_w, self._loss_func(initial_w, alpha_names)
 
     def compute_combined_ic(self, w, alpha_names):
