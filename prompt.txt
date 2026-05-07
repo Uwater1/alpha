@@ -1,0 +1,35 @@
+### Agent Directive: Validation of "Generating Synergistic Formulaic Alpha Collections via Reinforcement Learning"
+
+**Objective:**
+Perform an exhaustive technical audit, implementation, and verification of the claims made in the research paper located in `arXiv-2306.12964v1/`. You are expected to use "maximum effort" to either empirically prove or disprove the core findings of this article within the context of the current `alpha191` project.
+
+**Project Context:**
+This project already contains an implementation of WorldQuant's 191 Alphas, an expression parser (`alpha191.expression`), and a local stock database (`bao/`). The paper discusses using Reinforcement Learning (RL) to generate formulaic alpha collections that are "synergistic" (minimizing redundancy while maximizing predictive power).
+
+**Detailed Tasks:**
+
+1.  **Deep Literature Review:**
+    *   Read all TeX files in `arXiv-2306.12964v1/TeX/`, focusing on the Abstract, Formulation (`3_formulation.tex`), the RL Model (`4_2_RL.tex`), and the Experiments (`5_experiments.tex`).
+    *   Identify the exact mathematical definitions of "Synergy" and the reward functions used in their RL framework.
+    *   Extract any specific alpha formulas or collection strategies mentioned as "state-of-the-art" or superior results.
+
+2.  **Implementation & Verification (The "Proof"):**
+    *   **Baseline Analysis:** Calculate the synergy (correlation/VIF/ICIR) of the existing Alpha191 set using `calculate_covariance.py` and `calculate_vif.py`.
+    *   **Prototyping:** Implement the paper's core synergy metric or a simplified version of their RL reward logic.
+    *   **Simulation:** Use the `alpha191.expression` module to generate candidate alphas based on the paper's suggested operators and test them against the `bao/` dataset.
+    *   **Synergy Test:** Demonstrate whether a collection of alphas generated/selected using the paper's methodology outperforms the standard Alpha191 or a random collection in terms of portfolio Sharpe, ICIR, or turnover.
+
+3.  **Code Deliverables:**
+    *   Create a new directory `verification`.
+    *   Leave clean, well-documented Python scripts (e.g. `verify_synergy.py`, `simulate_generation.py`, etc.) that anyone can run to reproduce your findings.
+    *   Ensure the code integrates with the existing `alpha191` package.
+
+4.  **Final Report:**
+    *   Update `README.md`.
+    *   **Executive Summary:** State clearly: "Proven," "Disproven," or "Partially Verified."
+    *   **Technical Breakdown:** Document the methodology you used for verification.
+    *   **Data Evidence:** Include tables or charts showing the performance metrics.
+    *   **Conclusion:** Provide a critical assessment of the paper's practical utility for this project.
+
+**Mandate:**
+Do not settle for a surface-level summary. If the paper provides proofs, verify the logic. If it provides formulas, test them. Your goal is to be the ultimate arbiter of this paper's validity in a real-world quant environment.
