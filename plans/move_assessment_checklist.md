@@ -11,4 +11,4 @@
 - [x] Update imports in `tests/test_assessment_rre.py` <!-- id: 9 -->
 - [x] Update imports in `tests/test_stability_metrics.py` <!-- id: 10 -->
 - [x] Update imports in `tests/test_performance.py` <!-- id: 11 -->
-- [ ] Run tests to verify everything works <!-- id: 12 -->
+- [x] Run tests to verify everything works <!-- id: 12 -->
