@@ -9,7 +9,7 @@ from alpha191.utils import (
     format_alpha_name,
     parallel_load_stocks_with_alpha
 )
-from assessment import (
+from arxiv_2306.assessment import (
     get_clean_factor_and_forward_returns, 
     compute_performance_metrics,
     plot_quantile_returns_bar,

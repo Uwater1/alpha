@@ -28,7 +28,7 @@ from alpha191.utils import (
     get_benchmark_members, 
     load_stock_csv
 )
-from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics_light
+from arxiv_2306.assessment import get_clean_factor_and_forward_returns, compute_performance_metrics_light
 
 # Configuration
 BENCHMARK = 'zz800'

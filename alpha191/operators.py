@@ -28,7 +28,7 @@ import warnings
 from scipy import stats
 from numba import njit
 try:
-    from assessment.fast_ops import fast_rank
+    from arxiv_2306.assessment.fast_ops import fast_rank
 except ImportError:
     fast_rank = None
 

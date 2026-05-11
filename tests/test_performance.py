@@ -5,7 +5,7 @@ Unit tests for performance metrics in assessment.performance module.
 import pandas as pd
 import numpy as np
 import pytest
-from assessment.performance import cumulative_returns
+from arxiv_2306.assessment.performance import cumulative_returns
 
 def test_cumulative_returns_basic():
     """Test basic positive and negative returns."""

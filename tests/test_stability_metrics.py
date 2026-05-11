@@ -5,7 +5,7 @@ Unit tests for stability metrics in assessment.performance module.
 import pandas as pd
 import numpy as np
 import pytest
-from assessment.performance import (
+from arxiv_2306.assessment.performance import (
     compute_rolling_ic_stats,
     compute_ic_trend,
     compute_yearly_ic_breakdown,

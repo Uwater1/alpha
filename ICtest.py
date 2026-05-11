@@ -8,7 +8,7 @@ from alpha191.utils import (
     format_alpha_name,
     parallel_load_stocks_with_alpha
 )
-from assessment import get_clean_factor_and_forward_returns, compute_performance_metrics, compute_stability_metrics
+from arxiv_2306.assessment import get_clean_factor_and_forward_returns, compute_performance_metrics, compute_stability_metrics
 
 def assess_alpha(alpha_name: str, benchmark: str = "zz800", horizons: List[int] = [1, 5, 10, 20, 30, 60], plot: bool = False, n_jobs: int = -1):
     """Assess an alpha using the new assessment module with multiple horizons."""

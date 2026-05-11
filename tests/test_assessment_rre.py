@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import pytest
-from assessment.performance import factor_rre
+from arxiv_2306.assessment.performance import factor_rre
 
 def test_rre_perfect_stability():
     """
